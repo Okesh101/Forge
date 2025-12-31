@@ -1,0 +1,29 @@
+@mixin webkitText {
+  background: linear-gradient(135deg, #ffffff, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+@mixin btnStyle {
+  background: linear-gradient(135deg, #ff6a1a 0%, #ff8c42 100%);
+  border: none;
+  padding: 18px 48px;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(255, 106, 26, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 106, 26, 0.4);
+  }
+}
+@mixin gridTemplate {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}

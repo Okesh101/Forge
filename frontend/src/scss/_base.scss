@@ -1,0 +1,20 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  //   background: radial-gradient(
+  //     circle at top,
+  //     #e35a1c 5%,
+  //     #8c3a16 40%,
+  //     #1a1a1a 90%
+  //   );
+  //   color: white;
+  //   min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+  color: white;
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
