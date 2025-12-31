@@ -1,0 +1,240 @@
+@use "mixins" as *;
+.form-section {
+  @include pageReset;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 106, 26, 0.1),
+    rgba(255, 140, 66, 0.05)
+  );
+  border-radius: 24px;
+  border: 1px solid rgba(255, 106, 26, 0.2);
+  header {
+    text-align: center;
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #ff6a1a, transparent);
+      border-radius: 2px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 7px;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      @include webkitText;
+    }
+
+    p {
+      font-size: 1.05rem;
+      opacity: 0.7;
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    section {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      gap: 10px;
+    }
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+
+      label {
+        display: block;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: white;
+        position: relative;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -8px;
+          left: 0;
+          width: 40px;
+          height: 2px;
+          background: linear-gradient(90deg, #ff6a1a, transparent);
+          border-radius: 1px;
+        }
+      }
+
+      //   All input fields with type of text and all select tags
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 16px 20px;
+        background: rgba(25, 25, 35, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        font-size: 1rem;
+        color: white;
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #ff6a1a;
+          box-shadow: 0 0 0 3px rgba(255, 106, 26, 0.2);
+          background: rgba(25, 25, 35, 0.9);
+        }
+
+        &:hover {
+          border-color: rgba(255, 106, 26, 0.3);
+        }
+
+        option {
+          background: #1a1a2e;
+          color: white;
+          padding: 18px;
+        }
+      }
+
+      //   All Radio button
+      .radio-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-top: 8px;
+
+        .option {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 18px 20px;
+          background: rgba(25, 25, 35, 0.6);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+
+          &:hover {
+            background: rgba(25, 25, 35, 0.8);
+            border-color: rgba(255, 106, 26, 0.2);
+            // transform: translateY(-2px);
+          }
+
+          input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+            position: relative;
+
+            &::before {
+              content: "";
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 20px;
+              height: 20px;
+              border: 2px solid rgba(255, 255, 255, 0.3);
+              border-radius: 50%;
+              background: transparent;
+              transition: all 0.3s ease;
+            }
+
+            &:checked::before {
+              border-color: #ff6a1a;
+              background: #ff6a1a;
+              box-shadow: 0 0 0 4px rgba(255, 106, 26, 0.2);
+            }
+
+            &:checked::after {
+              content: "";
+              position: absolute;
+              top: 6px;
+              left: 6px;
+              width: 8px;
+              height: 8px;
+              background: white;
+              border-radius: 50%;
+            }
+          }
+
+          p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: white;
+            font-weight: 500;
+            line-height: 1.4;
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+  button {
+    @include btnStyle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 40px;
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    padding: 40px 24px;
+    margin: 40px 20px;
+
+    header {
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1.125rem;
+      }
+    }
+
+    form {
+      gap: 32px;
+
+      fieldset .radio-group {
+        grid-template-columns: 1fr;
+
+        .option {
+          padding: 16px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 32px 20px;
+
+    header {
+      h1 {
+        font-size: 1.75rem;
+      }
+    }
+
+    form {
+      fieldset {
+        label {
+          font-size: 1rem;
+        }
+
+        input[type="text"],
+        select {
+          padding: 14px 16px;
+        }
+      }
+    }
+  }
+}

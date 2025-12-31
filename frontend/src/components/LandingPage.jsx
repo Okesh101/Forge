@@ -8,7 +8,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate("/dashboard");
+    navigate("/form");
   };
   return (
     <motion.div
