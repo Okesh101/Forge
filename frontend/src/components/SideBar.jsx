@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function SideBar() {
   const navigate = useNavigate();
@@ -39,44 +40,60 @@ export default function SideBar() {
   }, [location.pathname]);
 
   return (
-    <div className="sidebar">
-      <button
-        onClick={() => {
-          navigate("/form");
-          setActiveButton("form");
-        }}
-        className={buttonFunction("form")}
+    <div className="sideBar-container">
+      <div className="sidebar">
+        <button
+          onClick={() => {
+            navigate("/form");
+            setActiveButton("form");
+          }}
+          className={buttonFunction("form")}
+        >
+          Strategy Builder
+        </button>
+        <button
+          onClick={() => {
+            navigate("/narration");
+            setActiveButton("narration");
+          }}
+          className={buttonFunction("narration")}
+        >
+          Narration
+        </button>
+        <button
+          onClick={() => {
+            navigate("/analytics");
+            setActiveButton("analytics");
+          }}
+          className={buttonFunction("analytics")}
+        >
+          Analytics
+        </button>
+        <button
+          onClick={() => {
+            navigate("/timeline");
+            setActiveButton("timeline");
+          }}
+          className={buttonFunction("timeline")}
+        >
+          Timeline
+        </button>
+        <button onClick={() => navigate("/")}>Back to HomePage</button>
+      </div>
+      <motion.div
+        className="page-nav"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
       >
-        Strategy Builder
-      </button>
-      <button
-        onClick={() => {
-          navigate("/narration");
-          setActiveButton("narration");
-        }}
-        className={buttonFunction("narration")}
-      >
-        Narration
-      </button>
-      <button
-        onClick={() => {
-          navigate("/analytics");
-          setActiveButton("analytics");
-        }}
-        className={buttonFunction("analytics")}
-      >
-        Analytics
-      </button>
-      <button
-        onClick={() => {
-          navigate("/timeline");
-          setActiveButton("timeline");
-        }}
-        className={buttonFunction("timeline")}
-      >
-        Timeline
-      </button>
-      <button onClick={() => navigate("/")}>Back to HomePage</button>
+        <motion.h1
+          initial={{ x: "-400px" }}
+          animate={{ x: "-10px" }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 120 }}
+        >
+          Forge
+        </motion.h1>
+      </motion.div>
     </div>
   );
 }
