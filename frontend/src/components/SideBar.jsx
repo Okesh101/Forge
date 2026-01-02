@@ -41,7 +41,12 @@ export default function SideBar() {
 
   return (
     <div className="sideBar-container">
-      <div className="sidebar">
+      <motion.div
+        className="sidebar"
+        initial={{ x: "-400px" }}
+        animate={{ x: 0 }}
+        transition={{ delay: 0.1, type: "spring", stiffness: 100 }}
+      >
         <button
           onClick={() => {
             navigate("/form");
@@ -79,16 +84,16 @@ export default function SideBar() {
           Timeline
         </button>
         <button onClick={() => navigate("/")}>Back to HomePage</button>
-      </div>
+      </motion.div>
       <motion.div
         className="page-nav"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1, duration: 0.4 }}
+        // initial={{ opacity: 0 }}
+        // animate={{ opacity: 1 }}
+        // transition={{ delay: 0.1, duration: 0.4 }}
       >
         <motion.h1
-          initial={{ x: "-400px" }}
-          animate={{ x: "-10px" }}
+          initial={{ x: "400px" }}
+          animate={{ x: "10px" }}
           transition={{ delay: 0.1, type: "spring", stiffness: 120 }}
         >
           Forge
