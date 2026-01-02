@@ -30,9 +30,16 @@ export default function Form() {
     { id: "procrastination", label: "I avoid starting" },
   ];
 
-  // useEffect(() => {
-  //   const
-  // }, [third])
+  // Function for handle submission of the form
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/create_session");
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   // goodluck is this where I'm sending the request for entering the
   // dashboard bcos i think am lost and will it be alongside the input values
@@ -165,7 +172,7 @@ export default function Form() {
             </fieldset>
           </section>
         </form>
-        <button>
+        <button onClick={handleSubmit}>
           Create My Practice Plan <FiArrowRight />
         </button>
       </div>
