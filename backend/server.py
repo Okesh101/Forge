@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google import genai
 from dotenv import load_dotenv
-import uuid, time
+import uuid
+import time
 
 load_dotenv()
 
@@ -187,15 +188,51 @@ Explain clearly and calmly.
 
 """
 
+forge_normalize_input = """
+You are FORGE-INTERPRETER.
+
+Your task is to translate raw human input into a clear, expanded, 
+machine-friendly specification for downstream reasoning systems.
+
+You do NOT add assumptions.
+You do NOT redesign the task.
+You ONLY clarify intent, context, scope, and constraints.
+
+If information is missing, infer cautiously and mark it as inferred.
+
+Your output will be used by another AI system.
+Clarity and completeness are critical.
+
+"""
+
+forge_normalize_output = """
+You are FORGE-REFINER.
+
+Your role is to translate internal system outputs into frontend-ready structures.
+
+You do NOT change meaning.
+You do NOT add advice.
+You preserve structure but improve clarity.
+
+Your outputs must be:
+- Human-readable
+- Frontend-friendly
+- Clearly segmented
+
+"""
+
 sessions = {}
 
-def generate_AI_Response(contents_data):
+# UTILITY FUNCTIONS
+
+
+def generate_AI_Response(gemini_prompt, contents_data):
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
-        contents=skill_architect_prompt + contents_data,
-        # temperature=1.0
+        contents="Your Prompt: " + gemini_prompt + "\nUser data: " + contents_data
     )
     return response.text
+
 
 def create_session():
     session_id = str(uuid.uuid4())
@@ -204,6 +241,29 @@ def create_session():
     return session_id
 
 
+def normalizeHumanInput(input_data):
+    output = generate_AI_Response(
+        forge_normalize_input, f"Human Input: {input_data}")
+    return output
+
+
+def denormalizeSystemOutput(system_output):
+    output = generate_AI_Response(
+        forge_normalize_output, f"System Output: {system_output}")
+    return output
+
+
+def getAnswerfromAI(dataFromFrontend, prompt):
+    normalized_input = normalizeHumanInput(str(dataFromFrontend))
+
+    AI_generated_response = generate_AI_Response(
+        prompt, normalized_input)
+
+    Ai_Call = denormalizeSystemOutput(AI_generated_response)
+    return Ai_Call
+
+
+# API ROUTES
 @app.route('/api/create_session', methods=['GET', 'POST'])
 def create_session_endpoint():
     session_id = create_session()
@@ -228,18 +288,85 @@ def new_decision():
     decision_data = request.json.get('decision_data')
     if not decision_data:
         return jsonify({"error": "No decision data provided"}), 400
+    
+    # skill_name = decision_data.get('skill_name')
+    # proficiency_level = decision_data.get('proficiency_level')
+    # target_level = decision_data.get('target_proficiency_level')
+    # time_available = decision_data.get('time_available')
 
-    skill_name = decision_data.get('skill_name')
-    proficiency_level = decision_data.get('proficiency_level')
-    target_level = decision_data.get('target_proficiency_level')
-    time_available = decision_data.get('time_available')
-
-    Ai_Call = generate_AI_Response(f" Skill: {skill_name} " + f" Proficiency: {proficiency_level} " + f" Target: {target_level} " + f" Time Available: {time_available} ")
+    final_response = getAnswerfromAI(decision_data, skill_architect_prompt)
 
     # Store decision and AI response in session
     sessions[session_id]['decisions'].append(decision_data)
 
-    return jsonify({"response": Ai_Call}), 201
+    return jsonify({"response": final_response}), 201
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# 🧬 FULL SESSION MEMORY SCHEMA(V1)
+# {
+#     "session_id": "7f3c2d...",
+#   "created_at": "2025-07-01T10:12:00Z",
+#   "skill": {
+#       "name": "Jazz Piano",
+#     "level": "Beginner",
+#     "weekly_time_hours": 5
+#   },
+
+#     "current_strategy": {
+#       "version": 3,
+#       "weekly_structure": {},
+#     "focus_distribution": {},
+#     "difficulty_level": "moderate",
+#     "generated_at": "2025-07-14"
+#   },
+
+#     "practice_logs": [
+#       {
+#           "date": "2025-07-10",
+#           "activity": "Left-hand comping",
+#           "difficulty_rating": 4,
+#           "reflection": "Struggled with timing",
+#           "analysis": {
+#               "effort_level": "high",
+#               "friction": ["timing instability"]
+#           }
+#       }
+#   ],
+
+#     "strategy_history": [
+#       {
+#           "version": 1,
+#           "reason": "Initial strategy",
+#           "created_at": "2025-07-01"
+#       },
+#       {
+#           "version": 2,
+#           "reason": "Increased difficulty after under-challenge",
+#           "created_at": "2025-07-07"
+#       }
+#   ],
+
+#     "agent_insights": {
+#       "detected_patterns": [],
+#       "plateau_flags": [],
+#     "confidence_trend": []
+#   },
+
+#     "timeline": [
+#       {
+#           "event": "strategy_revision",
+#           "timestamp": "2025-07-07",
+#           "summary": "Adjusted focus toward rhythm stability"
+#       }
+#   ],
+
+#     "meta": {
+#       "last_analyzed": "2025-07-14",
+#       "next_scheduled_review": "2025-07-21",
+#     "agent_version": "forge-v1"
+#   }
+# }
