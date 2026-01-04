@@ -1,2 +1,2 @@
 # Forge
-A Gemini-powered system that observes organizational decisions over time, understands their context, tracks outcomes, and surfaces long-horizon patterns and reasoning that traditional analytics cannot.
+A Gemini-powered web-based autonomous agent that designs a skill-building practice plan, observes performance over time, detects stagnation or growth, and rewrites the practice loop weekly without the user asking.
