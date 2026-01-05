@@ -1,14 +1,27 @@
 import React from "react";
 import { FiPlayCircle, FiTarget } from "react-icons/fi";
 import { Brain, PlayCircle, Repeat, TrendingUp, Zap } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useAnimate } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
-  const handleNavigate = () => {
-    navigate("/form");
+  // function to handle navigation to form page
+  const handleNavigate = async () => {
+    // Create a new session before navigating
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/create_session", {
+        method: "GET",
+        headers: { "Content-Type": "X-Session-ID" },
+      });
+      // If session creation is successful, navigate to form page
+      if (res.session === 200) {
+        navigate("/form");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
   return (
     <motion.div
