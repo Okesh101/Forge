@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FiArrowRight,
@@ -10,8 +10,9 @@ import {
   FiBook,
   FiZap,
 } from "react-icons/fi";
-import SideBar from "./Utilities/SideBar";
-import PageNav from "./Utilities/PageNav";
+import SideBar from "../Utilities/SideBar";
+import PageNav from "../Utilities/PageNav";
+import { SessionContext } from "../contextApi/SessionContext";
 
 export default function Form() {
   // Options for learning styles
@@ -43,6 +44,7 @@ export default function Form() {
   const [failureResponse, setFailureResponse] = useState("");
   const [coachingStyle, setCoachingStyle] = useState("");
   const [errors, setErrors] = useState({});
+  const { sessionId } = useContext(SessionContext);
 
   // Renamed the generic setState function to handleInputChange to avoid conflicts
   function handleInputChange(e, setStateFunction) {
@@ -106,7 +108,10 @@ export default function Form() {
       try {
         const res = await fetch("http://127.0.0.1:5000/decision/new", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": sessionId,
+          },
           body: JSON.stringify(values),
         });
         const data = await res.json();
