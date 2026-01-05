@@ -3,18 +3,21 @@ import { FiPlayCircle, FiTarget } from "react-icons/fi";
 import { Brain, PlayCircle, Repeat, TrendingUp, Zap } from "lucide-react";
 import { motion, useAnimate } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { SessionContext } from "../contextApi/SessionContext";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { setSessionId } = useContext(SessionContext);
 
   // function to handle navigation to form page
   const handleNavigate = async () => {
     // Create a new session before navigating
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/create_session", {
-        method: "GET",
-        headers: { "Content-Type": "X-Session-ID" },
-      });
+      const res = await fetch("http://127.0.0.1:5000/api/create_session");
+      const sessionId = res.headers.get("X-Session-ID");
+
+      setSessionId(sessionId);
       // If session creation is successful, navigate to form page
       if (res.session === 200) {
         navigate("/form");
