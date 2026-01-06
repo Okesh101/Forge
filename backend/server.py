@@ -224,8 +224,6 @@ Your outputs must be:
 sessions = {}
 
 # UTILITY FUNCTIONS
-
-
 def generate_AI_Response(gemini_prompt, contents_data):
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
