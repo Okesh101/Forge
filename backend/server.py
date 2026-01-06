@@ -279,13 +279,13 @@ def show_session():
 
 @app.route('/api/decision/new', methods=['POST', 'GET'])
 def new_decision():
-    # session_id = request.headers.get('X-Session-ID')
-    # if session_id not in sessions:
-    #     return jsonify({"error": "Session not found"}), 401
+    session_id = request.headers.get('X-Session-ID')
+    if session_id not in sessions:
+        return jsonify({"error": "Session not found"}), 401
 
-    # decision_data = request.json.get('decision_data')
-    # if not decision_data:
-    #     return jsonify({"error": "No decision data provided"}), 400
+    decision_data = request.json.get('decision_data')
+    if not decision_data:
+        return jsonify({"error": "No decision data provided"}), 400
 
     decision_data = {
         "skill": "Jazz piano",
@@ -301,7 +301,6 @@ def new_decision():
     final_response = getAnswerfromAI(decision_data, skill_architect_prompt)
 
     # Store decision and AI response in session
-    # sessions[session_id]['decisions'].append(decision_data)
 
     return jsonify({"response": final_response}), 201
 
