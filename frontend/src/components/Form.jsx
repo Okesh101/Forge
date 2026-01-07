@@ -120,7 +120,7 @@ export default function Form() {
       // };
       // Send form data to backend
       try {
-        const res = await fetch("http://127.0.0.1:5000/decision/new", {
+        const res = await fetch("http://127.0.0.1:5000/api/decision/new", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export default function Form() {
         const data = await res.json();
         console.log(data);
       } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
       }
     }
     setErrors(newErrors);
