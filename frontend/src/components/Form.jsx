@@ -35,20 +35,34 @@ export default function Form() {
   ];
 
   // State variable for form inputs
-  const [goal, setGoal] = useState("");
-  const [skillOrHabit, setSkillOrHabit] = useState("");
-  const [currentLevel, setCurrentLevel] = useState("");
-  const [timeCommitment, setTimeCommitment] = useState("");
-  const [learningStyle, setLearningStyle] = useState("");
-  const [challenge, setChallenge] = useState("");
-  const [failureResponse, setFailureResponse] = useState("");
-  const [coachingStyle, setCoachingStyle] = useState("");
+  // const [goal, setGoal] = useState("");
+  // const [skillOrHabit, setSkillOrHabit] = useState("");
+  // const [currentLevel, setCurrentLevel] = useState("");
+  // const [timeCommitment, setTimeCommitment] = useState("");
+  // const [learningStyle, setLearningStyle] = useState("");
+  // const [challenge, setChallenge] = useState("");
+  // const [failureResponse, setFailureResponse] = useState("");
+  // const [coachingStyle, setCoachingStyle] = useState("");
+  const [decision_Data, setDecision_Data] = useState({
+    goal: "",
+    skillOrHabit: "",
+    currentLevel: "",
+    timeCommitment: "",
+    learningStyle: "",
+    challenge: "",
+    failureResponse: "",
+    coachingStyle: "",
+  });
   const [errors, setErrors] = useState({});
   const { sessionId } = useContext(SessionContext);
 
   // Renamed the generic setState function to handleInputChange to avoid conflicts
-  function handleInputChange(e, setStateFunction) {
-    setStateFunction(e.target.value);
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+    setDecision_Data((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
 
   // Function for handle submission of the form
@@ -59,51 +73,51 @@ export default function Form() {
     const newErrors = {};
 
     // Validation checks
-    if (!goal) {
-      newErrors.goal = "This field is required";
+    if (!decision_Data.goal) {
+      newErrors.decision_Data.goal = "This field is required";
       isValid = false;
     }
-    if (!skillOrHabit) {
-      newErrors.skillOrHabit = "This field is required";
+    if (!decision_Data.skillOrHabit) {
+      newErrors.decision_Data.skillOrHabit = "This field is required";
       isValid = false;
     }
-    if (!currentLevel) {
-      newErrors.currentLevel = "This field is required";
+    if (!decision_Data.currentLevel) {
+      newErrors.decision_Data.currentLevel = "This field is required";
       isValid = false;
     }
-    if (!timeCommitment) {
-      newErrors.timeCommitment = "This field is required";
+    if (!decision_Data.timeCommitment) {
+      newErrors.decision_Data.timeCommitment = "This field is required";
       isValid = false;
     }
-    if (!learningStyle) {
-      newErrors.learningStyle = "This field is required";
+    if (!decision_Data.learningStyle) {
+      newErrors.decision_Data.learningStyle = "This field is required";
       isValid = false;
     }
-    if (!challenge) {
-      newErrors.challenge = "This field is required";
+    if (!decision_Data.challenge) {
+      newErrors.decision_Data.challenge = "This field is required";
       isValid = false;
     }
-    if (!failureResponse) {
-      newErrors.failureResponse = "This field is required";
+    if (!decision_Data.failureResponse) {
+      newErrors.decision_Data.failureResponse = "This field is required";
       isValid = false;
     }
-    if (!coachingStyle) {
-      newErrors.coachingStyle = "This field is required";
+    if (!decision_Data.coachingStyle) {
+      newErrors.decision_Data.coachingStyle = "This field is required";
       isValid = false;
     }
     // If all validations pass, submit the form
     if (isValid) {
       // Collect all form values
-      const values = {
-        goal,
-        skillOrHabit,
-        currentLevel,
-        timeCommitment,
-        learningStyle,
-        challenge,
-        failureResponse,
-        coachingStyle,
-      };
+      // const values = {
+      //   goal,
+      //   skillOrHabit,
+      //   currentLevel,
+      //   timeCommitment,
+      //   learningStyle,
+      //   challenge,
+      //   failureResponse,
+      //   coachingStyle,
+      // };
       // Send form data to backend
       try {
         const res = await fetch("http://127.0.0.1:5000/decision/new", {
@@ -112,7 +126,7 @@ export default function Form() {
             "Content-Type": "application/json",
             "X-Session-ID": sessionId,
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify({ decision_Data }),
         });
         const data = await res.json();
         console.log(data);
@@ -141,8 +155,9 @@ export default function Form() {
                     <FiTarget /> What do you want to build?
                   </label>
                   <select
-                    value={goal}
-                    onChange={(e) => handleInputChange(e, setGoal)}
+                    name="goal"
+                    value={decision_Data.goal}
+                    onChange={handleInputChange}
                   >
                     <option value="">Select an option</option>
                     <option value="skill">Acquire a new skill</option>
@@ -160,9 +175,10 @@ export default function Form() {
                   </label>
                   <input
                     type="text"
+                    name="skillOrHabit"
+                    value={decision_Data.skillOrHabit}
                     placeholder="e.g., Learn React, Meditate daily, Play guitar"
-                    value={skillOrHabit}
-                    onChange={(e) => handleInputChange(e, setSkillOrHabit)}
+                    onChange={handleInputChange}
                   />
                 </fieldset>
                 {errors.skillOrHabit && (
@@ -178,9 +194,13 @@ export default function Form() {
                     <FiTrendingUp /> How would you describe your current level?
                   </label>
                   <select
-                    value={currentLevel}
-                    onChange={(e) => handleInputChange(e, setCurrentLevel)}
+                    name="currentLevel"
+                    value={decision_Data.currentLevel}
+                    onChange={handleInputChange}
                   >
+                    <option value="" disabled>
+                      Select current level
+                    </option>
                     <option value="beginner">Beginner</option>
                     <option value="some experience">Some Experience</option>
                     <option value="intermediate">Intermediate</option>
@@ -199,10 +219,13 @@ export default function Form() {
                     <FiClock /> How much time can you realistically commit?
                   </label>
                   <select
-                    value={timeCommitment}
-                    onChange={(e) => handleInputChange(e, setTimeCommitment)}
+                    name="timeCommitment"
+                    value={decision_Data.timeCommitment}
+                    onChange={handleInputChange}
                   >
-                    <option value="">Select time commitment</option>
+                    <option value="" disabled>
+                      Select time commitment
+                    </option>
                     <option value="10-15">10-15 minutes/day</option>
                     <option value="30">30 minutes/day</option>
                     <option value="60">1 hour/day</option>
@@ -231,10 +254,10 @@ export default function Form() {
                     >
                       <input
                         type="radio"
-                        name="learning-style"
+                        name="learningStyle"
                         value={option.id}
-                        checked={learningStyle === option.id}
-                        onChange={(e) => handleInputChange(e, setLearningStyle)}
+                        checked={decision_Data.learningStyle === option.id}
+                        onChange={handleInputChange}
                       />
                       <p>{option.label}</p>
                     </motion.div>
@@ -262,10 +285,10 @@ export default function Form() {
                     >
                       <input
                         type="radio"
-                        name="challenges"
+                        name="challenge"
                         value={option.id}
-                        checked={challenge === option.id}
-                        onChange={(e) => handleInputChange(e, setChallenge)}
+                        checked={decision_Data.challenge === option.id}
+                        onChange={handleInputChange}
                       />
                       <p>{option.label}</p>
                     </motion.div>
@@ -285,10 +308,13 @@ export default function Form() {
                     next?
                   </label>
                   <select
-                    value={failureResponse}
-                    onChange={(e) => handleInputChange(e, setFailureResponse)}
+                    name="failureResponse"
+                    value={decision_Data.failureResponse}
+                    onChange={handleInputChange}
                   >
-                    <option value="">Select your typical response</option>
+                    <option value="" disabled>
+                      Select your typical response
+                    </option>
                     <option value="restart">I restart from scratch</option>
                     <option value="break">I take a long break</option>
                     <option value="expectation">I lower my expectations</option>
@@ -309,10 +335,13 @@ export default function Form() {
                     How do you want this system to treat you?
                   </label>
                   <select
-                    value={coachingStyle}
-                    onChange={(e) => handleInputChange(e, setCoachingStyle)}
+                    name="coachingStyle"
+                    value={decision_Data.coachingStyle}
+                    onChange={handleInputChange}
                   >
-                    <option value="">Select coaching style</option>
+                    <option value="" disabled>
+                      Select coaching style
+                    </option>
                     <option value="gentle">Gentle and supportive</option>
                     <option value="direct">Direct and honest</option>
                     <option value="strict">Strict and challenging</option>
