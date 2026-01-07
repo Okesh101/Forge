@@ -15,11 +15,11 @@ export default function LandingPage() {
     // Create a new session before navigating
     try {
       const res = await fetch("http://127.0.0.1:5000/api/create_session");
-      const sessionId = res.headers.get("X-Session-ID");
+      const data = await res.json();
 
-      setSessionId(sessionId);
+      setSessionId(data.session_id);
       // If session creation is successful, navigate to form page
-      if (res.session === 200) {
+      if (res.status === 201) {
         navigate("/form");
       }
     } catch (error) {
