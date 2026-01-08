@@ -208,11 +208,15 @@ Clarity and completeness are critical.
 forge_normalize_output = """
 You are FORGE-REFINER.
 
-Your role is to translate internal system outputs into frontend-ready structures.
+Your role is to translate internal system outputs into frontend-ready structures that can be portrayed on the frontend screen and look beautiful.
 
-You do NOT change meaning.
-You do NOT add advice.
+You do NOT change meaning, you ONLY refine it to be better understood by the user.
+You do NOT add advice, you ONLY give clarity and remove ambiguity.
 You preserve structure but improve clarity.
+You CAN only when needed tweak structure for better readability.
+You CAN expand terse points into full sentences for better readability.
+You MUST explain any technical terms in simple language for user to understand.
+You also collect the initial input passed down from the normalizer that turned the real user input into a machine-friendly format to provide context.
 
 Your outputs must be:
 - Human-readable
@@ -224,8 +228,6 @@ Your outputs must be:
 sessions = {}
 
 # UTILITY FUNCTIONS
-
-
 def generate_AI_Response(gemini_prompt, contents_data):
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
@@ -247,21 +249,28 @@ def normalizeHumanInput(input_data):
     return output
 
 
-def denormalizeSystemOutput(system_output):
+def denormalizeSystemOutput(system_output, initial_system_input):
     output = generate_AI_Response(
-        forge_normalize_output, f"System Output: {system_output}")
+        forge_normalize_output, f"\nInitial Input: {initial_system_input}", f"System Output: {system_output}")
     return output
 
 
 def getAnswerfromAI(dataFromFrontend, prompt):
     normalized_input = normalizeHumanInput(str(dataFromFrontend))
 
+    print("\nNormalized Input:", normalized_input)
+
     AI_generated_response = generate_AI_Response(
         prompt, normalized_input)
 
-    Ai_Call = denormalizeSystemOutput(AI_generated_response)
+    print("\nAI Generated Response:", AI_generated_response)
+
+    Ai_Call = denormalizeSystemOutput(AI_generated_response, normalized_input)
     return Ai_Call
 
+
+def storeSession(session_id, session_data):
+    sessions[session_id]["data"].update(session_data)
 
 # API ROUTES
 @app.route('/api/create_session', methods=['GET', 'POST'])
@@ -281,29 +290,42 @@ def show_session():
 
 @app.route('/api/decision/new', methods=['POST', 'GET'])
 def new_decision():
-    # session_id = request.headers.get('X-Session-ID')
-    # if session_id not in sessions:
-    #     return jsonify({"error": "Session not found"}), 401
+    session_id = request.headers.get('X-Session-ID')
+    if session_id not in sessions:
+        return jsonify({"error": "Session not found"}), 401
 
-    # decision_data = request.json.get('decision_data')
-    # if not decision_data:
-    #     return jsonify({"error": "No decision data provided"}), 400
+    decision_data = request.json.get('decision_Data')
+    if not decision_data:
+        return jsonify({"error": "No decision data provided"}), 400
 
-    decision_data = {
-        "skill": "Jazz piano",
-        "level": "beginner",
-        "weekly_time_in_hours": 5
-    }
+    goal = decision_data.get('goal')
+    skill = decision_data.get('skillOrHabit')
+    proficiency_level = decision_data.get('currentLevel')
+    daily_time_commitable = decision_data.get('timeCommitment')
+    learning_style = decision_data.get('learningStyle')
+    probable_challenges = decision_data.get('challenge')
+    reaction_to_failure = decision_data.get('failureResponse')
+    coaching_style = decision_data.get('coachingStyle')
 
-    # skill_name = decision_data.get('skill_name')
-    # proficiency_level = decision_data.get('proficiency_level')
-    # target_level = decision_data.get('target_proficiency_level')
-    # time_available = decision_data.get('time_available')
+    decision = {
+        "goal": goal,
+        "targetSkill": skill,
+        "current_proficiency_level": proficiency_level,
+        "daily_time_commitable": daily_time_commitable,
+        "preferred_learning_style": learning_style,
+        "probable_challenges": probable_challenges,
+        "reaction_to_failure": reaction_to_failure,
+        "preferred_coaching_style": coaching_style}
 
-    final_response = getAnswerfromAI(decision_data, skill_architect_prompt)
+    final_response = getAnswerfromAI(decision, skill_architect_prompt)
 
     # Store decision and AI response in session
-    # sessions[session_id]['decisions'].append(decision_data)
+    storeSession(session_id, {
+        "decision": decision,
+        "ai_response": final_response
+    })
+
+    print("Sessions Data:", sessions[session_id])
 
     return jsonify({"response": final_response}), 201
 
