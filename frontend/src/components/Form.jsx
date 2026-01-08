@@ -152,6 +152,7 @@ export default function Form() {
               <div className="field">
                 <fieldset>
                   <label htmlFor="goal">
+                    your
                     <FiTarget /> What do you want to build?
                   </label>
                   <select
