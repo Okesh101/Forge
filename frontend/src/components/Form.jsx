@@ -9,10 +9,14 @@ import {
   FiTrendingUp,
   FiBook,
   FiZap,
+  FiMessageCircle,
+  FiAlertTriangle,
 } from "react-icons/fi";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { SessionContext } from "../contextApi/SessionContext";
+import Loading from "../Loading";
+import { useNavigate } from "react-router-dom";
 
 export default function Form() {
   // Options for learning styles
@@ -34,15 +38,6 @@ export default function Form() {
     { id: "procrastination", label: "I avoid starting" },
   ];
 
-  // State variable for form inputs
-  // const [goal, setGoal] = useState("");
-  // const [skillOrHabit, setSkillOrHabit] = useState("");
-  // const [currentLevel, setCurrentLevel] = useState("");
-  // const [timeCommitment, setTimeCommitment] = useState("");
-  // const [learningStyle, setLearningStyle] = useState("");
-  // const [challenge, setChallenge] = useState("");
-  // const [failureResponse, setFailureResponse] = useState("");
-  // const [coachingStyle, setCoachingStyle] = useState("");
   const [decision_Data, setDecision_Data] = useState({
     goal: "",
     skillOrHabit: "",
@@ -54,6 +49,11 @@ export default function Form() {
     coachingStyle: "",
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Getting sessionId from contextApi
   const { sessionId } = useContext(SessionContext);
 
   // Renamed the generic setState function to handleInputChange to avoid conflicts
@@ -74,51 +74,43 @@ export default function Form() {
 
     // Validation checks
     if (!decision_Data.goal) {
-      newErrors.decision_Data.goal = "This field is required";
+      newErrors.goal = "This field is required";
       isValid = false;
     }
     if (!decision_Data.skillOrHabit) {
-      newErrors.decision_Data.skillOrHabit = "This field is required";
+      newErrors.skillOrHabit = "This field is required";
       isValid = false;
     }
     if (!decision_Data.currentLevel) {
-      newErrors.decision_Data.currentLevel = "This field is required";
+      newErrors.currentLevel = "This field is required";
       isValid = false;
     }
     if (!decision_Data.timeCommitment) {
-      newErrors.decision_Data.timeCommitment = "This field is required";
+      newErrors.timeCommitment = "This field is required";
       isValid = false;
     }
     if (!decision_Data.learningStyle) {
-      newErrors.decision_Data.learningStyle = "This field is required";
+      newErrors.learningStyle = "This field is required";
       isValid = false;
     }
     if (!decision_Data.challenge) {
-      newErrors.decision_Data.challenge = "This field is required";
+      newErrors.challenge = "This field is required";
       isValid = false;
     }
     if (!decision_Data.failureResponse) {
-      newErrors.decision_Data.failureResponse = "This field is required";
+      newErrors.failureResponse = "This field is required";
       isValid = false;
     }
     if (!decision_Data.coachingStyle) {
-      newErrors.decision_Data.coachingStyle = "This field is required";
+      newErrors.coachingStyle = "This field is required";
       isValid = false;
     }
+
+    setErrors(newErrors);
     // If all validations pass, submit the form
     if (isValid) {
-      // Collect all form values
-      // const values = {
-      //   goal,
-      //   skillOrHabit,
-      //   currentLevel,
-      //   timeCommitment,
-      //   learningStyle,
-      //   challenge,
-      //   failureResponse,
-      //   coachingStyle,
-      // };
       // Send form data to backend
+      setIsLoading(true);
       try {
         const res = await fetch("http://127.0.0.1:5000/api/decision/new", {
           method: "POST",
@@ -130,11 +122,16 @@ export default function Form() {
         });
         const data = await res.json();
         console.log(data);
+
+        // Simulate loading time
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        setIsLoading(false);
+        navigate("/analytics");
       } catch (error) {
         console.error(error.message);
+        setIsLoading(false);
       }
     }
-    setErrors(newErrors);
   };
 
   return (
@@ -152,7 +149,6 @@ export default function Form() {
               <div className="field">
                 <fieldset>
                   <label htmlFor="goal">
-                    your
                     <FiTarget /> What do you want to build?
                   </label>
                   <select
@@ -160,7 +156,9 @@ export default function Form() {
                     value={decision_Data.goal}
                     onChange={handleInputChange}
                   >
-                    <option value="">Select an option</option>
+                    <option value="" disabled>
+                      Select an option
+                    </option>
                     <option value="skill">Acquire a new skill</option>
                     <option value="habit">Form a new habit</option>
                     <option value="improve">Improve existing skill</option>
@@ -305,8 +303,8 @@ export default function Form() {
               <div className="field">
                 <fieldset>
                   <label htmlFor="failureResponse">
-                    <FiHeart /> When you fail or stop, what usually happens
-                    next?
+                    <FiAlertTriangle /> When you fail or stop, what usually
+                    happens next?
                   </label>
                   <select
                     name="failureResponse"
@@ -333,7 +331,8 @@ export default function Form() {
               <div className="field">
                 <fieldset>
                   <label htmlFor="coachingStyle">
-                    How do you want this system to treat you?
+                    <FiMessageCircle /> How do you want this system to treat
+                    you?
                   </label>
                   <select
                     name="coachingStyle"
@@ -358,6 +357,7 @@ export default function Form() {
             Create My Practice Plan <FiArrowRight />
           </button>
         </div>
+        {isLoading && <Loading />}
       </div>
     </>
   );
