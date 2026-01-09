@@ -3,7 +3,8 @@ from flask_cors import CORS
 from google import genai
 from dotenv import load_dotenv
 import uuid
-import time
+import json
+import datetime
 
 load_dotenv()
 
@@ -11,6 +12,8 @@ client = genai.Client()
 
 app = Flask(__name__)
 CORS(app)
+
+current_time = datetime.datetime.now()
 
 initial_prompt = """
 You are iDecision, an institutional decision-intelligence system.
@@ -238,7 +241,7 @@ def generate_AI_Response(gemini_prompt, contents_data):
 
 def create_session():
     session_id = str(uuid.uuid4())
-    sessions[session_id] = {"created_at": time.time(),
+    sessions[session_id] = {"created_at": current_time.isoformat(),
                             "data": {}}
     return session_id
 
@@ -251,7 +254,7 @@ def normalizeHumanInput(input_data):
 
 def denormalizeSystemOutput(system_output, initial_system_input):
     output = generate_AI_Response(
-        forge_normalize_output, f"\nInitial Input: {initial_system_input}", f"System Output: {system_output}")
+        forge_normalize_output, f"\nInitial Input: {initial_system_input}; System Output: {system_output}")
     return output
 
 
