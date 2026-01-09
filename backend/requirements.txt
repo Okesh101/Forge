@@ -5,3 +5,5 @@ requests
 google-genai
 python-dotenv
 flask_cors
+datetime
+flask_apscheduler
