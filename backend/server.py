@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import uuid
 import json
 import datetime
+import os
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ CORS(app)
 
 current_time = datetime.datetime.now()
 
+# AI PROMPTS
 initial_prompt = """
 You are iDecision, an institutional decision-intelligence system.
 
@@ -228,9 +230,12 @@ Your outputs must be:
 
 """
 
-sessions = {}
+# GLOBAL VARIABLES
+AI_MEMORY_DIR = "AI_Memory"
 
 # UTILITY FUNCTIONS
+
+
 def generate_AI_Response(gemini_prompt, contents_data):
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
@@ -239,11 +244,52 @@ def generate_AI_Response(gemini_prompt, contents_data):
     return response.text
 
 
+def session_exists(session_id):
+    return os.path.exists(f"{AI_MEMORY_DIR}/{session_id}.json")
+
+
 def create_session():
     session_id = str(uuid.uuid4())
-    sessions[session_id] = {"created_at": current_time.isoformat(),
-                            "data": {}}
+    createAiMemory(session_id)
     return session_id
+
+
+def createAiMemory(session_id):
+    os.makedirs(AI_MEMORY_DIR, exist_ok=True)
+
+    memory = {
+        "session_id": session_id,
+        "created_at": current_time.isoformat(),
+        "skill": {},
+        "current_strategy": None,
+        "practice_logs": [],
+        "strategy_history": [],
+        "agent_insights": {},
+        "timeline": [
+            {
+                "event": "session_created",
+                "timestamp": current_time.isoformat(),
+                "summary": "AI memory session created."
+            }
+        ],
+        "meta": {
+            "agent_version": "forge-v1",
+            "last_analyzed": None,
+            # "next_scheduled_review": None,
+        }
+    }
+    with open(f"{AI_MEMORY_DIR}/{session_id}.json", "w") as f:
+        json.dump(memory, f, indent=4)
+
+
+def loadAiMemory(session_id):
+    with open(f"{AI_MEMORY_DIR}/{session_id}.json", "r") as f:
+        return json.load(f)
+
+
+def saveAiMemory(session_id, memory):
+    with open(f"{AI_MEMORY_DIR}/{session_id}.json", "w") as f:
+        json.dump(memory, f, indent=4)
 
 
 def normalizeHumanInput(input_data):
@@ -272,12 +318,13 @@ def getAnswerfromAI(dataFromFrontend, prompt):
     return Ai_Call
 
 
-def storeSession(session_id, session_data):
-    sessions[session_id]["data"].update(session_data)
+# def storeSession(session_id, session_data):
+#     sessions[session_id]["data"].update(session_data)
+
 
 # API ROUTES
 @app.route('/api/create_session', methods=['GET', 'POST'])
-def create_session_endpoint():
+def createSession():
     session_id = create_session()
     return jsonify({"session_id": session_id}), 201
 
@@ -285,16 +332,15 @@ def create_session_endpoint():
 @app.route('/api/show_session', methods=['GET', 'POST'])
 def show_session():
     session_id = request.headers.get('X-Session-ID')
-    # session = sessions.get(session_id)
-    if session_id not in sessions:
+    if session_exists(session_id) == False:
         return jsonify({"error": "Session not found"}), 401
-    return jsonify(sessions[session_id]), 200
+    return jsonify(loadAiMemory(session_id)), 200
 
 
 @app.route('/api/decision/new', methods=['POST', 'GET'])
 def new_decision():
     session_id = request.headers.get('X-Session-ID')
-    if session_id not in sessions:
+    if session_exists(session_id) == False:
         return jsonify({"error": "Session not found"}), 401
 
     decision_data = request.json.get('decision_Data')
@@ -323,12 +369,16 @@ def new_decision():
     final_response = getAnswerfromAI(decision, skill_architect_prompt)
 
     # Store decision and AI response in session
-    storeSession(session_id, {
+    # storeSession(session_id, {
+    #     "decision": decision,
+    #     "ai_response": final_response
+    # })
+    saveAiMemory(session_id, {
         "decision": decision,
         "ai_response": final_response
     })
 
-    print("Sessions Data:", sessions[session_id])
+    print("Sessions Data:", loadAiMemory(session_id))
 
     return jsonify({"response": final_response}), 201
 
