@@ -20,6 +20,10 @@ export default function SideBar() {
         // Handle form button click
         setActiveButton("form");
         break;
+      case "/masteryPath":
+        // Handle masteryPath button click
+        setActiveButton("masteryPath");
+        break;
       case "/narration":
         // Handle narration button click
         setActiveButton("narration");
@@ -54,6 +58,15 @@ export default function SideBar() {
         className={buttonFunction("form")}
       >
         Strategy Builder
+      </button>
+      <button
+        onClick={() => {
+          navigate("/masteryPath");
+          setActiveButton("masteryPath");
+        }}
+        className={buttonFunction("masteryPath")}
+      >
+        MasteryPath
       </button>
       <button
         onClick={() => {

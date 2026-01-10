@@ -1,0 +1,103 @@
+@use "mixins" as *;
+.path-page {
+  @include pageReset;
+}
+// color: black !important;
+//   .narration-page {
+//     padding: 2rem;
+//   }
+
+//   .response {
+//     max-width: 800px;
+//     margin: 0 auto;
+//   }
+
+//   .strategy-card {
+//     background: #f8f9fa;
+//     border-left: 4px solid #4a6cf7;
+//     padding: 1.5rem;
+//     margin: 1.5rem 0;
+//     border-radius: 0 8px 8px 0;
+//   }
+
+//   .user-data {
+//     background: #e8f4fd;
+//     padding: 0.2rem 0.5rem;
+//     border-radius: 4px;
+//     font-weight: 600;
+//     color: #2c5282;
+//   }
+
+//   .system-steps {
+//     margin: 2rem 0;
+//   }
+
+//   .step {
+//     display: flex;
+//     align-items: flex-start;
+//     margin: 1.5rem 0;
+//     padding: 1rem;
+//     background: white;
+//     border: 1px solid #e2e8f0;
+//     border-radius: 8px;
+//   }
+
+//   .step-number {
+//     background: #4a6cf7;
+//     color: white;
+//     width: 36px;
+//     height: 36px;
+//     border-radius: 50%;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-weight: bold;
+//     margin-right: 1rem;
+//     flex-shrink: 0;
+//   }
+
+//   .step-content {
+//     flex: 1;
+//   }
+
+//   .alive-section ul {
+//     list-style: none;
+//     padding: 0;
+//   }
+
+//   .alive-section li {
+//     padding: 0.5rem 0;
+//     border-bottom: 1px solid #e2e8f0;
+//   }
+
+//   .cta-section {
+//     text-align: center;
+//     margin-top: 3rem;
+//     padding: 2rem;
+//     background: linear-gradient(135deg, #f8f9fa 0%, #e8f4fd 100%);
+//     border-radius: 12px;
+//   }
+
+//   .start-button {
+//     background: #4a6cf7;
+//     color: white;
+//     border: none;
+//     padding: 1rem 2rem;
+//     font-size: 1.1rem;
+//     border-radius: 8px;
+//     cursor: pointer;
+//     margin: 1rem 0;
+//     transition: transform 0.2s;
+//   }
+
+//   .start-button:hover {
+//     transform: translateY(-2px);
+//   }
+
+//   .small-note {
+//     font-size: 0.9rem;
+//     color: #666;
+//     font-style: italic;
+//     margin-top: 1rem;
+//   }
+// }

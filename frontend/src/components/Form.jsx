@@ -126,7 +126,7 @@ export default function Form() {
         // Simulate loading time
         await new Promise((resolve) => setTimeout(resolve, 5000));
         setIsLoading(false);
-        navigate("/analytics");
+        navigate("/narration");
       } catch (error) {
         console.error(error.message);
         setIsLoading(false);
