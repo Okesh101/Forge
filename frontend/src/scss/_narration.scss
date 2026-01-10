@@ -1,4 +1,49 @@
 @use "mixins" as *;
 .narration-page {
   @include pageReset;
+  header {
+    @include headerStyle;
+    // text-align: center;
+  }
+  .response {
+    p {
+      margin-bottom: 2rem;
+    }
+    .response-card {
+      background: rgba(25, 25, 35, 0.8);
+      border: 2px solid rgba(236, 86, 4, 0.61);
+      // color: red;
+      opacity: 0.6;
+      border-radius: 24px;
+      padding: 40px;
+      margin: 20px 0;
+      // display: flex;
+      // flex-direction: column;
+      // gap: 5px;
+      p {
+        margin: 7px 0;
+      }
+      .sub-title {
+        text-decoration: underline;
+      }
+      ul {
+        margin-top: 4px;
+      }
+      .child-card {
+        display: flex;
+        flex-direction: column;
+        b {
+          // margin-bottom: 3px;
+          margin-top: 10px;
+          text-decoration: underline;
+        }
+        span {
+          margin: 2px 0;
+        }
+        // ul {
+        //   margin-top: 4px;
+        // }
+      }
+    }
+  }
 }
