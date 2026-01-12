@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google import genai
+from google.genai.errors import ClientError
 from dotenv import load_dotenv
 import uuid
 import json
@@ -48,8 +49,8 @@ All outputs must be structured, concise, and machine-readable.
 
 """
 
-skill_architect_prompt = """
-You are FORGE-ARCHITECT.
+forge_decision_architect_prompt = """
+You are FORGE-DECISION-ARCHITECT.
 
 Your role is to design a practice system for long-term skill mastery.
 
@@ -73,15 +74,22 @@ You collect the following information:
 - Target proficiency level
 - Available weekly time
 
-You assume the user will log practice honestly but imperfectly.
+Your task:
+1. Normalize raw human input into a precise machine-readable specification.
+2. Design an initial practice strategy for long-term skill mastery.
 
-You output the following:
-- Skill model which comprises of core components and supporting components.
-- Initial practice strategy which include weekly structure, focus distribution, and difficulty baseline.
-- Evaluation metrics which includes subjective and objective measures.
-- Assumptions made during design.
+Rules:
+- Do not remove nuance from user input.
+- Explicitly mark inferred data.
+- Output STRICT JSON only.
+- No commentary outside JSON.
 
-All outputs must be structured and machine-readable.
+Output schema:
+{
+  "meta": {...},
+  "normalized_input": {...},
+  "strategy": {...}
+}
 
 """
 
@@ -235,14 +243,23 @@ You MUST return your output in a JSON format for better readability and one that
 AI_MEMORY_DIR = "AI_Memory"
 
 # UTILITY FUNCTIONS
+def call_gemini(prompt: str, payload: dict) -> dict:
+    try:
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=json.dumps({
+                "system_prompt": prompt,
+                "input": payload
+            })
+        )
 
+        return json.loads(response.text)
 
-def generate_AI_Response(gemini_prompt, contents_data):
-    response = client.models.generate_content(
-        model="gemini-3-flash-preview",
-        contents="Your Prompt: " + gemini_prompt + "\nUser data: " + contents_data
-    )
-    return response.text
+    except ClientError as e:
+        raise RuntimeError(f"Gemini API error: {e}")
+
+    except json.JSONDecodeError:
+        raise ValueError("AI response is not valid JSON")
 
 
 def session_exists(session_id):
@@ -293,30 +310,11 @@ def saveAiMemory(session_id, memory):
         json.dump(memory, f, indent=4)
 
 
-def normalizeHumanInput(input_data):
-    output = generate_AI_Response(
-        forge_normalize_input, f"Human Input: {input_data}")
-    return output
-
-
-def denormalizeSystemOutput(system_output, initial_system_input):
-    output = generate_AI_Response(
-        forge_normalize_output, f"\nInitial Input: {initial_system_input}; System Output: {system_output}")
-    return output
-
-
-def getAnswerfromAI(dataFromFrontend, prompt):
-    normalized_input = normalizeHumanInput(str(dataFromFrontend))
-
-    print("\nNormalized Input:", normalized_input)
-
-    AI_generated_response = generate_AI_Response(
-        prompt, normalized_input)
-
-    print("\nAI Generated Response:", AI_generated_response)
-
-    Ai_Call = denormalizeSystemOutput(AI_generated_response, normalized_input)
-    return Ai_Call
+def getDecisionStrategy(raw_decision: dict) -> dict:
+    return call_gemini(
+        prompt=forge_decision_architect_prompt,
+        payload=raw_decision
+    )
 
 # API ROUTES
 @app.route('/api/create_session', methods=['GET', 'POST'])
@@ -336,53 +334,82 @@ def show_session():
 @app.route('/api/decision/new', methods=['POST', 'GET'])
 def new_decision():
     session_id = request.headers.get('X-Session-ID')
-    if session_exists(session_id) == False:
+    if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
 
     decision_data = request.json.get('decision_Data')
     if not decision_data:
         return jsonify({"error": "No decision data provided"}), 400
 
-    goal = decision_data.get('goal')
-    skill = decision_data.get('skillOrHabit')
-    proficiency_level = decision_data.get('currentLevel')
-    daily_time_commitable = decision_data.get('timeCommitment')
-    learning_style = decision_data.get('learningStyle')
-    probable_challenges = decision_data.get('challenge')
-    reaction_to_failure = decision_data.get('failureResponse')
-    coaching_style = decision_data.get('coachingStyle')
+    try:
+        ai_result = getDecisionStrategy(decision_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    decision = {
-        "goal": goal,
-        "targetSkill": skill,
-        "current_proficiency_level": proficiency_level,
-        "daily_time_commitable": daily_time_commitable,
-        "preferred_learning_style": learning_style,
-        "probable_challenges": probable_challenges,
-        "reaction_to_failure": reaction_to_failure,
-        "preferred_coaching_style": coaching_style}
+    memory = loadAiMemory(session_id)
 
-    final_response = getAnswerfromAI(decision, skill_architect_prompt)
-
-    # Store decision and AI response in session
-    # storeSession(session_id, {
-    #     "decision": decision,
-    #     "ai_response": final_response
-    # })
-    # loadedAIResponse = json.load(final_response)
-    # loadedAIResponse['']
-    loadedMemory = loadAiMemory(session_id)
-    loadedMemory['skill'] = {
-        "name": skill,
-        "level": proficiency_level,
-        "weekly_time_minutes": daily_time_commitable
+    memory['skill'] = {
+        "name": decision_data.get('skillOrHabit'),
+        "level": decision_data.get('currentLevel'),
+        "weekly_time_minutes": decision_data.get('timeCommitment')
     }
-    loadedMemory['current_strategy'] = final_response
-    saveAiMemory(session_id, loadedMemory)
 
-    print("Sessions Data:", loadAiMemory(session_id))
+    memory['current_strategy'] = ai_result['strategy']
 
-    return jsonify({"response": final_response}), 200
+    memory['strategy_history'].append({
+        "version": len(memory['strategy_history']) + 1,
+        "reason": "Initial strategy",
+        "created_at": current_time.isoformat()
+    })
+
+    memory['timeline'].append({
+        "event": "initial_strategy_created",
+        "timestamp": current_time.isoformat(),
+        "summary": f"Initial practice strategy created for {[memory['skill']['name']]}."
+    })
+
+    saveAiMemory(session_id, memory)
+    # goal = decision_data.get('goal')
+    # skill = decision_data.get('skillOrHabit')
+    # proficiency_level = decision_data.get('currentLevel')
+    # daily_time_commitable = decision_data.get('timeCommitment')
+    # learning_style = decision_data.get('learningStyle')
+    # probable_challenges = decision_data.get('challenge')
+    # reaction_to_failure = decision_data.get('failureResponse')
+    # coaching_style = decision_data.get('coachingStyle')
+
+    # decision = {
+    #     "goal": goal,
+    #     "targetSkill": skill,
+    #     "current_proficiency_level": proficiency_level,
+    #     "daily_time_commitable": daily_time_commitable,
+    #     "preferred_learning_style": learning_style,
+    #     "probable_challenges": probable_challenges,
+    #     "reaction_to_failure": reaction_to_failure,
+    #     "preferred_coaching_style": coaching_style}
+
+    # final_response = getDecisionStrategy(decision)
+
+    # # Store decision and AI response in session
+    # # storeSession(session_id, {
+    # #     "decision": decision,
+    # #     "ai_response": final_response
+    # # })
+    # # loadedAIResponse = json.load(final_response)
+    # # loadedAIResponse['']
+    # loadedMemory = loadAiMemory(session_id)
+    # loadedMemory['skill'] = {
+    #     "name": skill,
+    #     "level": proficiency_level,
+    #     "weekly_time_minutes": daily_time_commitable
+    # }
+    # loadedMemory['current_strategy'] = final_response
+    # saveAiMemory(session_id, loadedMemory)
+
+    # print("Sessions Data:", loadAiMemory(session_id))
+
+    return jsonify({"normalizedInput": ai_result["normalized_input"],
+                    "strategy": ai_result["strategy"]}), 200
 
 
 if __name__ == '__main__':
