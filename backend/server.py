@@ -227,6 +227,7 @@ Your outputs must be:
 - Human-readable
 - Frontend-friendly
 - Clearly segmented
+You MUST return your output in a JSON format for better readability and one that can be parsed into a json.loads() function.
 
 """
 
@@ -317,11 +318,6 @@ def getAnswerfromAI(dataFromFrontend, prompt):
     Ai_Call = denormalizeSystemOutput(AI_generated_response, normalized_input)
     return Ai_Call
 
-
-# def storeSession(session_id, session_data):
-#     sessions[session_id]["data"].update(session_data)
-
-
 # API ROUTES
 @app.route('/api/create_session', methods=['GET', 'POST'])
 def createSession():
@@ -373,11 +369,13 @@ def new_decision():
     #     "decision": decision,
     #     "ai_response": final_response
     # })
+    # loadedAIResponse = json.load(final_response)
+    # loadedAIResponse['']
     loadedMemory = loadAiMemory(session_id)
     loadedMemory['skill'] = {
         "name": skill,
         "level": proficiency_level,
-        "weekly_time_minutes": daily_time_commitable * 7
+        "weekly_time_minutes": daily_time_commitable
     }
     loadedMemory['current_strategy'] = final_response
     saveAiMemory(session_id, loadedMemory)
