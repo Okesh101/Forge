@@ -369,44 +369,6 @@ def new_decision():
     })
 
     saveAiMemory(session_id, memory)
-    # goal = decision_data.get('goal')
-    # skill = decision_data.get('skillOrHabit')
-    # proficiency_level = decision_data.get('currentLevel')
-    # daily_time_commitable = decision_data.get('timeCommitment')
-    # learning_style = decision_data.get('learningStyle')
-    # probable_challenges = decision_data.get('challenge')
-    # reaction_to_failure = decision_data.get('failureResponse')
-    # coaching_style = decision_data.get('coachingStyle')
-
-    # decision = {
-    #     "goal": goal,
-    #     "targetSkill": skill,
-    #     "current_proficiency_level": proficiency_level,
-    #     "daily_time_commitable": daily_time_commitable,
-    #     "preferred_learning_style": learning_style,
-    #     "probable_challenges": probable_challenges,
-    #     "reaction_to_failure": reaction_to_failure,
-    #     "preferred_coaching_style": coaching_style}
-
-    # final_response = getDecisionStrategy(decision)
-
-    # # Store decision and AI response in session
-    # # storeSession(session_id, {
-    # #     "decision": decision,
-    # #     "ai_response": final_response
-    # # })
-    # # loadedAIResponse = json.load(final_response)
-    # # loadedAIResponse['']
-    # loadedMemory = loadAiMemory(session_id)
-    # loadedMemory['skill'] = {
-    #     "name": skill,
-    #     "level": proficiency_level,
-    #     "weekly_time_minutes": daily_time_commitable
-    # }
-    # loadedMemory['current_strategy'] = final_response
-    # saveAiMemory(session_id, loadedMemory)
-
-    # print("Sessions Data:", loadAiMemory(session_id))
 
     return jsonify({"normalizedInput": ai_result["normalized_input"],
                     "strategy": ai_result["strategy"]}), 200
