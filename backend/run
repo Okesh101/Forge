@@ -1,0 +1,3 @@
+#!/bin/bash
+# Use '.' or 'source' to ensure changes stay in your current shell
+python3 server.py
