@@ -373,14 +373,18 @@ def new_decision():
     #     "decision": decision,
     #     "ai_response": final_response
     # })
-    saveAiMemory(session_id, {
-        "decision": decision,
-        "ai_response": final_response
-    })
+    loadedMemory = loadAiMemory(session_id)
+    loadedMemory['skill'] = {
+        "name": skill,
+        "level": proficiency_level,
+        "weekly_time_minutes": daily_time_commitable * 7
+    }
+    loadedMemory['current_strategy'] = final_response
+    saveAiMemory(session_id, loadedMemory)
 
     print("Sessions Data:", loadAiMemory(session_id))
 
-    return jsonify({"response": final_response}), 201
+    return jsonify({"response": final_response}), 200
 
 
 if __name__ == '__main__':
