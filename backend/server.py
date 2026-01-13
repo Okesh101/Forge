@@ -1,3 +1,4 @@
+from asyncio import exceptions
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google import genai
@@ -7,6 +8,7 @@ import uuid
 import json
 import datetime
 import os
+import asyncio
 
 load_dotenv()
 
@@ -18,37 +20,6 @@ CORS(app)
 current_time = datetime.datetime.now()
 
 # AI PROMPTS
-initial_prompt = """
-You are iDecision, an institutional decision-intelligence system.
-
-Your role is to analyze human and organizational decisions over time.
-You do NOT give advice.
-You do NOT optimize metrics.
-You observe, extract reasoning, identify assumptions, detect bias, and track outcomes.
-
-You think in long horizons.
-You compare intent versus reality.
-You reason across multiple decisions to identify patterns, drift, and failure modes.
-
-For every decision you receive:
-- Extract explicit and implicit assumptions
-- Classify decision type (strategic, tactical, reactive)
-- Assess confidence language
-- Identify uncertainty and risk framing
-- Store insights in a way that allows comparison across time
-
-When outcomes are later provided:
-- Compare outcome against original assumptions
-- Identify which assumptions failed or held
-- Detect recurring cognitive bias patterns
-
-You must always be neutral, analytical, and evidence-focused.
-You never judge; you only reveal structure and patterns.
-
-All outputs must be structured, concise, and machine-readable.
-
-"""
-
 forge_decision_architect_prompt = """
 You are FORGE-DECISION-ARCHITECT.
 
@@ -201,51 +172,54 @@ Explain clearly and calmly.
 
 """
 
-forge_normalize_input = """
-You are FORGE-INTERPRETER.
+# forge_normalize_input = """
+# You are FORGE-INTERPRETER.
 
-Your task is to translate raw human input into a clear, expanded, 
-machine-friendly specification for downstream reasoning systems.
+# Your task is to translate raw human input into a clear, expanded, 
+# machine-friendly specification for downstream reasoning systems.
 
-You do NOT add assumptions.
-You do NOT redesign the task.
-You ONLY clarify intent, context, scope, and constraints.
+# You do NOT add assumptions.
+# You do NOT redesign the task.
+# You ONLY clarify intent, context, scope, and constraints.
 
-If information is missing, infer cautiously and mark it as inferred.
+# If information is missing, infer cautiously and mark it as inferred.
 
-Your output will be used by another AI system.
-Clarity and completeness are critical.
+# Your output will be used by another AI system.
+# Clarity and completeness are critical.
 
-"""
+# """
 
-forge_normalize_output = """
-You are FORGE-REFINER.
+# forge_normalize_output = """
+# You are FORGE-REFINER.
 
-Your role is to translate internal system outputs into frontend-ready structures that can be portrayed on the frontend screen and look beautiful.
+# Your role is to translate internal system outputs into frontend-ready structures that can be portrayed on the frontend screen and look beautiful.
 
-You do NOT change meaning, you ONLY refine it to be better understood by the user.
-You do NOT add advice, you ONLY give clarity and remove ambiguity.
-You preserve structure but improve clarity.
-You CAN only when needed tweak structure for better readability.
-You CAN expand terse points into full sentences for better readability.
-You MUST explain any technical terms in simple language for user to understand.
-You also collect the initial input passed down from the normalizer that turned the real user input into a machine-friendly format to provide context.
+# You do NOT change meaning, you ONLY refine it to be better understood by the user.
+# You do NOT add advice, you ONLY give clarity and remove ambiguity.
+# You preserve structure but improve clarity.
+# You CAN only when needed tweak structure for better readability.
+# You CAN expand terse points into full sentences for better readability.
+# You MUST explain any technical terms in simple language for user to understand.
+# You also collect the initial input passed down from the normalizer that turned the real user input into a machine-friendly format to provide context.
 
-Your outputs must be:
-- Human-readable
-- Frontend-friendly
-- Clearly segmented
-You MUST return your output in a JSON format for better readability and one that can be parsed into a json.loads() function.
+# Your outputs must be:
+# - Human-readable
+# - Frontend-friendly
+# - Clearly segmented
+# You MUST return your output in a JSON format for better readability and one that can be parsed into a json.loads() function.
 
-"""
+# """
 
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
 
 # UTILITY FUNCTIONS
-def call_gemini(prompt: str, payload: dict) -> dict:
+async def call_gemini(prompt: str, payload: dict) -> dict:
+
+    await asyncio.sleep(0.6) # To avoid rate limits
+
     try:
-        response = client.models.generate_content(
+        response = await client.models.generate_content_async(
             model="gemini-3-flash-preview",
             contents=json.dumps({
                 "system_prompt": prompt,
@@ -254,7 +228,12 @@ def call_gemini(prompt: str, payload: dict) -> dict:
         )
 
         return json.loads(response.text)
-
+    
+    except exceptions.ResourceExhausted:
+        print("Quota hit! Sleeping for 35 seconds...")
+        await asyncio.sleep(35)  # Wait for the window to reset
+        return await call_gemini(prompt, payload)  # Retry
+    
     except ClientError as e:
         raise RuntimeError(f"Gemini API error: {e}")
 
@@ -294,6 +273,10 @@ def createAiMemory(session_id):
             "agent_version": "forge-v1",
             "last_analyzed": None,
             # "next_scheduled_review": None,
+        },
+        "normalized_return": {
+            "normalized_input": {},
+            "normalized_strategy": {}
         }
     }
     with open(f"{AI_MEMORY_DIR}/{session_id}.json", "w") as f:
@@ -332,7 +315,7 @@ def show_session():
 
 
 @app.route('/api/decision/new', methods=['POST', 'GET'])
-def new_decision():
+async def new_decision():
     session_id = request.headers.get('X-Session-ID')
     if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
@@ -342,7 +325,7 @@ def new_decision():
         return jsonify({"error": "No decision data provided"}), 400
 
     try:
-        ai_result = getDecisionStrategy(decision_data)
+        ai_result = await getDecisionStrategy(decision_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -368,10 +351,13 @@ def new_decision():
         "summary": f"Initial practice strategy created for {[memory['skill']['name']]}."
     })
 
+    memory['normalized_return']['normalized_input'] = ai_result['normalized_input']
+    memory['normalized_return']['normalized_strategy'] = ai_result['strategy']
+
     saveAiMemory(session_id, memory)
 
-    return jsonify({"normalizedInput": ai_result["normalized_input"],
-                    "strategy": ai_result["strategy"]}), 200
+    return jsonify({"response": "Strategy Created Successfully",
+                    "status": "success"}), 200
 
 
 if __name__ == '__main__':
