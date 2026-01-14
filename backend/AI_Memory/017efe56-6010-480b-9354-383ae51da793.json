@@ -1,6 +1,6 @@
 {
-    "session_id": "56373098-9115-462b-a496-01c2f0bf04ec",
-    "created_at": "2026-01-12T15:21:17.945429",
+    "session_id": "017efe56-6010-480b-9354-383ae51da793",
+    "created_at": "2026-01-12T22:54:36.548199",
     "skill": {},
     "current_strategy": null,
     "practice_logs": [],
@@ -9,12 +9,16 @@
     "timeline": [
         {
             "event": "session_created",
-            "timestamp": "2026-01-12T15:21:17.945429",
+            "timestamp": "2026-01-12T22:54:36.548199",
             "summary": "AI memory session created."
         }
     ],
     "meta": {
         "agent_version": "forge-v1",
         "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {},
+        "strategy": {}
     }
 }

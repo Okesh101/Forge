@@ -1,3 +1,4 @@
+from asyncio import exceptions
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google import genai
@@ -7,6 +8,7 @@ import uuid
 import json
 import datetime
 import os
+import asyncio
 
 load_dotenv()
 
@@ -18,37 +20,6 @@ CORS(app)
 current_time = datetime.datetime.now()
 
 # AI PROMPTS
-initial_prompt = """
-You are iDecision, an institutional decision-intelligence system.
-
-Your role is to analyze human and organizational decisions over time.
-You do NOT give advice.
-You do NOT optimize metrics.
-You observe, extract reasoning, identify assumptions, detect bias, and track outcomes.
-
-You think in long horizons.
-You compare intent versus reality.
-You reason across multiple decisions to identify patterns, drift, and failure modes.
-
-For every decision you receive:
-- Extract explicit and implicit assumptions
-- Classify decision type (strategic, tactical, reactive)
-- Assess confidence language
-- Identify uncertainty and risk framing
-- Store insights in a way that allows comparison across time
-
-When outcomes are later provided:
-- Compare outcome against original assumptions
-- Identify which assumptions failed or held
-- Detect recurring cognitive bias patterns
-
-You must always be neutral, analytical, and evidence-focused.
-You never judge; you only reveal structure and patterns.
-
-All outputs must be structured, concise, and machine-readable.
-
-"""
-
 forge_decision_architect_prompt = """
 You are FORGE-DECISION-ARCHITECT.
 
@@ -201,49 +172,54 @@ Explain clearly and calmly.
 
 """
 
-forge_normalize_input = """
-You are FORGE-INTERPRETER.
+# forge_normalize_input = """
+# You are FORGE-INTERPRETER.
 
-Your task is to translate raw human input into a clear, expanded, 
-machine-friendly specification for downstream reasoning systems.
+# Your task is to translate raw human input into a clear, expanded,
+# machine-friendly specification for downstream reasoning systems.
 
-You do NOT add assumptions.
-You do NOT redesign the task.
-You ONLY clarify intent, context, scope, and constraints.
+# You do NOT add assumptions.
+# You do NOT redesign the task.
+# You ONLY clarify intent, context, scope, and constraints.
 
-If information is missing, infer cautiously and mark it as inferred.
+# If information is missing, infer cautiously and mark it as inferred.
 
-Your output will be used by another AI system.
-Clarity and completeness are critical.
+# Your output will be used by another AI system.
+# Clarity and completeness are critical.
 
-"""
+# """
 
-forge_normalize_output = """
-You are FORGE-REFINER.
+# forge_normalize_output = """
+# You are FORGE-REFINER.
 
-Your role is to translate internal system outputs into frontend-ready structures that can be portrayed on the frontend screen and look beautiful.
+# Your role is to translate internal system outputs into frontend-ready structures that can be portrayed on the frontend screen and look beautiful.
 
-You do NOT change meaning, you ONLY refine it to be better understood by the user.
-You do NOT add advice, you ONLY give clarity and remove ambiguity.
-You preserve structure but improve clarity.
-You CAN only when needed tweak structure for better readability.
-You CAN expand terse points into full sentences for better readability.
-You MUST explain any technical terms in simple language for user to understand.
-You also collect the initial input passed down from the normalizer that turned the real user input into a machine-friendly format to provide context.
+# You do NOT change meaning, you ONLY refine it to be better understood by the user.
+# You do NOT add advice, you ONLY give clarity and remove ambiguity.
+# You preserve structure but improve clarity.
+# You CAN only when needed tweak structure for better readability.
+# You CAN expand terse points into full sentences for better readability.
+# You MUST explain any technical terms in simple language for user to understand.
+# You also collect the initial input passed down from the normalizer that turned the real user input into a machine-friendly format to provide context.
 
-Your outputs must be:
-- Human-readable
-- Frontend-friendly
-- Clearly segmented
-You MUST return your output in a JSON format for better readability and one that can be parsed into a json.loads() function.
+# Your outputs must be:
+# - Human-readable
+# - Frontend-friendly
+# - Clearly segmented
+# You MUST return your output in a JSON format for better readability and one that can be parsed into a json.loads() function.
 
-"""
+# """
 
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
 
 # UTILITY FUNCTIONS
+
+
 def call_gemini(prompt: str, payload: dict) -> dict:
+
+    # await asyncio.sleep(0.6) # To avoid rate limits
+
     try:
         response = client.models.generate_content(
             model="gemini-3-flash-preview",
@@ -254,6 +230,11 @@ def call_gemini(prompt: str, payload: dict) -> dict:
         )
 
         return json.loads(response.text)
+
+    # except exceptions.ResourceExhausted:
+    #     print("Quota hit! Sleeping for 35 seconds...")
+    #     await asyncio.sleep(35)  # Wait for the window to reset
+    #     return await call_gemini(prompt, payload)  # Retry
 
     except ClientError as e:
         raise RuntimeError(f"Gemini API error: {e}")
@@ -294,6 +275,10 @@ def createAiMemory(session_id):
             "agent_version": "forge-v1",
             "last_analyzed": None,
             # "next_scheduled_review": None,
+        },
+        "normalized_return": {
+            "normalized_input": {},
+            "normalized_strategy": {}
         }
     }
     with open(f"{AI_MEMORY_DIR}/{session_id}.json", "w") as f:
@@ -316,14 +301,51 @@ def getDecisionStrategy(raw_decision: dict) -> dict:
         payload=raw_decision
     )
 
+
+def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
+    phases = list(strategy['practice_roadmap'].values())
+    current_phase = phases[0]
+
+    return {
+        "goal_summary": (
+            f"You are learning {normalized_input['skill_name']},"
+            f"starting at {normalized_input['current_proficiency']} level, "
+            f"with about {normalized_input['available_weekly_time']} each week."
+        ),
+        "learning_philosophy": (
+            f"You will improve through {normalized_input['constraints']['learning_style']} "
+            "and paying attention to what works and what doesn't."
+        ),
+        "current_phase": {
+            "title": current_phase['focus'],
+            "why_this_phase": (
+                "This phase builds the basic skills needed before moving to more complex tasks."
+            )
+        },
+        "this_week_plan": [
+            {
+                "task": "Main Practice Activity",
+                "details": current_phase['primary_loop']
+            }
+        ],
+        "what_to_focus_on": [
+            current_phase['difficulty_balance']
+        ],
+        "how_to_measure_progress": [
+            current_phase['milestone']
+        ]
+    }
+
 # API ROUTES
-@app.route('/api/create_session', methods=['GET', 'POST'])
+
+
+@app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
     return jsonify({"session_id": session_id}), 201
 
 
-@app.route('/api/show_session', methods=['GET', 'POST'])
+@app.route('/api/show_session', methods=['GET'])
 def show_session():
     session_id = request.headers.get('X-Session-ID')
     if session_exists(session_id) == False:
@@ -331,7 +353,7 @@ def show_session():
     return jsonify(loadAiMemory(session_id)), 200
 
 
-@app.route('/api/decision/new', methods=['POST', 'GET'])
+@app.route('/api/decision/new', methods=['POST'])
 def new_decision():
     session_id = request.headers.get('X-Session-ID')
     if not session_exists(session_id):
@@ -368,48 +390,29 @@ def new_decision():
         "summary": f"Initial practice strategy created for {[memory['skill']['name']]}."
     })
 
+    memory['normalized_return']['normalized_input'] = ai_result['normalized_input']
+    memory['normalized_return']['normalized_strategy'] = ai_result['strategy']
+
     saveAiMemory(session_id, memory)
-    # goal = decision_data.get('goal')
-    # skill = decision_data.get('skillOrHabit')
-    # proficiency_level = decision_data.get('currentLevel')
-    # daily_time_commitable = decision_data.get('timeCommitment')
-    # learning_style = decision_data.get('learningStyle')
-    # probable_challenges = decision_data.get('challenge')
-    # reaction_to_failure = decision_data.get('failureResponse')
-    # coaching_style = decision_data.get('coachingStyle')
 
-    # decision = {
-    #     "goal": goal,
-    #     "targetSkill": skill,
-    #     "current_proficiency_level": proficiency_level,
-    #     "daily_time_commitable": daily_time_commitable,
-    #     "preferred_learning_style": learning_style,
-    #     "probable_challenges": probable_challenges,
-    #     "reaction_to_failure": reaction_to_failure,
-    #     "preferred_coaching_style": coaching_style}
+    return jsonify({"response": "Strategy Created Successfully",
+                    "status": "success"}), 200
 
-    # final_response = getDecisionStrategy(decision)
 
-    # # Store decision and AI response in session
-    # # storeSession(session_id, {
-    # #     "decision": decision,
-    # #     "ai_response": final_response
-    # # })
-    # # loadedAIResponse = json.load(final_response)
-    # # loadedAIResponse['']
-    # loadedMemory = loadAiMemory(session_id)
-    # loadedMemory['skill'] = {
-    #     "name": skill,
-    #     "level": proficiency_level,
-    #     "weekly_time_minutes": daily_time_commitable
-    # }
-    # loadedMemory['current_strategy'] = final_response
-    # saveAiMemory(session_id, loadedMemory)
+@app.route("/api/decision/get", methods=['GET'])
+def get_narration():
+    session_id = request.headers.get('X-Session-ID')
+    if not session_exists(session_id):
+        return jsonify({"error": "Session not found"}), 401
 
-    # print("Sessions Data:", loadAiMemory(session_id))
+    memory = loadAiMemory(session_id)
 
-    return jsonify({"normalizedInput": ai_result["normalized_input"],
-                    "strategy": ai_result["strategy"]}), 200
+    narration = build_narration_payload(
+        memory['normalized_return']['normalized_input'],
+        memory['normalized_return']['normalized_strategy']
+    )
+
+    return jsonify(narration), 200
 
 
 if __name__ == '__main__':
