@@ -40,13 +40,10 @@ export default function Form() {
 
   const [decision_Data, setDecision_Data] = useState({
     goal: "",
-    skillOrHabit: "",
     currentLevel: "",
-    timeCommitment: "",
+    goalLevel: "",
     learningStyle: "",
-    challenge: "",
-    failureResponse: "",
-    coachingStyle: "",
+    timeCommitment: 1,
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -85,24 +82,12 @@ export default function Form() {
       newErrors.currentLevel = "This field is required";
       isValid = false;
     }
+    if (!decision_Data.goalLevel) {
+      newErrors.goalLevel = "This field is required";
+      isValid = false;
+    }
     if (!decision_Data.timeCommitment) {
       newErrors.timeCommitment = "This field is required";
-      isValid = false;
-    }
-    if (!decision_Data.learningStyle) {
-      newErrors.learningStyle = "This field is required";
-      isValid = false;
-    }
-    if (!decision_Data.challenge) {
-      newErrors.challenge = "This field is required";
-      isValid = false;
-    }
-    if (!decision_Data.failureResponse) {
-      newErrors.failureResponse = "This field is required";
-      isValid = false;
-    }
-    if (!decision_Data.coachingStyle) {
-      newErrors.coachingStyle = "This field is required";
       isValid = false;
     }
 
@@ -124,11 +109,13 @@ export default function Form() {
         console.log(data);
 
         // Simulate loading time
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        setIsLoading(false);
-        navigate("/narration");
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
+        if (data.status === "success") {
+          setIsLoading(false);
+          navigate("/narration");
+        }
       } catch (error) {
-        console.error(error.message);
+        console.log(error.message);
         setIsLoading(false);
       }
     }
@@ -145,213 +132,72 @@ export default function Form() {
             <p>Start your mastery journey with personalized guidance.</p>
           </header>
           <form>
-            <section>
-              <div className="field">
-                <fieldset>
-                  <label htmlFor="goal">
-                    <FiTarget /> What do you want to build?
-                  </label>
-                  <select
-                    name="goal"
-                    value={decision_Data.goal}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select an option
-                    </option>
-                    <option value="skill">Acquire a new skill</option>
-                    <option value="habit">Form a new habit</option>
-                    <option value="improve">Improve existing skill</option>
-                  </select>
-                </fieldset>
-                {errors.goal && <p className="errorMssg">{errors.goal}</p>}
-              </div>
-
-              <div className="field">
-                <fieldset>
-                  <label htmlFor="skillOrHabit">
-                    <FiUser /> What is the skill or habit?
-                  </label>
-                  <input
-                    type="text"
-                    name="skillOrHabit"
-                    value={decision_Data.skillOrHabit}
-                    placeholder="e.g., Learn React, Meditate daily, Play guitar"
-                    onChange={handleInputChange}
-                  />
-                </fieldset>
-                {errors.skillOrHabit && (
-                  <p className="errorMssg">{errors.skillOrHabit}</p>
-                )}
-              </div>
-            </section>
-
-            <section>
-              <div className="field">
-                <fieldset>
-                  <label htmlFor="currentLevel">
-                    <FiTrendingUp /> How would you describe your current level?
-                  </label>
-                  <select
-                    name="currentLevel"
-                    value={decision_Data.currentLevel}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select current level
-                    </option>
-                    <option value="beginner">Beginner</option>
-                    <option value="some experience">Some Experience</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                    <option value="not-sure">Not sure</option>
-                  </select>
-                </fieldset>
-                {errors.currentLevel && (
-                  <p className="errorMssg">{errors.currentLevel}</p>
-                )}
-              </div>
-
-              <div className="field">
-                <fieldset>
-                  <label htmlFor="timeCommitment">
-                    <FiClock /> How much time can you realistically commit?
-                  </label>
-                  <select
-                    name="timeCommitment"
-                    value={decision_Data.timeCommitment}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select time commitment
-                    </option>
-                    <option value="10-15">10-15 minutes/day</option>
-                    <option value="30">30 minutes/day</option>
-                    <option value="60">1 hour/day</option>
-                    <option value="flexible">Flexible / inconsistent</option>
-                    <option value="not-sure">Not sure yet</option>
-                  </select>
-                </fieldset>
-                {errors.timeCommitment && (
-                  <p className="errorMssg">{errors.timeCommitment}</p>
-                )}
-              </div>
-            </section>
+            <div className="field">
+              <fieldset>
+                <label htmlFor="goal">TARGET SKILL</label>
+                <input
+                  type="text"
+                  placeholder="e.g, Quantum Physics, Learn React"
+                />
+              </fieldset>
+              {errors.goal && <p className="errorMssg">{errors.goal}</p>}
+            </div>
 
             <div className="field">
               <fieldset>
-                <label htmlFor="learningStyle">
-                  <FiBook /> How do you learn best?
-                </label>
-                <div className="radio-group">
-                  {learningOptions.map((option) => (
-                    <motion.div
-                      className="option"
-                      key={option.id}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 120 }}
-                    >
-                      <input
-                        type="radio"
-                        name="learningStyle"
-                        value={option.id}
-                        checked={decision_Data.learningStyle === option.id}
-                        onChange={handleInputChange}
-                      />
-                      <p>{option.label}</p>
-                    </motion.div>
-                  ))}
-                </div>
+                <label htmlFor="currentLevel">CURRENT PROFICIENCY</label>
+                <select
+                  name="currentLevel"
+                  value={decision_Data.currentLevel}
+                  onChange={handleInputChange}
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
               </fieldset>
-              {errors.learningStyle && (
-                <p className="errorMssg">{errors.learningStyle}</p>
+              {errors.currentLevel && (
+                <p className="errorMssg">{errors.currentLevel}</p>
               )}
             </div>
 
             <div className="field">
               <fieldset>
-                <label htmlFor="challenges">
-                  <FiZap />
-                  What usually slows you down or stops you?
-                </label>
-                <div className="radio-group">
-                  {challengeOptions.map((option) => (
-                    <motion.div
-                      className="option"
-                      key={option.id}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 120 }}
-                    >
-                      <input
-                        type="radio"
-                        name="challenge"
-                        value={option.id}
-                        checked={decision_Data.challenge === option.id}
-                        onChange={handleInputChange}
-                      />
-                      <p>{option.label}</p>
-                    </motion.div>
-                  ))}
-                </div>
+                <label htmlFor="goalLevel">GOAL LEVEL</label>
+                <select
+                  name="goalLevel"
+                  value={decision_Data.goalLevel}
+                  onChange={handleInputChange}
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
               </fieldset>
-              {errors.challenge && (
-                <p className="errorMssg">{errors.challenge}</p>
+              {errors.goalLevel && (
+                <p className="errorMssg">{errors.goalLevel}</p>
               )}
             </div>
-
-            <section>
-              <div className="field">
-                <fieldset>
-                  <label htmlFor="failureResponse">
-                    <FiAlertTriangle /> When you fail or stop, what usually
-                    happens next?
-                  </label>
-                  <select
-                    name="failureResponse"
-                    value={decision_Data.failureResponse}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select your typical response
-                    </option>
-                    <option value="restart">I restart from scratch</option>
-                    <option value="break">I take a long break</option>
-                    <option value="expectation">I lower my expectations</option>
-                    <option value="quit">I quit silently</option>
-                    <option value="try-again">
-                      I try again with a new method
-                    </option>
-                  </select>
-                </fieldset>
-                {errors.failureResponse && (
-                  <p className="errorMssg">{errors.failureResponse}</p>
-                )}
-              </div>
-
-              <div className="field">
-                <fieldset>
-                  <label htmlFor="coachingStyle">
-                    <FiMessageCircle /> How do you want this system to treat
-                    you?
-                  </label>
-                  <select
-                    name="coachingStyle"
-                    value={decision_Data.coachingStyle}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select coaching style
-                    </option>
-                    <option value="gentle">Gentle and supportive</option>
-                    <option value="direct">Direct and honest</option>
-                    <option value="strict">Strict and challenging</option>
-                  </select>
-                </fieldset>
-                {errors.coachingStyle && (
-                  <p className="errorMssg">{errors.coachingStyle}</p>
-                )}
-              </div>
-            </section>
+            <div className="field">
+              <fieldset>
+                <label htmlFor="timeCommitment">
+                  WEEKLY COMMITMENT: {decision_Data.timeCommitment}
+                </label>
+                <input
+                  name="timeCommitment"
+                  type="range"
+                  min="1"
+                  max="40"
+                  value={decision_Data.timeCommitment}
+                  onChange={handleInputChange}
+                />
+              </fieldset>
+              {errors.goalLevel && (
+                <p className="errorMssg">{errors.goalLevel}</p>
+              )}
+            </div>
           </form>
           <button type="button" onClick={handleSubmit}>
             Create My Practice Plan <FiArrowRight />
@@ -361,4 +207,157 @@ export default function Form() {
       </div>
     </>
   );
+}
+
+{
+  /* <div className="field">
+<fieldset>
+  <label htmlFor="timeCommitment">
+    <FiClock /> How much time can you realistically commit?
+  </label>
+  <select
+    name="timeCommitment"
+    value={decision_Data.timeCommitment}
+    onChange={handleInputChange}
+  >
+    <option value="" disabled>
+      Select time commitment
+    </option>
+    <option value="10-15">10-15 minutes/day</option>
+    <option value="30">30 minutes/day</option>
+    <option value="60">1 hour/day</option>
+    <option value="flexible">Flexible / inconsistent</option>
+    <option value="not-sure">Not sure yet</option>
+  </select>
+</fieldset>
+{errors.timeCommitment && (
+  <p className="errorMssg">{errors.timeCommitment}</p>
+)}
+</div> */
+}
+{
+  /* <select name="goal" value={decision_Data.goal} onChange={handleInputChange}>
+  <option value="" disabled>
+    Select an option
+  </option>
+  <option value="skill">Acquire a new skill</option>
+  <option value="habit">Form a new habit</option>
+  <option value="improve">Improve existing skill</option>
+</select>; */
+}
+{
+  /* <div className="field">
+  <fieldset>
+    <label htmlFor="learningStyle">
+      <FiBook /> How do you learn best?
+    </label>
+    <div className="radio-group">
+      {learningOptions.map((option) => (
+        <motion.div
+          className="option"
+          key={option.id}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 120 }}
+        >
+          <input
+            type="radio"
+            name="learningStyle"
+            value={option.id}
+            checked={decision_Data.learningStyle === option.id}
+            onChange={handleInputChange}
+          />
+          <p>{option.label}</p>
+        </motion.div>
+      ))}
+    </div>
+  </fieldset>
+  {errors.learningStyle && (
+    <p className="errorMssg">{errors.learningStyle}</p>
+  )}
+</div>
+
+<div className="field">
+  <fieldset>
+    <label htmlFor="challenges">
+      <FiZap />
+      What usually slows you down or stops you?
+    </label>
+    <div className="radio-group">
+      {challengeOptions.map((option) => (
+        <motion.div
+          className="option"
+          key={option.id}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 120 }}
+        >
+          <input
+            type="radio"
+            name="challenge"
+            value={option.id}
+            checked={decision_Data.challenge === option.id}
+            onChange={handleInputChange}
+          />
+          <p>{option.label}</p>
+        </motion.div>
+      ))}
+    </div>
+  </fieldset>
+  {errors.challenge && (
+    <p className="errorMssg">{errors.challenge}</p>
+  )}
+</div>
+
+<section>
+  <div className="field">
+    <fieldset>
+      <label htmlFor="failureResponse">
+        <FiAlertTriangle /> When you fail or stop, what usually
+        happens next?
+      </label>
+      <select
+        name="failureResponse"
+        value={decision_Data.failureResponse}
+        onChange={handleInputChange}
+      >
+        <option value="" disabled>
+          Select your typical response
+        </option>
+        <option value="restart">I restart from scratch</option>
+        <option value="break">I take a long break</option>
+        <option value="expectation">I lower my expectations</option>
+        <option value="quit">I quit silently</option>
+        <option value="try-again">
+          I try again with a new method
+        </option>
+      </select>
+    </fieldset>
+    {errors.failureResponse && (
+      <p className="errorMssg">{errors.failureResponse}</p>
+    )}
+  </div>
+
+  <div className="field">
+    <fieldset>
+      <label htmlFor="coachingStyle">
+        <FiMessageCircle /> How do you want this system to treat
+        you?
+      </label>
+      <select
+        name="coachingStyle"
+        value={decision_Data.coachingStyle}
+        onChange={handleInputChange}
+      >
+        <option value="" disabled>
+          Select coaching style
+        </option>
+        <option value="gentle">Gentle and supportive</option>
+        <option value="direct">Direct and honest</option>
+        <option value="strict">Strict and challenging</option>
+      </select>
+    </fieldset>
+    {errors.coachingStyle && (
+      <p className="errorMssg">{errors.coachingStyle}</p>
+    )}
+  </div>
+</section> */
 }

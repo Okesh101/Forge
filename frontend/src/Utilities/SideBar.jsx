@@ -66,7 +66,7 @@ export default function SideBar() {
         }}
         className={buttonFunction("masteryPath")}
       >
-        MasteryPath
+        Log Session
       </button>
       <button
         onClick={() => {
