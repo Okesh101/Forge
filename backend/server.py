@@ -1,6 +1,6 @@
 from asyncio import exceptions
-# from wsgiref import types
 from flask import Flask, request, jsonify
+from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from google import genai
 from google.genai.errors import ClientError
@@ -18,14 +18,19 @@ client = genai.Client()
 app = Flask(__name__)
 CORS(app)
 
+scheduler = APScheduler()
 current_time = datetime.datetime.now()
 
 # AI PROMPTS
 forge_decision_architect_prompt = """
 You are FORGE-DECISION-ARCHITECT.
 
+Your job is to FILL A PREDEFINED STRATEGY TEMPLATE.
 Your role is to design a practice system for long-term skill mastery.
 
+You are NOT allowed to invent new fields.
+You are NOT allowed to rename fields.
+You are NOT allowed to omit required fields.
 You do NOT motivate.
 You do NOT give generic advice.
 You do NOT optimize for speed.
@@ -36,7 +41,7 @@ You think in weeks, not days.
 You balance focus between core and supporting components.
 You balance difficulty between comfortable and challenging.
 You create evaluation metrics that capture both subjective and objective progress.
-You speak like a practice architect, NOT too formal, NOT too casual.
+You speak like a practice architect, NOT too formal.
 You speak like you are in the shoes of a learner planning their own practice.
 You design practice loops that can be evaluated over time.
 
@@ -56,12 +61,71 @@ Rules:
 - Output STRICT JSON only.
 - No commentary outside JSON.
 
-Output schema:
+If information is missing, infer it and list it in "inferred_fields".
+
+You MUST output JSON that EXACTLY matches the schema provided.
+Any deviation is an error.
+
+Schema you must follow exactly:
+
 {
-  "meta": {...},
-  "normalized_input": {...},
-  "strategy": {...}
+  "meta": {
+    "agent": "forge",
+    "version": "v1"
+  },
+
+  "normalized_input": {
+    "skill_name": "string",
+    "current_level": "number (0-4)",
+    "target_level": "number (0-4)",
+    "weekly_time_minutes": "number",
+    "constraints": {
+      "learning_style": "string",
+      "dropout_risk": "low | medium | high",
+      "time_flexibility": "low | medium | high"
+    },
+    "inferred_fields": [ "string" ]
+  },
+
+  "strategy": {
+    "strategy_version": 1,
+
+    "skill_model": {
+      "core_components": [ "string" ],
+      "supporting_components": [ "string" ]
+    },
+
+    "practice_cycles": [
+      {
+        "cycle_index": 1,
+        "duration_weeks": "number",
+        "focus_summary": "string",
+        "weekly_loop": {
+          "primary_activity": "string",
+          "secondary_activity": "string"
+        },
+        "difficulty_profile": {
+          "comfortable": "string",
+          "challenging": "string"
+        },
+        "success_markers": {
+          "objective": [ "string" ],
+          "subjective": [ "string" ]
+        }
+      }
+    ],
+
+    "evaluation_metrics": {
+      "objective": [ "string" ],
+      "subjective": [ "string" ]
+    },
+
+    "architect_notes": [ "string" ]
+  }
 }
+
+Output STRICT JSON only.
+
 
 """
 
@@ -158,63 +222,14 @@ You output the following:
 
 """
 
-forge_narrator = """
-You are FORGE-NARRATOR.
-
-You explain system changes to humans.
-
-You do NOT simplify away meaning.
-You do NOT sound motivational.
-
-You accept the changes made to the practice strategy by the system and the reasoning behind them.
-You output a clear explanation for the user in human-friendly language.
-
-Explain clearly and calmly.
-
-"""
-
-# forge_normalize_input = """
-# You are FORGE-INTERPRETER.
-
-# Your task is to translate raw human input into a clear, expanded,
-# machine-friendly specification for downstream reasoning systems.
-
-# You do NOT add assumptions.
-# You do NOT redesign the task.
-# You ONLY clarify intent, context, scope, and constraints.
-
-# If information is missing, infer cautiously and mark it as inferred.
-
-# Your output will be used by another AI system.
-# Clarity and completeness are critical.
-
-# """
-
-# forge_normalize_output = """
-# You are FORGE-REFINER.
-
-# Your role is to translate internal system outputs into frontend-ready structures that can be portrayed on the frontend screen and look beautiful.
-
-# You do NOT change meaning, you ONLY refine it to be better understood by the user.
-# You do NOT add advice, you ONLY give clarity and remove ambiguity.
-# You preserve structure but improve clarity.
-# You CAN only when needed tweak structure for better readability.
-# You CAN expand terse points into full sentences for better readability.
-# You MUST explain any technical terms in simple language for user to understand.
-# You also collect the initial input passed down from the normalizer that turned the real user input into a machine-friendly format to provide context.
-
-# Your outputs must be:
-# - Human-readable
-# - Frontend-friendly
-# - Clearly segmented
-# You MUST return your output in a JSON format for better readability and one that can be parsed into a json.loads() function.
-
-# """
-
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
 
 # UTILITY FUNCTIONS
+
+
+def printer():
+    print("Scheduled task executed.")
 
 
 def call_gemini(prompt: str, payload: dict) -> dict:
@@ -243,6 +258,7 @@ def call_gemini(prompt: str, payload: dict) -> dict:
     except json.JSONDecodeError:
         raise ValueError("AI response is not valid JSON")
 
+
 def call_gemini_for_deeper_reasoning(prompt: str, payload: dict) -> dict:
 
     try:
@@ -264,6 +280,7 @@ def call_gemini_for_deeper_reasoning(prompt: str, payload: dict) -> dict:
 
     except json.JSONDecodeError:
         raise ValueError("AI response is not valid JSON")
+
 
 def session_exists(session_id):
     return os.path.exists(f"{AI_MEMORY_DIR}/{session_id}.json")
@@ -288,7 +305,7 @@ def createAiMemory(session_id):
         "agent_insights": {},
         "timeline": [
             {
-                "id": str(uuid.uuid2()),
+                "id": str(uuid.uuid1()),
                 "event": "session_created",
                 "actor": "system",
                 "timestamp": current_time.isoformat(),
@@ -336,22 +353,36 @@ def getDecisionStrategy(raw_decision: dict) -> dict:
     )
 
 
+def getLevel(level: int) -> str:
+    levels = {
+        0: "novice",
+        1: "beginner",
+        2: "intermediate",
+        3: "advanced",
+        4: "expert"
+    }
+    return levels.get(level, -1)
+
+
 def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
-    phases = list(strategy['practice_roadmap'].values())
-    current_phase = phases[0]
+    # phases = list(strategy['practice_roadmap'].values())
+    # current_phase = phases[0]
+    first_cycle = strategy['practice_cycles'][0]
 
     return {
         "goal_summary": (
             f"You are learning {normalized_input['skill_name']},"
-            f"starting at {normalized_input['current_proficiency']} level, "
-            f"with about {normalized_input['available_weekly_time']} each week."
+            f"starting at {getLevel(normalized_input['current_level'])} level, "
+            f"towards {getLevel(normalized_input['target_level'])} level, "
+            f"with about {normalized_input['weekly_time_minutes']} minutes per week."
         ),
         "learning_philosophy": (
-            f"You will improve through {normalized_input['constraints']['learning_style']} "
-            "and paying attention to what works and what doesn't."
+            f"The plan favours a {normalized_input['constraints']['learning_style']} "
+            "learning style and paying attention to what works and what doesn't "
+            f"while managing a {normalized_input['constraints']['dropout_risk']} risk of dropping out."
         ),
         "current_phase": {
-            "title": current_phase['focus'],
+            "title": first_cycle['focus_summary'],
             "why_this_phase": (
                 "This phase builds the basic skills needed before moving to more complex tasks."
             )
@@ -359,14 +390,19 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
         "this_week_plan": [
             {
                 "task": "Main Practice Activity",
-                "details": current_phase['primary_loop']
+                "details": first_cycle['weekly_loop']['primary_activity'],
+            },
+            {
+                "task": "Secondary Practice Activity",
+                "details": first_cycle['weekly_loop']['secondary_activity'],
             }
         ],
         "what_to_focus_on": [
-            current_phase['difficulty_balance']
+            first_cycle['difficulty_profile']['challenging'],
         ],
         "how_to_measure_progress": [
-            current_phase['milestone']
+            first_cycle['success_markers']['objective']
+            + first_cycle['success_markers']['subjective']
         ]
     }
 
@@ -419,7 +455,7 @@ def new_decision():
     })
 
     memory['timeline'].append({
-        "id": str(uuid.uuid2()),
+        "id": str(uuid.uuid1()),
         "event": "initial_strategy_created",
         "actor": "ai",
         "timestamp": current_time.isoformat(),
@@ -428,7 +464,7 @@ def new_decision():
         "details": {
             "reason": "Sufficient information provided to create initial practice system.",
             "changes": {
-                "strategy_version": len(memory['strategy_history']) + 1
+                "strategy_version": len(memory['strategy_history'])
             },
             "evidence": [
                 f"Skill: {memory['skill']['name']}",
@@ -476,15 +512,92 @@ def get_timeline():
 
     timeline = sorted(
         memory['timeline'],
-        key=lambda x: x['timestamp'],
-        reverse=True
+        key=lambda x: x['timestamp']
     )
 
     return jsonify({
         "timeline": timeline
     }), 200
 
+
+@app.route('/api/practice/new', methods=['POST'])
+def log_practice():
+    session_id = request.headers.get('X-Session-ID')
+    if not session_exists(session_id):
+        return jsonify({"error": "Session not found"}), 401
+
+    practice_data = request.json.get('practice_data')
+    if not practice_data:
+        return jsonify({"error": "No practice data provided"}), 400
+
+    memory = loadAiMemory(session_id)
+
+    memory['practice_logs'].append({
+        "date": current_time.isoformat(),
+        "activity": practice_data.get('activity'),
+        "difficulty_rating": practice_data.get('difficulty_rating'),
+        "reflection": practice_data.get('reflection'),
+        "analysis": {
+            "effort_level": practice_data.get('effort_level'),
+            "friction": practice_data.get('friction')
+        }
+    })
+
+    memory['timeline'].append({
+        "id": str(uuid.uuid1()),
+        "event": "practice_session_logged",
+        "actor": "user",
+        "timestamp": current_time.isoformat(),
+        "title": "Practice Session Logged",
+        "summary": f"Logged practice session for {memory['skill']['name']}.",
+        "details": {
+            "reason": "User logged a new practice session.",
+            "changes": {
+                "practice_log_count": len(memory['practice_logs'])
+            },
+            "evidence": [
+                f"Activity: {practice_data.get('activity')}",
+                f"Difficulty Rating: {practice_data.get('difficulty_rating')}",
+            ]
+        },
+        "visibility": {
+            "show_on_timeline": True,
+            "clickable": True
+        }
+    })
+
+    saveAiMemory(session_id, memory)
+
+    return jsonify({"response": "Practice log created successfully",
+                    "status": "success"}), 201
+
+
+@app.route('/api/practice/logs', methods=['GET'])
+def get_practice_logs():
+    session_id = request.headers.get('X-Session-ID')
+    if not session_exists(session_id):
+        return jsonify({"error": "Session not found"}), 401
+
+    memory = loadAiMemory(session_id)
+    practice_memory = memory['practice_logs']
+
+    practices = []
+    for practice_log in practice_memory:
+        practices.append({
+            "date": practice_log['date'],
+            "activity": practice_log['activity'],
+            "difficulty_rating": practice_log['difficulty_rating'],
+            "reflection": practice_log['reflection']
+        })
+
+    return jsonify({
+        "practice_logs": practices
+    }), 200
+
+
 if __name__ == '__main__':
+    # scheduler.add_job(id='Scheduled Task', func=printer, trigger='interval', seconds=30)
+    scheduler.start()
     app.run(debug=True)
 
 
