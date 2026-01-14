@@ -6,7 +6,7 @@ import Analytics from "./components/Analytics";
 import Timeline from "./components/Timeline";
 import Narration from "./components/Narration";
 import ScrollToTop from "./components/ScrollToTop";
-import MasteryPath from "./components/MasteryPath";
+import LogPractice from "./components/LogPractice";
 function App() {
   return (
     <>
@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/form" element={<Form />} />
-        <Route path="/masteryPath" element={<MasteryPath />} />
+        <Route path="/logpractice" element={<LogPractice />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/narration" element={<Narration />} />

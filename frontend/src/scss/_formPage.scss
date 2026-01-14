@@ -9,12 +9,6 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    section {
-      display: flex;
-      align-items: flex-end;
-      width: 100%;
-      gap: 20px;
-    }
     .field {
       width: 100%;
       display: flex;
@@ -33,10 +27,11 @@
 
       label {
         display: block;
-        font-size: 1.125rem;
+        font-size: 0.9rem;
         font-weight: 600;
         margin-bottom: 16px;
         color: white;
+        opacity: 0.7;
         position: relative;
 
         &::after {
@@ -52,7 +47,7 @@
       }
 
       //   All input fields with type of text and all select tags
-      input[type="text"],
+      input,
       select {
         width: 100%;
         padding: 16px 20px;
@@ -80,80 +75,6 @@
           padding: 18px;
         }
       }
-
-      //   All Radio button
-      .radio-group {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 16px;
-        margin-top: 8px;
-
-        .option {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 18px 20px;
-          background: rgba(25, 25, 35, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          position: relative;
-
-          &:hover {
-            background: rgba(25, 25, 35, 0.8);
-            border-color: rgba(255, 106, 26, 0.2);
-            // transform: translateY(-2px);
-          }
-
-          input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            margin: 0;
-            cursor: pointer;
-            position: relative;
-
-            &::before {
-              content: "";
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 20px;
-              height: 20px;
-              border: 2px solid rgba(255, 255, 255, 0.3);
-              border-radius: 50%;
-              background: transparent;
-              transition: all 0.3s ease;
-            }
-
-            &:checked::before {
-              border-color: #ff6a1a;
-              background: #ff6a1a;
-              box-shadow: 0 0 0 4px rgba(255, 106, 26, 0.2);
-            }
-
-            &:checked::after {
-              content: "";
-              position: absolute;
-              top: 6px;
-              left: 6px;
-              width: 8px;
-              height: 8px;
-              background: white;
-              border-radius: 50%;
-            }
-          }
-
-          p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: white;
-            font-weight: 500;
-            line-height: 1.4;
-            flex: 1;
-          }
-        }
-      }
     }
   }
   button {
@@ -179,18 +100,6 @@
         font-size: 1.125rem;
       }
     }
-
-    form {
-      gap: 32px;
-
-      fieldset .radio-group {
-        grid-template-columns: 1fr;
-
-        .option {
-          padding: 16px;
-        }
-      }
-    }
   }
 
   @media (max-width: 480px) {
@@ -204,10 +113,6 @@
 
     form {
       fieldset {
-        label {
-          font-size: 1rem;
-        }
-
         input[type="text"],
         select {
           padding: 14px 16px;

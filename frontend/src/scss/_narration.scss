@@ -28,21 +28,9 @@
       }
       ul {
         margin-top: 4px;
-      }
-      .child-card {
-        display: flex;
-        flex-direction: column;
-        b {
-          // margin-bottom: 3px;
-          margin-top: 10px;
-          text-decoration: underline;
+        li {
+          list-style-type: none;
         }
-        span {
-          margin: 2px 0;
-        }
-        // ul {
-        //   margin-top: 4px;
-        // }
       }
     }
   }

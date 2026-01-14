@@ -2,7 +2,7 @@ import React from "react";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 
-export default function MasteryPath() {
+export default function LogPractice() {
   return (
     <>
       <SideBar />
