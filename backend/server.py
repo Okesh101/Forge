@@ -1,4 +1,5 @@
 from asyncio import exceptions
+# from wsgiref import types
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google import genai
@@ -8,7 +9,7 @@ import uuid
 import json
 import datetime
 import os
-import asyncio
+# import asyncio
 
 load_dotenv()
 
@@ -242,6 +243,27 @@ def call_gemini(prompt: str, payload: dict) -> dict:
     except json.JSONDecodeError:
         raise ValueError("AI response is not valid JSON")
 
+def call_gemini_for_deeper_reasoning(prompt: str, payload: dict) -> dict:
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=json.dumps({
+                "system_prompt": prompt,
+                "input": payload
+            }),
+            config=types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(thinking_level="high")
+            )
+        )
+
+        return json.loads(response.text)
+
+    except ClientError as e:
+        raise RuntimeError(f"Gemini API error: {e}")
+
+    except json.JSONDecodeError:
+        raise ValueError("AI response is not valid JSON")
 
 def session_exists(session_id):
     return os.path.exists(f"{AI_MEMORY_DIR}/{session_id}.json")
@@ -266,9 +288,21 @@ def createAiMemory(session_id):
         "agent_insights": {},
         "timeline": [
             {
+                "id": str(uuid.uuid2()),
                 "event": "session_created",
+                "actor": "system",
                 "timestamp": current_time.isoformat(),
-                "summary": "AI memory session created."
+                "title": "Session Created",
+                "summary": "Your learning journey started here.",
+                "details": {
+                    "reason": "User initiated a new learning session.",
+                    "changes": {},
+                    "evidence": []
+                },
+                "visibility": {
+                    "show_on_timeline": True,
+                    "clickable": False
+                }
             }
         ],
         "meta": {
@@ -385,9 +419,26 @@ def new_decision():
     })
 
     memory['timeline'].append({
+        "id": str(uuid.uuid2()),
         "event": "initial_strategy_created",
+        "actor": "ai",
         "timestamp": current_time.isoformat(),
-        "summary": f"Initial practice strategy created for {[memory['skill']['name']]}."
+        "title": "Initial Practice Strategy Created",
+        "summary": f"Initial practice strategy created for {[memory['skill']['name']]}.",
+        "details": {
+            "reason": "Sufficient information provided to create initial practice system.",
+            "changes": {
+                "strategy_version": len(memory['strategy_history']) + 1
+            },
+            "evidence": [
+                f"Skill: {memory['skill']['name']}",
+                f"Experience Level: {memory['skill']['level']}",
+            ]
+        },
+        "visibility": {
+            "show_on_timeline": True,
+            "clickable": True
+        }
     })
 
     memory['normalized_return']['normalized_input'] = ai_result['normalized_input']
@@ -396,10 +447,10 @@ def new_decision():
     saveAiMemory(session_id, memory)
 
     return jsonify({"response": "Strategy Created Successfully",
-                    "status": "success"}), 200
+                    "status": "success"}), 201
 
 
-@app.route("/api/decision/get", methods=['GET'])
+@app.route('/api/decision/get', methods=['GET'])
 def get_narration():
     session_id = request.headers.get('X-Session-ID')
     if not session_exists(session_id):
@@ -414,6 +465,24 @@ def get_narration():
 
     return jsonify(narration), 200
 
+
+@app.route('/api/timeline', methods=['GET'])
+def get_timeline():
+    session_id = request.headers.get('X-Session-ID')
+    if not session_exists(session_id):
+        return jsonify({"error": "Session not found"}), 401
+
+    memory = loadAiMemory(session_id)
+
+    timeline = sorted(
+        memory['timeline'],
+        key=lambda x: x['timestamp'],
+        reverse=True
+    )
+
+    return jsonify({
+        "timeline": timeline
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
