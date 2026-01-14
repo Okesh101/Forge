@@ -175,7 +175,7 @@ Explain clearly and calmly.
 # forge_normalize_input = """
 # You are FORGE-INTERPRETER.
 
-# Your task is to translate raw human input into a clear, expanded, 
+# Your task is to translate raw human input into a clear, expanded,
 # machine-friendly specification for downstream reasoning systems.
 
 # You do NOT add assumptions.
@@ -214,12 +214,14 @@ Explain clearly and calmly.
 AI_MEMORY_DIR = "AI_Memory"
 
 # UTILITY FUNCTIONS
-async def call_gemini(prompt: str, payload: dict) -> dict:
 
-    await asyncio.sleep(0.6) # To avoid rate limits
+
+def call_gemini(prompt: str, payload: dict) -> dict:
+
+    # await asyncio.sleep(0.6) # To avoid rate limits
 
     try:
-        response = await client.models.generate_content_async(
+        response = client.models.generate_content(
             model="gemini-3-flash-preview",
             contents=json.dumps({
                 "system_prompt": prompt,
@@ -228,12 +230,12 @@ async def call_gemini(prompt: str, payload: dict) -> dict:
         )
 
         return json.loads(response.text)
-    
-    except exceptions.ResourceExhausted:
-        print("Quota hit! Sleeping for 35 seconds...")
-        await asyncio.sleep(35)  # Wait for the window to reset
-        return await call_gemini(prompt, payload)  # Retry
-    
+
+    # except exceptions.ResourceExhausted:
+    #     print("Quota hit! Sleeping for 35 seconds...")
+    #     await asyncio.sleep(35)  # Wait for the window to reset
+    #     return await call_gemini(prompt, payload)  # Retry
+
     except ClientError as e:
         raise RuntimeError(f"Gemini API error: {e}")
 
@@ -299,14 +301,51 @@ def getDecisionStrategy(raw_decision: dict) -> dict:
         payload=raw_decision
     )
 
+
+def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
+    phases = list(strategy['practice_roadmap'].values())
+    current_phase = phases[0]
+
+    return {
+        "goal_summary": (
+            f"You are learning {normalized_input['skill_name']},"
+            f"starting at {normalized_input['current_proficiency']} level, "
+            f"with about {normalized_input['available_weekly_time']} each week."
+        ),
+        "learning_philosophy": (
+            f"You will improve through {normalized_input['constraints']['learning_style']} "
+            "and paying attention to what works and what doesn't."
+        ),
+        "current_phase": {
+            "title": current_phase['focus'],
+            "why_this_phase": (
+                "This phase builds the basic skills needed before moving to more complex tasks."
+            )
+        },
+        "this_week_plan": [
+            {
+                "task": "Main Practice Activity",
+                "details": current_phase['primary_loop']
+            }
+        ],
+        "what_to_focus_on": [
+            current_phase['difficulty_balance']
+        ],
+        "how_to_measure_progress": [
+            current_phase['milestone']
+        ]
+    }
+
 # API ROUTES
-@app.route('/api/create_session', methods=['GET', 'POST'])
+
+
+@app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
     return jsonify({"session_id": session_id}), 201
 
 
-@app.route('/api/show_session', methods=['GET', 'POST'])
+@app.route('/api/show_session', methods=['GET'])
 def show_session():
     session_id = request.headers.get('X-Session-ID')
     if session_exists(session_id) == False:
@@ -314,8 +353,8 @@ def show_session():
     return jsonify(loadAiMemory(session_id)), 200
 
 
-@app.route('/api/decision/new', methods=['POST', 'GET'])
-async def new_decision():
+@app.route('/api/decision/new', methods=['POST'])
+def new_decision():
     session_id = request.headers.get('X-Session-ID')
     if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
@@ -325,7 +364,7 @@ async def new_decision():
         return jsonify({"error": "No decision data provided"}), 400
 
     try:
-        ai_result = await getDecisionStrategy(decision_data)
+        ai_result = getDecisionStrategy(decision_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -358,6 +397,22 @@ async def new_decision():
 
     return jsonify({"response": "Strategy Created Successfully",
                     "status": "success"}), 200
+
+
+@app.route("/api/decision/get", methods=['GET'])
+def get_narration():
+    session_id = request.headers.get('X-Session-ID')
+    if not session_exists(session_id):
+        return jsonify({"error": "Session not found"}), 401
+
+    memory = loadAiMemory(session_id)
+
+    narration = build_narration_payload(
+        memory['normalized_return']['normalized_input'],
+        memory['normalized_return']['normalized_strategy']
+    )
+
+    return jsonify(narration), 200
 
 
 if __name__ == '__main__':
