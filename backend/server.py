@@ -407,8 +407,6 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
     }
 
 # API ROUTES
-
-
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
