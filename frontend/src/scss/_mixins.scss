@@ -72,3 +72,53 @@
     line-height: 1.6;
   }
 }
+
+@mixin fieldsetStyle {
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+
+  label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: white;
+    opacity: 0.7;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, #ff6a1a, transparent);
+      border-radius: 1px;
+    }
+  }
+}
+
+@mixin inputStyle {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(25, 25, 35, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #ff6a1a;
+    box-shadow: 0 0 0 3px rgba(255, 106, 26, 0.2);
+    background: rgba(25, 25, 35, 0.9);
+  }
+
+  &:hover {
+    border-color: rgba(255, 106, 26, 0.3);
+  }
+}

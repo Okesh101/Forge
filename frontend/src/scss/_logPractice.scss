@@ -1,6 +1,19 @@
 @use "mixins" as *;
-.path-page {
+.logSession-page {
   @include pageReset;
+  form {
+    fieldset {
+      @include fieldsetStyle;
+      input {
+        @include inputStyle;
+      }
+    }
+  }
+  button {
+    @include btnStyle;
+    width: 100%;
+    margin-top: 30px;
+  }
 }
 // color: black !important;
 //   .narration-page {

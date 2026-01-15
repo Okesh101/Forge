@@ -6,8 +6,11 @@ import { motion } from "framer-motion";
 export default function Narration() {
   // goal_summary, learning_philosophy, current_phase.title,
   // this_week_plan, what_to_focus_on, how_to_measure_progress
+
+  // State to hold narration data
   const [narrationData, setNarrationData] = useState(null);
 
+  // Fetch narration data from the backend API
   useEffect(() => {
     const fetchNarrationData = async () => {
       try {

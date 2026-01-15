@@ -19,30 +19,11 @@ import Loading from "../Loading";
 import { useNavigate } from "react-router-dom";
 
 export default function Form() {
-  // Options for learning styles
-  const learningOptions = [
-    { id: "practice", label: "Practicing" },
-    { id: "explaining", label: "Explaining in my own words" },
-    { id: "watching", label: "Watching examples" },
-    { id: "reading", label: "Reading" },
-    { id: "trial", label: "Trial and error" },
-    { id: "teaching", label: "Teaching others" },
-  ];
-  // Options for challenges faced
-  const challengeOptions = [
-    { id: "motivation", label: "I lose motivation" },
-    { id: "confusion", label: "I get confused" },
-    { id: "boredom", label: "I get bored" },
-    { id: "inconsistent", label: "I'm inconsistent" },
-    { id: "direction", label: "I don't know what to do next" },
-    { id: "procrastination", label: "I avoid starting" },
-  ];
-
+  // State to hold form data
   const [decision_Data, setDecision_Data] = useState({
     goal: "",
     currentLevel: "",
     goalLevel: "",
-    learningStyle: "",
     timeCommitment: 1,
   });
   const [errors, setErrors] = useState({});
@@ -72,10 +53,6 @@ export default function Form() {
     // Validation checks
     if (!decision_Data.goal) {
       newErrors.goal = "This field is required";
-      isValid = false;
-    }
-    if (!decision_Data.skillOrHabit) {
-      newErrors.skillOrHabit = "This field is required";
       isValid = false;
     }
     if (!decision_Data.currentLevel) {
@@ -138,6 +115,9 @@ export default function Form() {
                 <input
                   type="text"
                   placeholder="e.g, Quantum Physics, Learn React"
+                  name="goal"
+                  value={decision_Data.goal}
+                  onChange={handleInputChange}
                 />
               </fieldset>
               {errors.goal && <p className="errorMssg">{errors.goal}</p>}
@@ -151,6 +131,9 @@ export default function Form() {
                   value={decision_Data.currentLevel}
                   onChange={handleInputChange}
                 >
+                  <option value="" disabled>
+                    Select your current level
+                  </option>
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
                   <option value="advanced">Advanced</option>
@@ -170,6 +153,9 @@ export default function Form() {
                   value={decision_Data.goalLevel}
                   onChange={handleInputChange}
                 >
+                  <option value="" disabled>
+                    Select your goal level
+                  </option>
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
                   <option value="advanced">Advanced</option>
@@ -194,9 +180,6 @@ export default function Form() {
                   onChange={handleInputChange}
                 />
               </fieldset>
-              {errors.goalLevel && (
-                <p className="errorMssg">{errors.goalLevel}</p>
-              )}
             </div>
           </form>
           <button type="button" onClick={handleSubmit}>
