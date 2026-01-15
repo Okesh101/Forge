@@ -20,9 +20,9 @@ export default function SideBar() {
         // Handle form button click
         setActiveButton("form");
         break;
-      case "/masteryPath":
-        // Handle masteryPath button click
-        setActiveButton("masteryPath");
+      case "/logSession":
+        // Handle logSession button click
+        setActiveButton("logSession");
         break;
       case "/narration":
         // Handle narration button click
@@ -50,24 +50,28 @@ export default function SideBar() {
       animate={{ x: 0 }}
       transition={{ delay: 0.1, type: "spring", stiffness: 70 }}
     >
-      <button
-        onClick={() => {
-          navigate("/form");
-          setActiveButton("form");
-        }}
-        className={buttonFunction("form")}
-      >
-        Strategy Builder
-      </button>
-      <button
-        onClick={() => {
-          navigate("/masteryPath");
-          setActiveButton("masteryPath");
-        }}
-        className={buttonFunction("masteryPath")}
-      >
-        Log Session
-      </button>
+      {location.pathname === "/form" ? (
+        <button
+          onClick={() => {
+            navigate("/form");
+            setActiveButton("form");
+          }}
+          className={buttonFunction("form")}
+        >
+          Strategy Builder
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            navigate("/logSession");
+            setActiveButton("logSession");
+          }}
+          className={buttonFunction("logSession")}
+        >
+          Log Practice Session
+        </button>
+      )}
+
       <button
         onClick={() => {
           navigate("/narration");
