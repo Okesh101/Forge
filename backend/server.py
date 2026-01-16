@@ -49,7 +49,7 @@ You collect the following information:
 - Skill name
 - Current proficiency level
 - Target proficiency level
-- Available weekly time
+- Available weekly time in hours
 
 Your task:
 1. Normalize raw human input into a precise machine-readable specification.
@@ -78,11 +78,10 @@ Schema you must follow exactly:
     "skill_name": "string",
     "current_level": "number (0-4)",
     "target_level": "number (0-4)",
-    "weekly_time_minutes": "number",
+    "weekly_time_hours": "number",
     "constraints": {
       "learning_style": "string",
-      "dropout_risk": "low | medium | high",
-      "time_flexibility": "low | medium | high"
+      "dropout_risk": "string"
     },
     "inferred_fields": [ "string" ]
   },
@@ -100,6 +99,7 @@ Schema you must follow exactly:
         "cycle_index": 1,
         "duration_weeks": "number",
         "focus_summary": "string",
+        "short_explanation": "string",
         "weekly_loop": {
           "primary_activity": "string",
           "secondary_activity": "string"
@@ -365,48 +365,57 @@ def getLevel(level: int) -> str:
 
 
 def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
-    # phases = list(strategy['practice_roadmap'].values())
-    # current_phase = phases[0]
-    first_cycle = strategy['practice_cycles'][0]
+    total_cycles = strategy['practice_cycles']
+    cycles = []
+    for cycle in total_cycles:
+        cycles.append({
+            # "cycle_index": cycle['cycle_index'],
+            "current_phase": {
+                "title": cycle['focus_summary'],
+                "weeks": cycle['duration_weeks'],
+                "why_this_phase": (
+                    cycle['short_explanation'],
+                )
+            },
+            "this_week_plan": [
+                {
+                    "task": "Main Practice Activity",
+                    "details": cycle['weekly_loop']['primary_activity'],
+                },
+                {
+                    "task": "Secondary Practice Activity",
+                    "details": cycle['weekly_loop']['secondary_activity'],
+                }
+            ],
+            "what_to_focus_on": [
+                cycle['difficulty_profile']['challenging'],
+            ],
+            "how_to_measure_progress": [
+                cycle['success_markers']['objective']
+                + cycle['success_markers']['subjective']
+            ]
+        })
 
     return {
-        "goal_summary": (
-            f"You are learning {normalized_input['skill_name']},"
-            f"starting at {getLevel(normalized_input['current_level'])} level, "
-            f"towards {getLevel(normalized_input['target_level'])} level, "
-            f"with about {normalized_input['weekly_time_minutes']} minutes per week."
-        ),
-        "learning_philosophy": (
-            f"The plan favours a {normalized_input['constraints']['learning_style']} "
-            "learning style and paying attention to what works and what doesn't "
-            f"while managing a {normalized_input['constraints']['dropout_risk']} risk of dropping out."
-        ),
-        "current_phase": {
-            "title": first_cycle['focus_summary'],
-            "why_this_phase": (
-                "This phase builds the basic skills needed before moving to more complex tasks."
+        "static": {
+            "goal_summary": (
+                f"You are learning {normalized_input['skill_name']},"
+                f"starting at {getLevel(normalized_input['current_level'])} level, "
+                f"towards {getLevel(normalized_input['target_level'])} level, "
+                f"with an average of {normalized_input['weekly_time_hours']} hours per week."
+            ),
+            "learning_philosophy": (
+                f"The plan favours a {normalized_input['constraints']['learning_style']} "
+                "learning style and paying attention to what works and what doesn't "
+                f"while managing a {normalized_input['constraints']['dropout_risk']} risk of dropping out."
             )
         },
-        "this_week_plan": [
-            {
-                "task": "Main Practice Activity",
-                "details": first_cycle['weekly_loop']['primary_activity'],
-            },
-            {
-                "task": "Secondary Practice Activity",
-                "details": first_cycle['weekly_loop']['secondary_activity'],
-            }
-        ],
-        "what_to_focus_on": [
-            first_cycle['difficulty_profile']['challenging'],
-        ],
-        "how_to_measure_progress": [
-            first_cycle['success_markers']['objective']
-            + first_cycle['success_markers']['subjective']
-        ]
+        "dynamic": cycles
     }
 
 # API ROUTES
+
+
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
@@ -439,9 +448,10 @@ def new_decision():
     memory = loadAiMemory(session_id)
 
     memory['skill'] = {
-        "name": decision_data.get('skillOrHabit'),
+        "name": decision_data.get('goal'),
         "level": decision_data.get('currentLevel'),
-        "weekly_time_minutes": decision_data.get('timeCommitment')
+        "targetLevel": decision_data.get('goalLevel'),
+        "weekly_time_hours": decision_data.get('timeCommitment')
     }
 
     memory['current_strategy'] = ai_result['strategy']
@@ -532,13 +542,15 @@ def log_practice():
 
     memory['practice_logs'].append({
         "date": current_time.isoformat(),
-        "activity": practice_data.get('activity'),
-        "difficulty_rating": practice_data.get('difficulty_rating'),
-        "reflection": practice_data.get('reflection'),
-        "analysis": {
-            "effort_level": practice_data.get('effort_level'),
-            "friction": practice_data.get('friction')
-        }
+        "activity": practice_data.get('focusContent'),
+        "duration_minutes": practice_data.get('duration'),
+        "difficulty_rating": practice_data.get('difficulty'),
+        "fatigue_level": practice_data.get('fatigueLevel'),
+        # "reflection": practice_data.get('reflection'),
+        # "analysis": {
+        #     "effort_level": practice_data.get('effort_level'),
+        #     "friction": practice_data.get('friction')
+        # }
     })
 
     memory['timeline'].append({
@@ -566,8 +578,14 @@ def log_practice():
 
     saveAiMemory(session_id, memory)
 
+    countLogs = loadAiMemory(session_id)['practice_logs'].__len__()
+    count = False
+    if countLogs % 3 == 0:
+        count = True
+
     return jsonify({"response": "Practice log created successfully",
-                    "status": "success"}), 201
+                    "status": "success",
+                    "count": count}), 201
 
 
 @app.route('/api/practice/logs', methods=['GET'])

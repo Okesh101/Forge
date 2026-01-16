@@ -1,0 +1,36 @@
+{
+    "session_id": "14f69b76-db49-4973-a03e-aa6a78c0ace7",
+    "created_at": "2026-01-16T13:27:01.960435",
+    "skill": {},
+    "current_strategy": null,
+    "practice_logs": [],
+    "strategy_history": [],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "49348fcc-f2d7-11f0-8252-a0481cdf2fa0",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-16T13:27:01.960435",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {},
+        "normalized_strategy": {}
+    }
+}
