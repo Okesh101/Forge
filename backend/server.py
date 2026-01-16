@@ -369,6 +369,7 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
     cycles = []
     for cycle in total_cycles:
         cycles.append({
+            "current_cycle_index": cycle['cycle_index'],
             "current_phase": {
                 "title": cycle['focus_summary'],
                 "weeks": cycle['duration_weeks'],
@@ -376,16 +377,16 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
                     cycle['short_explanation'],
                 )
             },
-            "this_week_plan": [
-                {
+            "this_week_plan": {                
+                "primary": {
                     "task": "Main Practice Activity",
                     "details": cycle['weekly_loop']['primary_activity'],
                 },
-                {
+                "secondary": {
                     "task": "Secondary Practice Activity",
                     "details": cycle['weekly_loop']['secondary_activity'],
                 }
-            ],
+            },
             "what_to_focus_on": [
                 cycle['difficulty_profile']['challenging'],
             ],
@@ -398,9 +399,9 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
     return {
         "static": {
             "goal_summary": (
-                f"You are learning {normalized_input['skill_name']},"
-                f"starting at {getLevel(normalized_input['current_level'])} level, "
-                f"towards {getLevel(normalized_input['target_level'])} level, "
+                f"You are learning {normalized_input['skill_name']} "
+                f"starting at {getLevel(normalized_input['current_level'])} level "
+                f"towards {getLevel(normalized_input['target_level'])} level "
                 f"with an average of {normalized_input['weekly_time_hours']} hours per week."
             ),
             "learning_philosophy": (
@@ -613,7 +614,7 @@ def get_practice_logs():
 if __name__ == '__main__':
     # scheduler.add_job(id='Scheduled Task', func=printer, trigger='interval', seconds=30)
     scheduler.start()
-    app.run(debug=True)
+    app.run(debug=False)
 
 
 # 🧬 FULL SESSION MEMORY SCHEMA(V1)

@@ -19,6 +19,7 @@ import Loading from "../Loading";
 import { useNavigate } from "react-router-dom";
 
 export default function Form() {
+  const SESSION_ID = sessionStorage.getItem("sessionId");
   // State to hold form data
   const [decision_Data, setDecision_Data] = useState({
     goal: "",
@@ -78,7 +79,7 @@ export default function Form() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Session-ID": sessionId,
+            "X-Session-ID": SESSION_ID,
           },
           body: JSON.stringify({ decision_Data }),
         });
