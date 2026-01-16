@@ -55,6 +55,42 @@ export default function LogPracticeSession() {
     }
     setFieldError(newErrors);
   };
+
+  const logPracticeData = [
+    {
+      id: 1,
+      focusContent: "I created a component in react",
+      duration: "30",
+      difficulty: 5,
+      fatigueLevel: 3,
+      date: "12/02/2025",
+    },
+    {
+      id: 2,
+      focusContent: "I tried to step up my game by using typescript",
+      duration: "60",
+      difficulty: 10,
+      fatigueLevel: 1,
+      date: "11/02/2025",
+    },
+    {
+      id: 3,
+      focusContent: "Learnt to use side effect rendering with useEffect",
+      duration: "20",
+      difficulty: 6,
+      fatigueLevel: 7,
+      date: "10/02/2025",
+    },
+    {
+      id: 4,
+      focusContent: "Learnt state management(ContextApi)",
+      duration: "10",
+      difficulty: 5,
+      fatigueLevel: 10,
+      date: "09/02/2025",
+    },
+  ];
+
   return (
     <>
       <SideBar />
@@ -80,7 +116,6 @@ export default function LogPracticeSession() {
                 <p className="errorMssg">{fieldError.focusContent}</p>
               )}
             </div>
-
             <section
               style={{
                 display: "flex",
@@ -120,7 +155,6 @@ export default function LogPracticeSession() {
                 )}
               </div>
             </section>
-
             <div className="field">
               <fieldset>
                 <label htmlFor="fatigueLevel">FATIGUE LEVEL (1-10)</label>
@@ -138,6 +172,28 @@ export default function LogPracticeSession() {
           <button type="button" onClick={handleSubmit}>
             Submit Log
           </button>
+
+          <div className="logSession_list">
+            <h3>Log Practice History</h3>
+            {logPracticeData.map((item) => (
+              <div className="logPracticeCard" key={item.id}>
+                <b style={{ color: "rgba(250, 92, 7, 0.81)" }}>{item.date}</b>
+                <em>{item.focusContent}</em>
+                <small>
+                  <span>DURATION: </span>
+                  {item.duration}
+                </small>
+                <small>
+                  <span>DIFFICULTY: </span>
+                  {item.difficulty}
+                </small>
+                <small>
+                  <span>FATIGUE LEVEL: </span>
+                  {item.fatigueLevel}
+                </small>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>

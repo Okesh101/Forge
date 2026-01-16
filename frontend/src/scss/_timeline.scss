@@ -15,9 +15,9 @@
     }
   }
   .timeline_details {
-    // background-image: url("../public/backgroung.jpg");
-    // background-repeat: no-repeat;
-    // background-size: cover;
+    background-image: url("../public/backgroung.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
     border-left: 3px solid red;
     width: 100%;
     max-width: 600px;
@@ -49,7 +49,7 @@
         align-items: center;
         gap: 15px;
         position: absolute;
-        left: -120px;
+        left: -80px;
         width: 100px;
         z-index: 1;
         p {
@@ -57,26 +57,27 @@
           font-weight: bold;
           text-align: left;
         }
+
         .circle {
           background-color: blue;
           width: 100%;
           max-width: 10px;
           height: 10px;
           border-radius: 50%;
-          position: absolute;
-          right: -13px;
-          left: auto;
+          // position: absolute;
+          // right: -13px;
+          // // left: -4px;
           margin: 0;
           cursor: pointer;
           transition: transform 0.2s ease;
           &:hover {
             transform: scale(1.5);
           }
-          &:hover + .card_details {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-          }
+        }
+        &:hover + .card_details {
+          opacity: 1;
+          visibility: visible;
+          transform: translateX(0);
         }
       }
     }

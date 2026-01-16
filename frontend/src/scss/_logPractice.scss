@@ -18,6 +18,34 @@
     width: 100%;
     margin-top: 30px;
   }
+  .logSession_list {
+    background: rgba(30, 30, 40, 0.8);
+    border-radius: 5px;
+    // padding: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 40px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .logPracticeCard {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 106, 26, 0.1),
+        rgba(255, 140, 66, 0.05)
+      );
+      border: 1px solid rgba(255, 106, 26, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      span {
+        opacity: 0.6;
+        font-size: 15px;
+        font-weight: bold;
+      }
+    }
+  }
 }
 // color: black !important;
 //   .narration-page {
