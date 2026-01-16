@@ -1,8 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
+import { useNavigate } from "react-router-dom";
 
 export default function LogPracticeSession() {
+  const [logSessionData, setLogSessionData] = useState({
+    focusContent: "",
+    duration: "",
+    difficulty: "",
+    fatigueLevel: 1,
+  });
+  const [fieldError, setFieldError] = useState({});
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setLogSessionData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    let isValid = true;
+    const newErrors = {};
+    if (!logSessionData.focusContent) {
+      newErrors.focusContent = "This field is required";
+      isValid = false;
+    }
+    if (!logSessionData.duration) {
+      newErrors.duration = "This field is required";
+      isValid = false;
+    } else if (isNaN(logSessionData.duration)) {
+      newErrors.duration = "Numbers only";
+      isValid = false;
+    }
+    if (!logSessionData.difficulty) {
+      newErrors.difficulty = "This field is required";
+      isValid = false;
+    } else if (isNaN(logSessionData.difficulty)) {
+      newErrors.difficulty = "Numbers only";
+      isValid = false;
+    }
+
+    if (isValid) {
+      const processedData = {
+        ...LogPracticeSession,
+        duration: Number(logSessionData.duration),
+        difficulty: Number(logSessionData.difficulty),
+      };
+      // navigate("/analytics");
+      console.log(processedData);
+    }
+    setFieldError(newErrors);
+  };
   return (
     <>
       <SideBar />
@@ -15,10 +67,18 @@ export default function LogPracticeSession() {
           <form>
             <div className="field">
               <fieldset>
-                <label>FOCUS CONTENT</label>
-                <input type="text" placeholder="What did you work on" />
+                <label htmlFor="focusContent">FOCUS CONTENT</label>
+                <input
+                  type="text"
+                  value={logSessionData.focusContent}
+                  name="focusContent"
+                  placeholder="What did you work on"
+                  onChange={handleChange}
+                />
               </fieldset>
-              {/* {errors.goal && <p className="errorMssg">{errors.goal}</p>} */}
+              {fieldError.focusContent && (
+                <p className="errorMssg">{fieldError.focusContent}</p>
+              )}
             </div>
 
             <section
@@ -31,28 +91,53 @@ export default function LogPracticeSession() {
             >
               <div className="field" style={{ width: "100%" }}>
                 <fieldset>
-                  <label>DURATION (MIN)</label>
-                  <input type="number" />
+                  <label htmlFor="duration">DURATION (MINUTES)</label>
+                  <input
+                    type="text"
+                    value={logSessionData.duration}
+                    name="duration"
+                    inputMode="numeric"
+                    onChange={handleChange}
+                  />
                 </fieldset>
-                {/* {errors.goal && <p className="errorMssg">{errors.goal}</p>} */}
+                {fieldError.duration && (
+                  <p className="errorMssg">{fieldError.duration}</p>
+                )}
               </div>
               <div className="field" style={{ width: "100%" }}>
                 <fieldset>
-                  <label>DIFFICULTY (1-10)</label>
-                  <input type="number" />
+                  <label htmlFor="difficulty">DIFFICULTY (1-10)</label>
+                  <input
+                    type="text"
+                    value={logSessionData.difficulty}
+                    name="difficulty"
+                    inputMode="numeric"
+                    onChange={handleChange}
+                  />
                 </fieldset>
-                {/* {errors.goal && <p className="errorMssg">{errors.goal}</p>} */}
+                {fieldError.difficulty && (
+                  <p className="errorMssg">{fieldError.difficulty}</p>
+                )}
               </div>
             </section>
 
             <div className="field">
               <fieldset>
-                <label>FATIGUE LEVEL (1-10)</label>
-                <input type="range" min="1" max="10" />
+                <label htmlFor="fatigueLevel">FATIGUE LEVEL (1-10)</label>
+                <input
+                  type="range"
+                  value={logSessionData.fatigueLevel}
+                  name="fatigueLevel"
+                  min="1"
+                  max="10"
+                  onChange={handleChange}
+                />
               </fieldset>
             </div>
           </form>
-          <button type="button">Submit Log</button>
+          <button type="button" onClick={handleSubmit}>
+            Submit Log
+          </button>
         </div>
       </div>
     </>

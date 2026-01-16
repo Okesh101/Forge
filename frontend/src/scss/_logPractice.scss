@@ -8,6 +8,10 @@
         @include inputStyle;
       }
     }
+    .errorMssg {
+      color: red;
+      font-size: 13px;
+    }
   }
   button {
     @include btnStyle;
