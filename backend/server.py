@@ -369,7 +369,6 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
     cycles = []
     for cycle in total_cycles:
         cycles.append({
-            # "cycle_index": cycle['cycle_index'],
             "current_phase": {
                 "title": cycle['focus_summary'],
                 "weeks": cycle['duration_weeks'],
