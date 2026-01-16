@@ -168,17 +168,36 @@ export default function Form() {
             </div>
             <div className="field">
               <fieldset>
-                <label htmlFor="timeCommitment">
-                  WEEKLY COMMITMENT: {decision_Data.timeCommitment}
+                <label
+                  htmlFor="timeCommitment"
+                  style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                >
+                  WEEKLY COMMITMENT:
+                  <span style={{ color: "#ff6a1a", fontSize: "18px" }}>
+                    {decision_Data.timeCommitment} HOURS
+                  </span>
                 </label>
                 <input
                   name="timeCommitment"
                   type="range"
                   min="1"
-                  max="40"
+                  max="168"
                   value={decision_Data.timeCommitment}
                   onChange={handleInputChange}
                 />
+                <div
+                  className="footer"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "-23px",
+                    opacity: 0.5,
+                    fontWeight: "bold",
+                  }}
+                >
+                  <p>1</p>
+                  <p>168</p>
+                </div>
               </fieldset>
             </div>
           </form>

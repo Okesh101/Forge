@@ -26,7 +26,7 @@ export default function Loading() {
             </motion.span>
           ))}
         </div>
-        <p>Contacting Gemini API</p>
+        <p>Designing Your Strategy...</p>
       </div>
     </div>
   );
