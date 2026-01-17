@@ -99,7 +99,7 @@ Schema you must follow exactly:
         "cycle_index": 1,
         "duration_weeks": "number",
         "focus_summary": "string",
-        "short_explanation": "string",
+        "short_explanation_for_cycle": "string", (NOTE: Direct this message as if you're telling the user what to do.)
         "weekly_loop": {
           "primary_activity": "string",
           "secondary_activity": "string"
@@ -132,35 +132,72 @@ Output STRICT JSON only.
 forge_analyzer = """
 You are FORGE-ANALYZER.
 
-Your role is to analyze individual practice sessions.
+Your role is to analyze a SINGLE practice session in context.
 
-You detect:
-- Friction
-- Overload
-- Under-challenge
-- Emotional interference
+You do NOT:
+- Change the strategy
+- Recommend actions
+- Motivate the user
+- Predict future outcomes
 
-You do NOT change the strategy.
-You only observe and classify.
+You ONLY observe, classify, and score signals.
 
-You collect the following information after each practice session:
-- Practice session data:
-    - Activity
-    - Difficulty (1–5)
-    - Reflection notes
-- Current Strategy Summary:
-    - Strategy snapshot
+You think carefully because human self-reports are noisy.
 
-You output the following:
-- session_analysis: 
-    - effort_level,
-    - challenge_alignment,
-    - friction_signals,
-    - positive_signals
-- flags
-- confidence_score in your analysis (0–1)
+Inputs you receive:
+1. Practice Session Data:
+   - activity (string)
+   - duration_minutes (number)
+   - difficulty_rating (1–5)
+   - fatigue_level (1–5)
+   - optional reflection text
 
-Remain neutral and evidence-focused.
+2. Current Strategy Snapshot:
+   - current cycle focus
+   - intended difficulty balance
+   - intended primary activity
+
+Your task:
+Extract interpretable signals from this session.
+
+You must detect:
+- Effort quality (not just duration)
+- Challenge alignment vs intended difficulty
+- Friction signals
+- Positive reinforcement signals
+
+Rules:
+- Base conclusions only on evidence
+- If evidence is weak, say so
+- Prefer “uncertain” over guessing
+- Remain neutral and analytical
+
+Output STRICT JSON only.
+No commentary outside JSON.
+
+You MUST follow this schema exactly:
+
+{
+  "session_analysis": {
+    "effort_level": "low | moderate | high",
+    "challenge_alignment": "under-challenged | aligned | over-challenged",
+    "friction_signals": [ "string" ],
+    "positive_signals": [ "string" ]
+  },
+
+  "flags": {
+    "fatigue_risk": true | false,
+    "motivation_risk": true | false,
+    "overload_risk": true | false
+  },
+
+  "analysis_confidence": "number (0–1)",
+
+  "analysis_notes": [
+    "Short evidence-based observations explaining key classifications"
+  ]
+}
+
 """
 
 forge_optimizer = """
@@ -374,10 +411,10 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
                 "title": cycle['focus_summary'],
                 "weeks": cycle['duration_weeks'],
                 "why_this_phase": (
-                    cycle['short_explanation'],
+                    cycle['short_explanation_for_cycle'],
                 )
             },
-            "this_week_plan": {                
+            "this_week_plan": {
                 "primary": {
                     "task": "Main Practice Activity",
                     "details": cycle['weekly_loop']['primary_activity'],
@@ -388,12 +425,13 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
                 }
             },
             "what_to_focus_on": [
-                cycle['difficulty_profile']['challenging'],
+                f"You will start with {cycle['difficulty_profile']['comfortable']} "
+                f"and gradually work towards {cycle['difficulty_profile']['challenging']}."
             ],
-            "how_to_measure_progress": [
-                cycle['success_markers']['objective']
-                + cycle['success_markers']['subjective']
-            ]
+            # "how_to_measure_progress": [
+            #     cycle['success_markers']['objective']
+            #     + cycle['success_markers']['subjective']
+            # ]
         })
 
     return {
@@ -405,7 +443,7 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
                 f"with an average of {normalized_input['weekly_time_hours']} hours per week."
             ),
             "learning_philosophy": (
-                f"The plan favours a {normalized_input['constraints']['learning_style']} "
+                f"The plan favours {normalized_input['constraints']['learning_style']} "
                 "learning style and paying attention to what works and what doesn't "
                 f"while managing a {normalized_input['constraints']['dropout_risk']} risk of dropping out."
             )
@@ -413,9 +451,23 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
         "dynamic": cycles
     }
 
+
+def callAnalyzer(session_id: str) -> dict:
+    memory = loadAiMemory(session_id)
+    countLogs = memory['practice_logs'].__len__()
+    if countLogs % 3 == 0:
+        return call_gemini_for_deeper_reasoning(
+            prompt=forge_analyzer,
+            payload={
+                "practice_session": memory['practice_logs'][-1],
+                "current_strategy_snapshot": memory['current_strategy']
+            }
+        )
+    else:
+        return
+
+
 # API ROUTES
-
-
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
@@ -577,15 +629,30 @@ def log_practice():
     })
 
     saveAiMemory(session_id, memory)
+    geminiAnalysis = callAnalyzer(session_id)
 
-    countLogs = loadAiMemory(session_id)['practice_logs'].__len__()
-    count = False
-    if countLogs % 3 == 0:
-        count = True
+    if geminiAnalysis:
+        memory = loadAiMemory(session_id)
+        memory['practice_logs'][-1]['analysis'] = geminiAnalysis
+        memory['timeline'].append({
+            "id": str(uuid.uuid1()),
+            "event": "session_analyzed",
+            "actor": "ai",
+            "timestamp": current_time.isoformat(),
+            "title": "Practice Session Analyzed",
+            "summary": "",
+            "details": {},
+            "visibilty": {
+                "show_on_timeline": True,
+                "clickable": True
+            }
+        })  # Still gotta fix this timeline updater
+        saveAiMemory(session_id, memory)
+    else:
+        return
 
     return jsonify({"response": "Practice log created successfully",
-                    "status": "success",
-                    "count": count}), 201
+                    "status": "success"}), 201
 
 
 @app.route('/api/practice/logs', methods=['GET'])
@@ -614,7 +681,7 @@ def get_practice_logs():
 if __name__ == '__main__':
     # scheduler.add_job(id='Scheduled Task', func=printer, trigger='interval', seconds=30)
     scheduler.start()
-    app.run(debug=False)
+    app.run(debug=True)
 
 
 # 🧬 FULL SESSION MEMORY SCHEMA(V1)

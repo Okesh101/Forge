@@ -1,0 +1,298 @@
+{
+    "session_id": "66893e37-c156-4e5a-8583-30cad0c34909",
+    "created_at": "2026-01-17T00:11:52.345354",
+    "skill": {
+        "name": "Learn Django",
+        "level": "beginner",
+        "targetLevel": "intermediate",
+        "weekly_time_hours": "8"
+    },
+    "current_strategy": {
+        "strategy_version": 1,
+        "skill_model": {
+            "core_components": [
+                "Model-Template-View (MTV) architecture",
+                "Django ORM and QuerySets",
+                "URL Routing",
+                "Form handling and validation"
+            ],
+            "supporting_components": [
+                "User authentication and permissions",
+                "Middleware and Signals",
+                "Django REST Framework (DRF) basics",
+                "Deployment and environment configuration"
+            ]
+        },
+        "practice_cycles": [
+            {
+                "cycle_index": 1,
+                "duration_weeks": 4,
+                "focus_summary": "Establishing the MVT Flow",
+                "short_explanation_for_cycle": "I want you to build small, throwaway apps that focus purely on getting data from a view to a template. Don't worry about the database yet; just master the routing and the request-response cycle.",
+                "weekly_loop": {
+                    "primary_activity": "Building simple functional views and mapping them to unique URLs.",
+                    "secondary_activity": "Experimenting with Django template tags to display dynamic dummy data."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Creating a new view and linking it to a template via a URL.",
+                    "challenging": "Passing complex dictionary structures through context and iterating them in templates without syntax errors."
+                },
+                "success_markers": {
+                    "objective": [
+                        "Successfully route 5 different URLs to 5 unique views.",
+                        "Display data from a view context in a template using logic tags."
+                    ],
+                    "subjective": [
+                        "Feeling less confused by the directory structure.",
+                        "Visualizing the path of a request from browser to view."
+                    ]
+                }
+            },
+            {
+                "cycle_index": 2,
+                "duration_weeks": 4,
+                "focus_summary": "Data Persistence and Forms",
+                "short_explanation_for_cycle": "Now you need to get your hands dirty with the ORM. You'll spend this time defining models and using Django's built-in forms to let users actually interact with your database.",
+                "weekly_loop": {
+                    "primary_activity": "Defining models and performing CRUD operations via the Django shell and admin panel.",
+                    "secondary_activity": "Building ModelForms and rendering them in templates to handle user input."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Running migrations and adding basic fields to a model.",
+                    "challenging": "Handling ForeignKey relationships and performing multi-table queries with the ORM."
+                },
+                "success_markers": {
+                    "objective": [
+                        "Create a functional create/update form that saves data to the DB.",
+                        "Query a specific set of objects using filters in the Django shell."
+                    ],
+                    "subjective": [
+                        "Confidence in managing database migrations without breaking the app.",
+                        "Seeing the power of the ORM instead of manual SQL."
+                    ]
+                }
+            },
+            {
+                "cycle_index": 3,
+                "duration_weeks": 4,
+                "focus_summary": "Logic Integration and Auth",
+                "short_explanation_for_cycle": "This is where it comes together. You'll build a cohesive app that requires users to log in, and you'll start looking at how to protect specific parts of your site.",
+                "weekly_loop": {
+                    "primary_activity": "Integrating Django\u2019s built-in authentication system for login/logout and restricted views.",
+                    "secondary_activity": "Refactoring code into Class-Based Views (CBVs) to reduce boilerplate."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Using login_required decorators on simple function views.",
+                    "challenging": "Overriding default authentication templates or extending the User model."
+                },
+                "success_markers": {
+                    "objective": [
+                        "A working application with at least two user roles (e.g., staff vs regular user).",
+                        "Transitioning at least 3 views from functions to CBVs."
+                    ],
+                    "subjective": [
+                        "Feeling like the 'Django way' of doing things is becoming intuitive.",
+                        "Reduced reliance on external tutorials for basic logic setup."
+                    ]
+                }
+            }
+        ],
+        "evaluation_metrics": {
+            "objective": [
+                "Time taken to build a standard CRUD feature from scratch.",
+                "Number of logic bugs encountered per new feature.",
+                "Correct use of Django conventions (PEP8, naming)."
+            ],
+            "subjective": [
+                "Level of comfort when reading Django documentation.",
+                "Confidence in explaining the MTV flow to someone else.",
+                "Degree of 'magic' felt (aiming for less magic, more understanding)."
+            ]
+        },
+        "architect_notes": [
+            "Django has a steep learning curve due to 'magic' behind the scenes; don't rush into DRF before the core is solid.",
+            "The 8-hour window is tight; stick to 2-hour blocks to maintain focus.",
+            "Avoid the temptation to use complex third-party packages until the core components are mastered."
+        ]
+    },
+    "practice_logs": [],
+    "strategy_history": [
+        {
+            "version": 1,
+            "reason": "Initial strategy",
+            "created_at": "2026-01-17T00:11:52.345354"
+        }
+    ],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "c0e7a91b-f330-11f0-8021-a0481cdf2fa0",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-17T00:11:52.345354",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        },
+        {
+            "id": "d2595386-f330-11f0-b25e-a0481cdf2fa0",
+            "event": "initial_strategy_created",
+            "actor": "ai",
+            "timestamp": "2026-01-17T00:11:52.345354",
+            "title": "Initial Practice Strategy Created",
+            "summary": "Initial practice strategy created for ['Learn Django'].",
+            "details": {
+                "reason": "Sufficient information provided to create initial practice system.",
+                "changes": {
+                    "strategy_version": 1
+                },
+                "evidence": [
+                    "Skill: Learn Django",
+                    "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {
+            "skill_name": "Django",
+            "current_level": 1,
+            "target_level": 3,
+            "weekly_time_hours": 8,
+            "constraints": {
+                "learning_style": "Project-based application",
+                "dropout_risk": "High complexity of framework abstractions"
+            },
+            "inferred_fields": [
+                "learning_style",
+                "dropout_risk",
+                "current_level mapping",
+                "target_level mapping"
+            ]
+        },
+        "normalized_strategy": {
+            "strategy_version": 1,
+            "skill_model": {
+                "core_components": [
+                    "Model-Template-View (MTV) architecture",
+                    "Django ORM and QuerySets",
+                    "URL Routing",
+                    "Form handling and validation"
+                ],
+                "supporting_components": [
+                    "User authentication and permissions",
+                    "Middleware and Signals",
+                    "Django REST Framework (DRF) basics",
+                    "Deployment and environment configuration"
+                ]
+            },
+            "practice_cycles": [
+                {
+                    "cycle_index": 1,
+                    "duration_weeks": 4,
+                    "focus_summary": "Establishing the MVT Flow",
+                    "short_explanation_for_cycle": "I want you to build small, throwaway apps that focus purely on getting data from a view to a template. Don't worry about the database yet; just master the routing and the request-response cycle.",
+                    "weekly_loop": {
+                        "primary_activity": "Building simple functional views and mapping them to unique URLs.",
+                        "secondary_activity": "Experimenting with Django template tags to display dynamic dummy data."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Creating a new view and linking it to a template via a URL.",
+                        "challenging": "Passing complex dictionary structures through context and iterating them in templates without syntax errors."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Successfully route 5 different URLs to 5 unique views.",
+                            "Display data from a view context in a template using logic tags."
+                        ],
+                        "subjective": [
+                            "Feeling less confused by the directory structure.",
+                            "Visualizing the path of a request from browser to view."
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 2,
+                    "duration_weeks": 4,
+                    "focus_summary": "Data Persistence and Forms",
+                    "short_explanation_for_cycle": "Now you need to get your hands dirty with the ORM. You'll spend this time defining models and using Django's built-in forms to let users actually interact with your database.",
+                    "weekly_loop": {
+                        "primary_activity": "Defining models and performing CRUD operations via the Django shell and admin panel.",
+                        "secondary_activity": "Building ModelForms and rendering them in templates to handle user input."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Running migrations and adding basic fields to a model.",
+                        "challenging": "Handling ForeignKey relationships and performing multi-table queries with the ORM."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Create a functional create/update form that saves data to the DB.",
+                            "Query a specific set of objects using filters in the Django shell."
+                        ],
+                        "subjective": [
+                            "Confidence in managing database migrations without breaking the app.",
+                            "Seeing the power of the ORM instead of manual SQL."
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 3,
+                    "duration_weeks": 4,
+                    "focus_summary": "Logic Integration and Auth",
+                    "short_explanation_for_cycle": "This is where it comes together. You'll build a cohesive app that requires users to log in, and you'll start looking at how to protect specific parts of your site.",
+                    "weekly_loop": {
+                        "primary_activity": "Integrating Django\u2019s built-in authentication system for login/logout and restricted views.",
+                        "secondary_activity": "Refactoring code into Class-Based Views (CBVs) to reduce boilerplate."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Using login_required decorators on simple function views.",
+                        "challenging": "Overriding default authentication templates or extending the User model."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "A working application with at least two user roles (e.g., staff vs regular user).",
+                            "Transitioning at least 3 views from functions to CBVs."
+                        ],
+                        "subjective": [
+                            "Feeling like the 'Django way' of doing things is becoming intuitive.",
+                            "Reduced reliance on external tutorials for basic logic setup."
+                        ]
+                    }
+                }
+            ],
+            "evaluation_metrics": {
+                "objective": [
+                    "Time taken to build a standard CRUD feature from scratch.",
+                    "Number of logic bugs encountered per new feature.",
+                    "Correct use of Django conventions (PEP8, naming)."
+                ],
+                "subjective": [
+                    "Level of comfort when reading Django documentation.",
+                    "Confidence in explaining the MTV flow to someone else.",
+                    "Degree of 'magic' felt (aiming for less magic, more understanding)."
+                ]
+            },
+            "architect_notes": [
+                "Django has a steep learning curve due to 'magic' behind the scenes; don't rush into DRF before the core is solid.",
+                "The 8-hour window is tight; stick to 2-hour blocks to maintain focus.",
+                "Avoid the temptation to use complex third-party packages until the core components are mastered."
+            ]
+        }
+    }
+}
