@@ -18,6 +18,7 @@ export default function LandingPage() {
       const data = await res.json();
 
       setSessionId(data.session_id);
+      sessionStorage.setItem("sessionId", data.session_id);
       // If session creation is successful, navigate to form page
       if (res.status === 201) {
         navigate("/form");
