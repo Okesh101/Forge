@@ -123,7 +123,7 @@ export default function Narration() {
                 <small> {item.this_week_plan.secondary.details} </small>
                 {/* <span>{item.current_phase.summary}</span> */}
                 <small> {item.what_to_focus_on} </small>
-                <small> {item.how_to_measure_progress} </small>
+                {/* <small> {item.how_to_measure_progress} </small> */}
               </motion.div>
             ))}
           </div>
