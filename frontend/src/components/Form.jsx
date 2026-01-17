@@ -175,14 +175,15 @@ export default function Form() {
                 >
                   WEEKLY COMMITMENT:
                   <span style={{ color: "#ff6a1a", fontSize: "18px" }}>
-                    {decision_Data.timeCommitment} HOURS
+                    {decision_Data.timeCommitment}
+                    {decision_Data.timeCommitment === 1 ? "HOUR" : "HOURS"}
                   </span>
                 </label>
                 <input
                   name="timeCommitment"
                   type="range"
                   min="1"
-                  max="168"
+                  max="84"
                   value={decision_Data.timeCommitment}
                   onChange={handleInputChange}
                 />
@@ -196,8 +197,8 @@ export default function Form() {
                     fontWeight: "bold",
                   }}
                 >
-                  <p>1</p>
-                  <p>168</p>
+                  <p>Casual(1h)</p>
+                  <p>Intense(84)</p>
                 </div>
               </fieldset>
             </div>

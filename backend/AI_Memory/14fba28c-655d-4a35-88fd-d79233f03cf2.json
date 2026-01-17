@@ -1,0 +1,252 @@
+{
+    "session_id": "14fba28c-655d-4a35-88fd-d79233f03cf2",
+    "created_at": "2026-01-17T09:45:33.993493",
+    "skill": {
+        "name": "Learn TypeScript",
+        "level": "beginner",
+        "targetLevel": "intermediate",
+        "weekly_time_hours": "11"
+    },
+    "current_strategy": {
+        "strategy_version": 1,
+        "skill_model": {
+            "core_components": [
+                "Static Type Definitions (Interfaces, Types, Enums)",
+                "Generics and Utility Types",
+                "Type Narrowing and Guarding",
+                "Compiler Configuration (tsconfig.json)",
+                "Integration with JavaScript Ecosystem"
+            ],
+            "supporting_components": [
+                "Modern ECMAScript Patterns",
+                "IDE Tooling (VS Code Introspection)",
+                "Build Tools (Webpack/Vite Integration)",
+                "Asynchronous Programming Patterns"
+            ]
+        },
+        "practice_cycles": [
+            {
+                "cycle_index": 1,
+                "duration_weeks": 4,
+                "focus_summary": "Syntactic Familiarity and Environment Setup",
+                "short_explanation_for_cycle": "Start by migrating small existing JavaScript logic into TypeScript files and resolving every red squiggle the compiler throws at you. You need to get comfortable with the 'strict' flag early on.",
+                "weekly_loop": {
+                    "primary_activity": "Refactoring small JS modules to TS using basic interfaces and primitive types.",
+                    "secondary_activity": "Studying the official TS handbook's 'Everyday Types' section to understand the difference between 'type' and 'interface'."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Defining types for simple function parameters and object literals.",
+                    "challenging": "Correctly typing third-party libraries that lack built-in type definitions."
+                },
+                "success_markers": {
+                    "objective": [
+                        "Zero errors in tsconfig 'strict' mode for a 500-line project.",
+                        "Completion of basic CRUD interface definitions."
+                    ],
+                    "subjective": [
+                        "Feeling less annoyed by compiler errors and viewing them as helpful hints.",
+                        "Recognizing when an 'any' type is a shortcut that should be avoided."
+                    ]
+                }
+            },
+            {
+                "cycle_index": 2,
+                "duration_weeks": 6,
+                "focus_summary": "Abstraction and Advanced Type Logic",
+                "short_explanation_for_cycle": "Shift your focus toward making your types more flexible. You'll build generic components and use mapped types to transform data structures without losing type safety.",
+                "weekly_loop": {
+                    "primary_activity": "Implementing generic functions and classes that work across different data models.",
+                    "secondary_activity": "Deep-diving into Type Guards (is) and Assertion functions to handle dynamic data."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Using built-in utility types like Pick, Partial, and Omit.",
+                    "challenging": "Writing complex generic constraints and conditional types for API responses."
+                },
+                "success_markers": {
+                    "objective": [
+                        "Implementation of at least 3 custom generic utilities.",
+                        "No use of 'any' or 'as' casting in the codebase."
+                    ],
+                    "subjective": [
+                        "Ability to read and understand the type definitions of popular open-source libraries.",
+                        "Confidence in designing types before writing the actual logic."
+                    ]
+                }
+            }
+        ],
+        "evaluation_metrics": {
+            "objective": [
+                "Ratio of type-safe code vs. type-casting/assertions.",
+                "Build time success rate on first attempt.",
+                "Complexity of generic constraints used in personal projects."
+            ],
+            "subjective": [
+                "The speed at which I can resolve a type mismatch error.",
+                "How often I rely on external documentation for basic type syntax.",
+                "Sense of security felt when refactoring large sections of code."
+            ]
+        },
+        "architect_notes": [
+            "The 11-hour weekly commitment allows for two 4-hour deep-work blocks and three 1-hour maintenance sessions.",
+            "I am prioritizing 'Strict Mode' from week 1 to prevent the accumulation of 'type debt'.",
+            "I'm assuming the learner already knows JavaScript fundamentals; if not, Cycle 1 will be significantly harder."
+        ]
+    },
+    "practice_logs": [],
+    "strategy_history": [
+        {
+            "version": 1,
+            "reason": "Initial strategy",
+            "created_at": "2026-01-17T09:45:33.993493"
+        }
+    ],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "e872c705-f380-11f0-b87f-d4bed912d276",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-17T09:45:33.993493",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        },
+        {
+            "id": "85733e34-f383-11f0-b954-d4bed912d276",
+            "event": "initial_strategy_created",
+            "actor": "ai",
+            "timestamp": "2026-01-17T09:45:33.993493",
+            "title": "Initial Practice Strategy Created",
+            "summary": "Initial practice strategy created for ['Learn TypeScript'].",
+            "details": {
+                "reason": "Sufficient information provided to create initial practice system.",
+                "changes": {
+                    "strategy_version": 1
+                },
+                "evidence": [
+                    "Skill: Learn TypeScript",
+                    "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {
+            "skill_name": "TypeScript",
+            "current_level": 1,
+            "target_level": 3,
+            "weekly_time_hours": 11,
+            "constraints": {
+                "learning_style": "Applied project-based learning with incremental complexity",
+                "dropout_risk": "Frustration with compiler strictness and configuration overhead"
+            },
+            "inferred_fields": [
+                "current_level",
+                "target_level",
+                "learning_style",
+                "dropout_risk"
+            ]
+        },
+        "normalized_strategy": {
+            "strategy_version": 1,
+            "skill_model": {
+                "core_components": [
+                    "Static Type Definitions (Interfaces, Types, Enums)",
+                    "Generics and Utility Types",
+                    "Type Narrowing and Guarding",
+                    "Compiler Configuration (tsconfig.json)",
+                    "Integration with JavaScript Ecosystem"
+                ],
+                "supporting_components": [
+                    "Modern ECMAScript Patterns",
+                    "IDE Tooling (VS Code Introspection)",
+                    "Build Tools (Webpack/Vite Integration)",
+                    "Asynchronous Programming Patterns"
+                ]
+            },
+            "practice_cycles": [
+                {
+                    "cycle_index": 1,
+                    "duration_weeks": 4,
+                    "focus_summary": "Syntactic Familiarity and Environment Setup",
+                    "short_explanation_for_cycle": "Start by migrating small existing JavaScript logic into TypeScript files and resolving every red squiggle the compiler throws at you. You need to get comfortable with the 'strict' flag early on.",
+                    "weekly_loop": {
+                        "primary_activity": "Refactoring small JS modules to TS using basic interfaces and primitive types.",
+                        "secondary_activity": "Studying the official TS handbook's 'Everyday Types' section to understand the difference between 'type' and 'interface'."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Defining types for simple function parameters and object literals.",
+                        "challenging": "Correctly typing third-party libraries that lack built-in type definitions."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Zero errors in tsconfig 'strict' mode for a 500-line project.",
+                            "Completion of basic CRUD interface definitions."
+                        ],
+                        "subjective": [
+                            "Feeling less annoyed by compiler errors and viewing them as helpful hints.",
+                            "Recognizing when an 'any' type is a shortcut that should be avoided."
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 2,
+                    "duration_weeks": 6,
+                    "focus_summary": "Abstraction and Advanced Type Logic",
+                    "short_explanation_for_cycle": "Shift your focus toward making your types more flexible. You'll build generic components and use mapped types to transform data structures without losing type safety.",
+                    "weekly_loop": {
+                        "primary_activity": "Implementing generic functions and classes that work across different data models.",
+                        "secondary_activity": "Deep-diving into Type Guards (is) and Assertion functions to handle dynamic data."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Using built-in utility types like Pick, Partial, and Omit.",
+                        "challenging": "Writing complex generic constraints and conditional types for API responses."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Implementation of at least 3 custom generic utilities.",
+                            "No use of 'any' or 'as' casting in the codebase."
+                        ],
+                        "subjective": [
+                            "Ability to read and understand the type definitions of popular open-source libraries.",
+                            "Confidence in designing types before writing the actual logic."
+                        ]
+                    }
+                }
+            ],
+            "evaluation_metrics": {
+                "objective": [
+                    "Ratio of type-safe code vs. type-casting/assertions.",
+                    "Build time success rate on first attempt.",
+                    "Complexity of generic constraints used in personal projects."
+                ],
+                "subjective": [
+                    "The speed at which I can resolve a type mismatch error.",
+                    "How often I rely on external documentation for basic type syntax.",
+                    "Sense of security felt when refactoring large sections of code."
+                ]
+            },
+            "architect_notes": [
+                "The 11-hour weekly commitment allows for two 4-hour deep-work blocks and three 1-hour maintenance sessions.",
+                "I am prioritizing 'Strict Mode' from week 1 to prevent the accumulation of 'type debt'.",
+                "I'm assuming the learner already knows JavaScript fundamentals; if not, Cycle 1 will be significantly harder."
+            ]
+        }
+    }
+}
