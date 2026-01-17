@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { useNavigate } from "react-router-dom";
+// import { LineChart } from "lucide-react";
+import { Activity } from "lucide-react";
 
 export default function LogPracticeSession() {
+  // State to hold log practice session data
   const [logSessionData, setLogSessionData] = useState({
     focusContent: "",
     duration: "",
     difficulty: "",
     fatigueLevel: 1,
   });
+  const [logHistory, setLogHistory] = useState([]);
+  // State for field errors
   const [fieldError, setFieldError] = useState({});
+
+  // Get session ID from session storage
+  const SESSION_ID = sessionStorage.getItem("sessionId");
+
+  // Navigation hook
   const navigate = useNavigate();
 
+  // Function handling input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -22,9 +33,14 @@ export default function LogPracticeSession() {
     }));
   };
 
-  const handleSubmit = () => {
+  // Function handling form submission
+  const handleSubmit = async () => {
     let isValid = true;
+
+    // Object to hold error message
     const newErrors = {};
+
+    // Validation checks
     if (!logSessionData.focusContent) {
       newErrors.focusContent = "This field is required";
       isValid = false;
@@ -33,7 +49,41 @@ export default function LogPracticeSession() {
       newErrors.duration = "This field is required";
       isValid = false;
     } else if (isNaN(logSessionData.duration)) {
-      newErrors.duration = "Numbers only";
+      newErrors.duration = "Numbers only"; // {
+      //   id: 1,
+      //   focusContent: "I created a component in react",
+      //   duration: "30",
+      //   difficulty: 5,
+      //   fatigueLevel: 3,
+      //   date: "12/02/2025",
+      // },
+      // {
+      //   id: 2,
+      //   focusContent: "I tried to step up my game by using typescript",
+      //   duration: "60",
+      //   difficulty: 10,
+      //   fatigueLevel: 1,
+      //   date: "11/02/2025",
+      // },
+      // {
+      //   id: 3,
+      //   focusContent: "Learnt to use side effect rendering with useEffect",
+      //   duration: "20",
+      //   difficulty: 6,
+      //   fatigueLevel: 7,
+      //   date: "10/02/2025",
+      // },
+      // {
+      //   id: 4,
+      //   focusContent: "Learnt state management(ContextApi)",
+      //   duration: "10",
+      //   difficulty: 5,
+      //   fatigueLevel: 10,
+      //   date: "09/02/2025",
+      // },
+      isValid = false;
+    } else if (logSessionData.duration < 1) {
+      newErrors.duration = "Must not be less than 1";
       isValid = false;
     }
     if (!logSessionData.difficulty) {
@@ -42,53 +92,92 @@ export default function LogPracticeSession() {
     } else if (isNaN(logSessionData.difficulty)) {
       newErrors.difficulty = "Numbers only";
       isValid = false;
+    } else if (logSessionData.difficulty > 10) {
+      newErrors.difficulty = "Must not be greater than 10";
+      isValid = false;
+    } else if (logSessionData.difficulty < 1) {
+      newErrors.difficulty = "Must not be less than 1";
+      isValid = false;
     }
 
+    // If all validations pass, submit the form
     if (isValid) {
-      const processedData = {
-        ...LogPracticeSession,
-        duration: Number(logSessionData.duration),
-        difficulty: Number(logSessionData.difficulty),
-      };
       // navigate("/analytics");
-      console.log(processedData);
+      console.log(logSessionData);
+
+      // Send form data to backend
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/practice/new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": SESSION_ID,
+          },
+          body: JSON.stringify({ logSessionData }),
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+
+      window.location.reload();
     }
     setFieldError(newErrors);
   };
 
+  useEffect(() => {
+    // Fetch log history from backend when component mounts
+    const fetchLogHistory = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/practice/logs", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": SESSION_ID,
+          },
+        });
+        const data = await res.json();
+        setLogHistory(data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchLogHistory();
+  }, []);
+
   const logPracticeData = [
-    {
-      id: 1,
-      focusContent: "I created a component in react",
-      duration: "30",
-      difficulty: 5,
-      fatigueLevel: 3,
-      date: "12/02/2025",
-    },
-    {
-      id: 2,
-      focusContent: "I tried to step up my game by using typescript",
-      duration: "60",
-      difficulty: 10,
-      fatigueLevel: 1,
-      date: "11/02/2025",
-    },
-    {
-      id: 3,
-      focusContent: "Learnt to use side effect rendering with useEffect",
-      duration: "20",
-      difficulty: 6,
-      fatigueLevel: 7,
-      date: "10/02/2025",
-    },
-    {
-      id: 4,
-      focusContent: "Learnt state management(ContextApi)",
-      duration: "10",
-      difficulty: 5,
-      fatigueLevel: 10,
-      date: "09/02/2025",
-    },
+    // {
+    //   id: 1,
+    //   focusContent: "I created a component in react",
+    //   duration: "30",
+    //   difficulty: 5,
+    //   fatigueLevel: 3,
+    //   date: "12/02/2025",
+    // },
+    // {
+    //   id: 2,
+    //   focusContent: "I tried to step up my game by using typescript",
+    //   duration: "60",
+    //   difficulty: 10,
+    //   fatigueLevel: 1,
+    //   date: "11/02/2025",
+    // },
+    // {
+    //   id: 3,
+    //   focusContent: "Learnt to use side effect rendering with useEffect",
+    //   duration: "20",
+    //   difficulty: 6,
+    //   fatigueLevel: 7,
+    //   date: "10/02/2025",
+    // },
+    // {
+    //   id: 4,
+    //   focusContent: "Learnt state management(ContextApi)",
+    //   duration: "10",
+    //   difficulty: 5,
+    //   fatigueLevel: 10,
+    //   date: "09/02/2025",
+    // },
   ];
 
   return (
@@ -175,24 +264,34 @@ export default function LogPracticeSession() {
 
           <div className="logSession_list">
             <h3>Log Practice History</h3>
-            {logPracticeData.map((item) => (
-              <div className="logPracticeCard" key={item.id}>
-                <b style={{ color: "rgba(250, 92, 7, 0.81)" }}>{item.date}</b>
-                <em>{item.focusContent}</em>
-                <small>
-                  <span>DURATION: </span>
-                  {item.duration}
-                </small>
-                <small>
-                  <span>DIFFICULTY: </span>
-                  {item.difficulty}
-                </small>
-                <small>
-                  <span>FATIGUE LEVEL: </span>
-                  {item.fatigueLevel}
-                </small>
+            {logPracticeData.length === 0 ? (
+              <div className="no_log">
+                <Activity className="icon" size={60} height={80} />
+                <p>
+                  {/* Start logging to visualize your strategy... */}
+                  Activity Overview
+                </p>
               </div>
-            ))}
+            ) : (
+              logPracticeData.map((item) => (
+                <div className="logPracticeCard" key={item.id}>
+                  <b style={{ color: "rgba(250, 92, 7, 0.81)" }}>{item.date}</b>
+                  <em>{item.focusContent}</em>
+                  <small>
+                    <span>DURATION: </span>
+                    {item.duration}
+                  </small>
+                  <small>
+                    <span>DIFFICULTY: </span>
+                    {item.difficulty}
+                  </small>
+                  <small>
+                    <span>FATIGUE LEVEL: </span>
+                    {item.fatigueLevel}
+                  </small>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

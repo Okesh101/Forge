@@ -1,10 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 
 export default function Timeline() {
+  // Get session ID from session storage
+  const SESSION_ID = sessionStorage.getItem("sessionId");
+
+  // State to hold time line data
+  const [timeline_data, setTimeline_Data] = useState([]);
+  useEffect(() => {
+    // Fetch timeline data from backend
+    const fetchTimeLine = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/timeline", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": SESSION_ID,
+          },
+        });
+        const data = await res.json();
+        setTimeline_Data(data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchTimeLine();
+  }, []);
   const timelineData = [
     {
       id: 1,
