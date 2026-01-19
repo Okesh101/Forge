@@ -99,7 +99,7 @@ Schema you must follow exactly:
         "cycle_index": 1,
         "duration_weeks": "number",
         "focus_summary": "string",
-        "short_explanation_for_cycle": "string", (NOTE: Direct this message as if you're telling the user what to do.)
+        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase..."),
         "weekly_loop": {
           "primary_activity": "string",
           "secondary_activity": "string"
@@ -290,7 +290,7 @@ def call_gemini(prompt: str, payload: dict) -> dict:
     #     return await call_gemini(prompt, payload)  # Retry
 
     except ClientError as e:
-        raise RuntimeError(f"Gemini API error: {e}")
+        raise RuntimeError(f"Gemini API error: {e['error']['code'] + e['error']['message']}")
 
     except json.JSONDecodeError:
         raise ValueError("AI response is not valid JSON")
@@ -668,9 +668,10 @@ def get_practice_logs():
     for practice_log in practice_memory:
         practices.append({
             "date": practice_log['date'],
-            "activity": practice_log['activity'],
-            "difficulty_rating": practice_log['difficulty_rating'],
-            "reflection": practice_log['reflection']
+            "focusContent": practice_log['activity'],
+            "duration": practice_log['duration_minutes'],
+            "difficulty": practice_log['difficulty_rating'],
+            "fatigueLevel": practice_log['fatigue_level']
         })
 
     return jsonify({
