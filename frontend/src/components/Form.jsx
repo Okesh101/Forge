@@ -198,7 +198,7 @@ export default function Form() {
                   }}
                 >
                   <p>Casual(1h)</p>
-                  <p>Intense(84)</p>
+                  <p>Intense(84h)</p>
                 </div>
               </fieldset>
             </div>

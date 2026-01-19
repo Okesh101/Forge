@@ -1,0 +1,250 @@
+{
+    "session_id": "a470e8c6-8a46-4799-ba2d-c8c87a56abe0",
+    "created_at": "2026-01-19T08:52:04.010823",
+    "skill": {
+        "name": "Learn Guitar",
+        "level": "beginner",
+        "targetLevel": "advanced",
+        "weekly_time_hours": "24"
+    },
+    "current_strategy": {
+        "strategy_version": 1,
+        "skill_model": {
+            "core_components": [
+                "Fretboard navigation",
+                "Chord transition mechanics",
+                "Rhythmic precision and timing",
+                "Picking and strumming technique",
+                "Scale and arpeggio patterns"
+            ],
+            "supporting_components": [
+                "Ear training and interval recognition",
+                "Functional music theory",
+                "Equipment maintenance",
+                "Performance stamina"
+            ]
+        },
+        "practice_cycles": [
+            {
+                "cycle_index": 1,
+                "duration_weeks": 12,
+                "focus_summary": "Mechanical foundations and rhythmic stability",
+                "short_explanation_for_cycle": "I need to get your hands moving reliably and your internal clock set before we try to hit advanced speeds or complex theory.",
+                "weekly_loop": {
+                    "primary_activity": "Metronome-based chord switching and open-position scales",
+                    "secondary_activity": "Active listening and transcription of basic melodies"
+                },
+                "difficulty_profile": {
+                    "comfortable": "Open chords and down-stroke strumming at 60 BPM",
+                    "challenging": "Syncopated rhythms and clean transitions between barred chords"
+                },
+                "success_markers": {
+                    "objective": [
+                        "Cleanly transition between 10 standard chords at 80 BPM",
+                        "Identify all notes on the E and A strings within 3 seconds"
+                    ],
+                    "subjective": [
+                        "Feelings of reduced tension in the fretting hand",
+                        "Sense of 'locking in' with a metronome click"
+                    ]
+                }
+            },
+            {
+                "cycle_index": 2,
+                "duration_weeks": 12,
+                "focus_summary": "Fretboard mobility and harmonic expansion",
+                "short_explanation_for_cycle": "Now that you're stable, I'm moving you up the neck to integrate the CAGED system and start connecting different positions.",
+                "weekly_loop": {
+                    "primary_activity": "CAGED system shape connecting and pentatonic patterns",
+                    "secondary_activity": "Functional theory applied to 12-bar blues progressions"
+                },
+                "difficulty_profile": {
+                    "comfortable": "Basic 12-bar blues in a single position",
+                    "challenging": "Soloing across the entire neck while targeting chord tones"
+                },
+                "success_markers": {
+                    "objective": [
+                        "Play major and minor scales in 5 positions at 100 BPM",
+                        "Improvise a 32-bar solo using only chord tones"
+                    ],
+                    "subjective": [
+                        "Feeling of the fretboard 'opening up' and appearing less random",
+                        "Confidence in moving between chord shapes mid-song"
+                    ]
+                }
+            }
+        ],
+        "evaluation_metrics": {
+            "objective": [
+                "BPM thresholds for scales and technical exercises",
+                "Number of songs memorized and performed without errors",
+                "Accuracy percentage in ear training intervals"
+            ],
+            "subjective": [
+                "Self-rated fluidity of movement",
+                "Perceived clarity of tone in complex passages",
+                "Consistency of practice habit under high-volume load"
+            ]
+        },
+        "architect_notes": [
+            "The 24-hour weekly commitment is significant; I have distributed this to prevent repetitive strain injury by alternating between physical drills and theory/ear training.",
+            "I am prioritizing rhythm and fretboard visualization over speed, as speed is an emergent property of accuracy.",
+            "The transition from level 1 to level 4 is a multi-year journey; this strategy covers the first 24 weeks of that progression."
+        ]
+    },
+    "practice_logs": [],
+    "strategy_history": [
+        {
+            "version": 1,
+            "reason": "Initial strategy",
+            "created_at": "2026-01-19T08:52:04.010823"
+        }
+    ],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "50c71c51-f50c-11f0-ae69-d4bed912d276",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-19T08:52:04.010823",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        },
+        {
+            "id": "7f6f8b28-f50c-11f0-8c95-d4bed912d276",
+            "event": "initial_strategy_created",
+            "actor": "ai",
+            "timestamp": "2026-01-19T08:52:04.010823",
+            "title": "Initial Practice Strategy Created",
+            "summary": "Initial practice strategy created for ['Learn Guitar'].",
+            "details": {
+                "reason": "Sufficient information provided to create initial practice system.",
+                "changes": {
+                    "strategy_version": 1
+                },
+                "evidence": [
+                    "Skill: Learn Guitar",
+                    "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {
+            "skill_name": "Guitar",
+            "current_level": 1,
+            "target_level": 4,
+            "weekly_time_hours": 24,
+            "constraints": {
+                "learning_style": "High-intensity immersion",
+                "dropout_risk": "Physical strain or burnout due to 24h/week volume"
+            },
+            "inferred_fields": [
+                "learning_style",
+                "dropout_risk"
+            ]
+        },
+        "normalized_strategy": {
+            "strategy_version": 1,
+            "skill_model": {
+                "core_components": [
+                    "Fretboard navigation",
+                    "Chord transition mechanics",
+                    "Rhythmic precision and timing",
+                    "Picking and strumming technique",
+                    "Scale and arpeggio patterns"
+                ],
+                "supporting_components": [
+                    "Ear training and interval recognition",
+                    "Functional music theory",
+                    "Equipment maintenance",
+                    "Performance stamina"
+                ]
+            },
+            "practice_cycles": [
+                {
+                    "cycle_index": 1,
+                    "duration_weeks": 12,
+                    "focus_summary": "Mechanical foundations and rhythmic stability",
+                    "short_explanation_for_cycle": "I need to get your hands moving reliably and your internal clock set before we try to hit advanced speeds or complex theory.",
+                    "weekly_loop": {
+                        "primary_activity": "Metronome-based chord switching and open-position scales",
+                        "secondary_activity": "Active listening and transcription of basic melodies"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Open chords and down-stroke strumming at 60 BPM",
+                        "challenging": "Syncopated rhythms and clean transitions between barred chords"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Cleanly transition between 10 standard chords at 80 BPM",
+                            "Identify all notes on the E and A strings within 3 seconds"
+                        ],
+                        "subjective": [
+                            "Feelings of reduced tension in the fretting hand",
+                            "Sense of 'locking in' with a metronome click"
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 2,
+                    "duration_weeks": 12,
+                    "focus_summary": "Fretboard mobility and harmonic expansion",
+                    "short_explanation_for_cycle": "Now that you're stable, I'm moving you up the neck to integrate the CAGED system and start connecting different positions.",
+                    "weekly_loop": {
+                        "primary_activity": "CAGED system shape connecting and pentatonic patterns",
+                        "secondary_activity": "Functional theory applied to 12-bar blues progressions"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Basic 12-bar blues in a single position",
+                        "challenging": "Soloing across the entire neck while targeting chord tones"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Play major and minor scales in 5 positions at 100 BPM",
+                            "Improvise a 32-bar solo using only chord tones"
+                        ],
+                        "subjective": [
+                            "Feeling of the fretboard 'opening up' and appearing less random",
+                            "Confidence in moving between chord shapes mid-song"
+                        ]
+                    }
+                }
+            ],
+            "evaluation_metrics": {
+                "objective": [
+                    "BPM thresholds for scales and technical exercises",
+                    "Number of songs memorized and performed without errors",
+                    "Accuracy percentage in ear training intervals"
+                ],
+                "subjective": [
+                    "Self-rated fluidity of movement",
+                    "Perceived clarity of tone in complex passages",
+                    "Consistency of practice habit under high-volume load"
+                ]
+            },
+            "architect_notes": [
+                "The 24-hour weekly commitment is significant; I have distributed this to prevent repetitive strain injury by alternating between physical drills and theory/ear training.",
+                "I am prioritizing rhythm and fretboard visualization over speed, as speed is an emergent property of accuracy.",
+                "The transition from level 1 to level 4 is a multi-year journey; this strategy covers the first 24 weeks of that progression."
+            ]
+        }
+    }
+}

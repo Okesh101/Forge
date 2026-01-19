@@ -53,15 +53,15 @@ export default function Narration() {
             <h1>Narration</h1>
             <p>
               <span>Goal summary:</span>
-              {narrationData.static.goal_summary}
+              {narrationData.static?.goal_summary}
             </p>
             <p>
               <span>Learning Philosophy:</span>
-              {narrationData.static.learning_philosophy}
+              {narrationData.static?.learning_philosophy}
             </p>
           </header>
           <div className="card_container">
-            {narrationData.dynamic.map((item) => (
+            {narrationData.dynamic?.map((item) => (
               <motion.div
                 className="item_card"
                 key={item.current_cycle_index}

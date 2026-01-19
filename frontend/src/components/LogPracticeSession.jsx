@@ -49,38 +49,7 @@ export default function LogPracticeSession() {
       newErrors.duration = "This field is required";
       isValid = false;
     } else if (isNaN(logSessionData.duration)) {
-      newErrors.duration = "Numbers only"; // {
-      //   id: 1,
-      //   focusContent: "I created a component in react",
-      //   duration: "30",
-      //   difficulty: 5,
-      //   fatigueLevel: 3,
-      //   date: "12/02/2025",
-      // },
-      // {
-      //   id: 2,
-      //   focusContent: "I tried to step up my game by using typescript",
-      //   duration: "60",
-      //   difficulty: 10,
-      //   fatigueLevel: 1,
-      //   date: "11/02/2025",
-      // },
-      // {
-      //   id: 3,
-      //   focusContent: "Learnt to use side effect rendering with useEffect",
-      //   duration: "20",
-      //   difficulty: 6,
-      //   fatigueLevel: 7,
-      //   date: "10/02/2025",
-      // },
-      // {
-      //   id: 4,
-      //   focusContent: "Learnt state management(ContextApi)",
-      //   duration: "10",
-      //   difficulty: 5,
-      //   fatigueLevel: 10,
-      //   date: "09/02/2025",
-      // },
+      newErrors.duration = "Numbers only";
       isValid = false;
     } else if (logSessionData.duration < 1) {
       newErrors.duration = "Must not be less than 1";
@@ -115,70 +84,40 @@ export default function LogPracticeSession() {
           },
           body: JSON.stringify({ logSessionData }),
         });
+        const data = await res.json();
+        console.log(data);
+        // if (data.status === "success") {
+        //   window.location.reload();
+        // } else {
+        //   alert("Error sending log practice data to the backend");
+        // }
       } catch (error) {
         console.log(error.message);
       }
-
-      window.location.reload();
     }
     setFieldError(newErrors);
   };
 
-  useEffect(() => {
-    // Fetch log history from backend when component mounts
-    const fetchLogHistory = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/practice/logs", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Session-ID": SESSION_ID,
-          },
-        });
-        const data = await res.json();
-        setLogHistory(data);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
+  // useEffect(() => {
+  //   // Fetch log history from backend when component mounts
+  //   const fetchLogHistory = async () => {
+  //     try {
+  //       const res = await fetch("http://localhost:5000/api/practice/logs", {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "X-Session-ID": SESSION_ID,
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       setLogHistory(data);
+  //     } catch (error) {
+  //       console.log(error.message);
+  //     }
+  //   };
 
-    fetchLogHistory();
-  }, []);
-
-  const logPracticeData = [
-    // {
-    //   id: 1,
-    //   focusContent: "I created a component in react",
-    //   duration: "30",
-    //   difficulty: 5,
-    //   fatigueLevel: 3,
-    //   date: "12/02/2025",
-    // },
-    // {
-    //   id: 2,
-    //   focusContent: "I tried to step up my game by using typescript",
-    //   duration: "60",
-    //   difficulty: 10,
-    //   fatigueLevel: 1,
-    //   date: "11/02/2025",
-    // },
-    // {
-    //   id: 3,
-    //   focusContent: "Learnt to use side effect rendering with useEffect",
-    //   duration: "20",
-    //   difficulty: 6,
-    //   fatigueLevel: 7,
-    //   date: "10/02/2025",
-    // },
-    // {
-    //   id: 4,
-    //   focusContent: "Learnt state management(ContextApi)",
-    //   duration: "10",
-    //   difficulty: 5,
-    //   fatigueLevel: 10,
-    //   date: "09/02/2025",
-    // },
-  ];
+  //   fetchLogHistory();
+  // }, []);
 
   return (
     <>
@@ -264,17 +203,14 @@ export default function LogPracticeSession() {
 
           <div className="logSession_list">
             <h3>Log Practice History</h3>
-            {logPracticeData.length === 0 ? (
+            {logHistory.length === 0 ? (
               <div className="no_log">
                 <Activity className="icon" size={60} height={80} />
-                <p>
-                  {/* Start logging to visualize your strategy... */}
-                  Activity Overview
-                </p>
+                <p>Activity Overview</p>
               </div>
             ) : (
-              logPracticeData.map((item) => (
-                <div className="logPracticeCard" key={item.id}>
+              logHistory.map((item, index) => (
+                <div className="logPracticeCard" key={index}>
                   <b style={{ color: "rgba(250, 92, 7, 0.81)" }}>{item.date}</b>
                   <em>{item.focusContent}</em>
                   <small>
