@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from google import genai
-from google.genai.errors import ClientError
+from google.genai.errors import ClientError, ServerError
 from google.genai import types
 from dotenv import load_dotenv
 import uuid
@@ -322,6 +322,19 @@ def call_gemini_for_deeper_reasoning(prompt: str, payload: dict) -> dict:
         raise ValueError("AI response is not valid JSON")
 
 
+def call_gemini_with_retry(prompt, payload, retries=3, delay=5) -> dict:
+    for attempt in range(retries):
+        try:
+            return call_gemini_for_deeper_reasoning(prompt, payload)
+        except ServerError as e:
+            if '503' in str(e):
+                print(
+                    f"Server busy, retrying in {delay} seconds... (Attempt {attempt+1})")
+                time.sleep(delay)
+            else:
+                raise e
+    raise RuntimeError("Gemini server busy, max retries reached.")
+
 def session_exists(session_id):
     return os.path.exists(f"{AI_MEMORY_DIR}/{session_id}.json")
 
@@ -461,7 +474,7 @@ def callAnalyzer(session_id: str) -> dict:
     countLogs = memory['practice_logs'].__len__()
     if countLogs % 3 == 0:
         # practice_sessions = memory['practice_logs'][-3:]
-        return call_gemini_for_deeper_reasoning(
+        return call_gemini_with_retry(
             prompt=forge_analyzer,
             payload={
                 "practice_session": memory['practice_logs'][-3:],
@@ -652,7 +665,7 @@ def log_practice():
                 "analysis_count": len(memory['practice_logs_analysis'])
             },
             "evidence": [
-                f"Challenge Alignment: {geminiAnalysis['challenge_alignment']}",
+                f"Challenge Alignment: {geminiAnalysis['session_analysis']['challenge_alignment']}",
                 f"Analyzer Confidence: {geminiAnalysis['analysis_confidence']}"
             ]
         },
