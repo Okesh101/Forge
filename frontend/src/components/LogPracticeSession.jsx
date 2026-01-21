@@ -102,7 +102,7 @@ export default function LogPracticeSession() {
     // Fetch log history from backend when component mounts
     const fetchLogHistory = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/practice/logs", {
+        const res = await fetch("http://127.0.0.1:5000/api/practice/logs", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -110,8 +110,7 @@ export default function LogPracticeSession() {
           },
         });
         const data = await res.json();
-        if (data.status === "success") {
-          // window.location.reload();
+        if (!data.error && data) {
           setLogHistory(data);
         } else {
           alert("Error retrieving log practice data from the backend");

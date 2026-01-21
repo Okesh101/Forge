@@ -132,14 +132,57 @@
             "fatigue_level": "3"
         },
         {
-            "date": "2026-01-21T02:16:12.420712",
-            "activity": "I tried the static typing but it wasnt easy",
-            "duration_minutes": "25",
+            "date": "2026-01-21T05:44:56.989337",
+            "activity": "I tried the practice without \"any\". It was hard!",
+            "duration_minutes": "20",
             "difficulty_rating": "8",
-            "fatigue_level": "8"
+            "fatigue_level": "7"
+        },
+        {
+            "date": "2026-01-21T05:56:54.892766",
+            "activity": "I learnt about 'any'",
+            "duration_minutes": "20",
+            "difficulty_rating": "7",
+            "fatigue_level": "4"
+        },
+        {
+            "date": "2026-01-21T05:58:02.481810",
+            "activity": "I tried to learn C++ but i was weak",
+            "duration_minutes": "30",
+            "difficulty_rating": "10",
+            "fatigue_level": "10"
         }
     ],
-    "practice_logs_analysis": [],
+    "practice_logs_analysis": [
+        {
+            "analysis_version": 1,
+            "session_analysis": {
+                "effort_level": "high",
+                "challenge_alignment": "over-challenged",
+                "friction_signals": [
+                    "Difficulty rating (8) significantly exceeds the intended 1\u20135 scale",
+                    "Fatigue level (7) significantly exceeds the intended 1\u20135 scale",
+                    "Short duration (20 mins) coupled with extreme difficulty suggests high cognitive load or frustration"
+                ],
+                "positive_signals": [
+                    "Direct adherence to strategy success marker: 'Zero any types in the codebase'",
+                    "Active engagement with the most challenging aspect of Cycle 1"
+                ]
+            },
+            "flags": {
+                "fatigue_risk": true,
+                "motivation_risk": false,
+                "overload_risk": true
+            },
+            "analysis_confidence": 0.9,
+            "analysis_notes": [
+                "The session difficulty was rated 8/5, indicating the user felt the challenge was far beyond the expected baseline.",
+                "User successfully attempted a 'no-any' constraint, which is a key objective of Cycle 1, despite the high perceived difficulty.",
+                "Fatigue jumped from 3/4 in earlier sessions to 7/5, signaling a rapid depletion of energy during this specific task.",
+                "The discrepancy between the short duration (20m) and high fatigue suggests the cognitive friction of typing without 'any' is currently very high."
+            ]
+        }
+    ],
     "strategy_history": [
         {
             "version": 1,
@@ -265,6 +308,182 @@
                 "reason": "User logged a new practice session.",
                 "changes": {
                     "practice_log_count": 3
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "6102fae9-f683-11f0-8e8b-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:39:55.117012",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 3
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "ade885a2-f683-11f0-94c1-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:42:56.165310",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 3
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "f9f59cfe-f683-11f0-972f-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:44:56.989337",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 3
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "02eb7738-f684-11f0-b8cc-a0481cdf2fa0",
+            "event": "session_analyzed",
+            "actor": "ai",
+            "timestamp": "2026-01-21T05:44:56.989337",
+            "title": "Practice Session Analyzed",
+            "summary": "Analyzed 3 consecutive practice sessions",
+            "details": {
+                "reason": "User logged up to 3 practice sessions.",
+                "changes": {
+                    "analysis_count": 1
+                },
+                "evidence": [
+                    "Challenge Alignment: over-challenged",
+                    "Analyzer Confidence: 0.9"
+                ]
+            },
+            "visibilty": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "39f7e07f-f685-11f0-bc88-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:44:56.989337",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 4
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "8ef6c252-f685-11f0-8d35-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:56:06.748021",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 5
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "ad39184f-f685-11f0-8498-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:56:54.892766",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 4
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "02e71d19-f686-11f0-852a-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-21T05:58:02.481810",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 5
                 },
                 "evidence": [
                     "Activity: None",
