@@ -6,9 +6,10 @@ from google import genai
 from google.genai.errors import ClientError, ServerError
 from google.genai import types
 from dotenv import load_dotenv
+from datetime import datetime
 import uuid
 import json
-import datetime
+import datetime as dt
 import os
 # import asyncio
 
@@ -20,7 +21,7 @@ app = Flask(__name__)
 CORS(app)
 
 scheduler = APScheduler()
-current_time = datetime.datetime.now()
+current_time = dt.datetime.now()
 
 # AI PROMPTS
 forge_decision_architect_prompt = """
@@ -100,7 +101,7 @@ Schema you must follow exactly:
         "cycle_index": 1,
         "duration_weeks": "number",
         "focus_summary": "string",
-        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses),
+        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses) (The sentence must not be less than 70 words),
         "weekly_loop": {
           "primary_activity": "string",
           "secondary_activity": "string"
@@ -571,6 +572,10 @@ def get_narration():
         return jsonify({"error": "Session not found"}), 401
 
     memory = loadAiMemory(session_id)
+    if not memory['normalized_return']['normalized_input']:
+        return jsonify({
+            "error": "User hasn't created a practice plan"
+        }), 400
 
     narration = build_narration_payload(
         memory['normalized_return']['normalized_input'],
@@ -593,6 +598,10 @@ def get_timeline():
         key=lambda x: x['timestamp']
     )
 
+    for item in timeline:
+        dt_obj = datetime.fromisoformat(item['timestamp'])
+        item['displayTime'] = dt_obj.strftime("%B %d, %Y at %I:%M %p")
+
     return jsonify({
         "timeline": timeline
     }), 200
@@ -609,6 +618,9 @@ def log_practice():
         return jsonify({"error": "No practice data provided"}), 400
 
     memory = loadAiMemory(session_id)
+
+    if not memory['skill']:
+        return jsonify({"error": "No strategy has been created"}), 400
 
     memory['practice_logs'].append({
         "date": current_time.isoformat(),
@@ -691,8 +703,10 @@ def get_practice_logs():
 
     practices = []
     for practice_log in practice_memory:
+        formattedTime = datetime.fromisoformat(
+            practice_log['date']).strftime("%B %d, %Y at %I:%M %p")
         practices.append({
-            "date": practice_log['date'],
+            "date": formattedTime,
             "focusContent": practice_log['activity'],
             "duration": practice_log['duration_minutes'],
             "difficulty": practice_log['difficulty_rating'],
@@ -727,7 +741,6 @@ def get_analytics():
             "fatigue_level": int(log['fatigue_level'])
         })
 
-    
     # ----------------------------------------
     # 2. Build analysis batches with scope
     # ----------------------------------------
@@ -757,9 +770,10 @@ def get_analytics():
         })
 
         mappings['analysis_to_sessions'][batch_id] = session_indices
-        
+
         for s_idx in session_indices:
-            mappings['session_to_analysis'].setdefault(s_idx, []).append(batch_id)
+            mappings['session_to_analysis'].setdefault(
+                s_idx, []).append(batch_id)
 
     # ----------------------------------------
     # 3. Compute high-level summary stats

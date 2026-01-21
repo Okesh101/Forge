@@ -88,6 +88,8 @@ export default function LogPracticeSession() {
         console.log(data);
         if (data.status === "success") {
           window.location.reload();
+        } else if (data.error) {
+          alert(`Error: ${data.error}`);
         } else {
           alert("Error sending log practice data to the backend");
         }
