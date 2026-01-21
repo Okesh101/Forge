@@ -4,6 +4,7 @@ from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from google import genai
 from google.genai.errors import ClientError
+from google.genai import types
 from dotenv import load_dotenv
 import uuid
 import json
@@ -99,7 +100,7 @@ Schema you must follow exactly:
         "cycle_index": 1,
         "duration_weeks": "number",
         "focus_summary": "string",
-        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase..."),
+        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses),
         "weekly_loop": {
           "primary_activity": "string",
           "secondary_activity": "string"
@@ -145,7 +146,7 @@ You ONLY observe, classify, and score signals.
 You think carefully because human self-reports are noisy.
 
 Inputs you receive:
-1. Practice Session Data:
+1. Practice Session Data (array of 3 consecutive practice sessions log):
    - activity (string)
    - duration_minutes (number)
    - difficulty_rating (1–5)
@@ -178,6 +179,7 @@ No commentary outside JSON.
 You MUST follow this schema exactly:
 
 {
+  "analysis_version": 1,
   "session_analysis": {
     "effort_level": "low | moderate | high",
     "challenge_alignment": "under-challenged | aligned | over-challenged",
@@ -290,7 +292,8 @@ def call_gemini(prompt: str, payload: dict) -> dict:
     #     return await call_gemini(prompt, payload)  # Retry
 
     except ClientError as e:
-        raise RuntimeError(f"Gemini API error: {e['error']['code'] + e['error']['message']}")
+        raise RuntimeError(
+            f"Gemini API error: {e['error']['code'] + e['error']['message']}")
 
     except json.JSONDecodeError:
         raise ValueError("AI response is not valid JSON")
@@ -338,6 +341,7 @@ def createAiMemory(session_id):
         "skill": {},
         "current_strategy": None,
         "practice_logs": [],
+        "practice_logs_analysis": [],
         "strategy_history": [],
         "agent_insights": {},
         "timeline": [
@@ -456,15 +460,16 @@ def callAnalyzer(session_id: str) -> dict:
     memory = loadAiMemory(session_id)
     countLogs = memory['practice_logs'].__len__()
     if countLogs % 3 == 0:
+        # practice_sessions = memory['practice_logs'][-3:]
         return call_gemini_for_deeper_reasoning(
             prompt=forge_analyzer,
             payload={
-                "practice_session": memory['practice_logs'][-1],
+                "practice_session": memory['practice_logs'][-3:],
                 "current_strategy_snapshot": memory['current_strategy']
             }
         )
     else:
-        return
+        return {}
 
 
 # API ROUTES
@@ -586,7 +591,7 @@ def log_practice():
     if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
 
-    practice_data = request.json.get('practice_data')
+    practice_data = request.json.get('logSessionData')
     if not practice_data:
         return jsonify({"error": "No practice data provided"}), 400
 
@@ -598,11 +603,6 @@ def log_practice():
         "duration_minutes": practice_data.get('duration'),
         "difficulty_rating": practice_data.get('difficulty'),
         "fatigue_level": practice_data.get('fatigueLevel'),
-        # "reflection": practice_data.get('reflection'),
-        # "analysis": {
-        #     "effort_level": practice_data.get('effort_level'),
-        #     "friction": practice_data.get('friction')
-        # }
     })
 
     memory['timeline'].append({
@@ -631,27 +631,39 @@ def log_practice():
     saveAiMemory(session_id, memory)
     geminiAnalysis = callAnalyzer(session_id)
 
-    if geminiAnalysis:
-        memory = loadAiMemory(session_id)
-        memory['practice_logs'][-1]['analysis'] = geminiAnalysis
-        memory['timeline'].append({
-            "id": str(uuid.uuid1()),
-            "event": "session_analyzed",
-            "actor": "ai",
-            "timestamp": current_time.isoformat(),
-            "title": "Practice Session Analyzed",
-            "summary": "",
-            "details": {},
-            "visibilty": {
-                "show_on_timeline": True,
-                "clickable": True
-            }
-        })  # Still gotta fix this timeline updater
-        saveAiMemory(session_id, memory)
-    else:
-        return
+    if not geminiAnalysis:
+        return jsonify({
+            "response": "Practice log created successfully",
+            "status": "success"
+        }), 201
 
-    return jsonify({"response": "Practice log created successfully",
+    memory = loadAiMemory(session_id)
+    memory['practice_logs_analysis'].append(geminiAnalysis)
+    memory['timeline'].append({
+        "id": str(uuid.uuid1()),
+        "event": "session_analyzed",
+        "actor": "ai",
+        "timestamp": current_time.isoformat(),
+        "title": "Practice Session Analyzed",
+        "summary": "Analyzed 3 consecutive practice sessions",
+        "details": {
+            "reason": "User logged up to 3 practice sessions.",
+            "changes": {
+                "analysis_count": len(memory['practice_logs_analysis'])
+            },
+            "evidence": [
+                f"Challenge Alignment: {geminiAnalysis['challenge_alignment']}",
+                f"Analyzer Confidence: {geminiAnalysis['analysis_confidence']}"
+            ]
+        },
+        "visibilty": {
+            "show_on_timeline": True,
+            "clickable": True
+        }
+    })
+    saveAiMemory(session_id, memory)
+
+    return jsonify({"response": "Practice log created and analyzed successfully",
                     "status": "success"}), 201
 
 
@@ -674,9 +686,7 @@ def get_practice_logs():
             "fatigueLevel": practice_log['fatigue_level']
         })
 
-    return jsonify({
-        "practice_logs": practices
-    }), 200
+    return jsonify(practices), 200
 
 
 if __name__ == '__main__':
