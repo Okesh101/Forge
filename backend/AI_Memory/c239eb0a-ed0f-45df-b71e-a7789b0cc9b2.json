@@ -137,20 +137,6 @@
             "duration_minutes": "20",
             "difficulty_rating": "8",
             "fatigue_level": "7"
-        },
-        {
-            "date": "2026-01-21T05:56:54.892766",
-            "activity": "I learnt about 'any'",
-            "duration_minutes": "20",
-            "difficulty_rating": "7",
-            "fatigue_level": "4"
-        },
-        {
-            "date": "2026-01-21T05:58:02.481810",
-            "activity": "I tried to learn C++ but i was weak",
-            "duration_minutes": "30",
-            "difficulty_rating": "10",
-            "fatigue_level": "10"
         }
     ],
     "practice_logs_analysis": [
@@ -242,94 +228,6 @@
                 "reason": "User logged a new practice session.",
                 "changes": {
                     "practice_log_count": 1
-                },
-                "evidence": [
-                    "Activity: None",
-                    "Difficulty Rating: None"
-                ]
-            },
-            "visibility": {
-                "show_on_timeline": true,
-                "clickable": true
-            }
-        },
-        {
-            "id": "d10ef7b9-f665-11f0-a83d-a0481cdf2fa0",
-            "event": "practice_session_logged",
-            "actor": "user",
-            "timestamp": "2026-01-21T02:05:38.091727",
-            "title": "Practice Session Logged",
-            "summary": "Logged practice session for Learn React TS.",
-            "details": {
-                "reason": "User logged a new practice session.",
-                "changes": {
-                    "practice_log_count": 2
-                },
-                "evidence": [
-                    "Activity: None",
-                    "Difficulty Rating: None"
-                ]
-            },
-            "visibility": {
-                "show_on_timeline": true,
-                "clickable": true
-            }
-        },
-        {
-            "id": "4a45cf7e-f666-11f0-b2ae-a0481cdf2fa0",
-            "event": "practice_session_logged",
-            "actor": "user",
-            "timestamp": "2026-01-21T02:11:24.923818",
-            "title": "Practice Session Logged",
-            "summary": "Logged practice session for Learn React TS.",
-            "details": {
-                "reason": "User logged a new practice session.",
-                "changes": {
-                    "practice_log_count": 3
-                },
-                "evidence": [
-                    "Activity: None",
-                    "Difficulty Rating: None"
-                ]
-            },
-            "visibility": {
-                "show_on_timeline": true,
-                "clickable": true
-            }
-        },
-        {
-            "id": "d5a9577e-f666-11f0-84a7-a0481cdf2fa0",
-            "event": "practice_session_logged",
-            "actor": "user",
-            "timestamp": "2026-01-21T02:16:12.420712",
-            "title": "Practice Session Logged",
-            "summary": "Logged practice session for Learn React TS.",
-            "details": {
-                "reason": "User logged a new practice session.",
-                "changes": {
-                    "practice_log_count": 3
-                },
-                "evidence": [
-                    "Activity: None",
-                    "Difficulty Rating: None"
-                ]
-            },
-            "visibility": {
-                "show_on_timeline": true,
-                "clickable": true
-            }
-        },
-        {
-            "id": "6102fae9-f683-11f0-8e8b-a0481cdf2fa0",
-            "event": "practice_session_logged",
-            "actor": "user",
-            "timestamp": "2026-01-21T05:39:55.117012",
-            "title": "Practice Session Logged",
-            "summary": "Logged practice session for Learn React TS.",
-            "details": {
-                "reason": "User logged a new practice session.",
-                "changes": {
-                    "practice_log_count": 3
                 },
                 "evidence": [
                     "Activity: None",

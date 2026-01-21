@@ -264,9 +264,8 @@ You output the following:
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
 
+
 # UTILITY FUNCTIONS
-
-
 def printer():
     print("Scheduled task executed.")
 
@@ -334,6 +333,7 @@ def call_gemini_with_retry(prompt, payload, retries=3, delay=5) -> dict:
             else:
                 raise e
     raise RuntimeError("Gemini server busy, max retries reached.")
+
 
 def session_exists(session_id):
     return os.path.exists(f"{AI_MEMORY_DIR}/{session_id}.json")
@@ -700,6 +700,101 @@ def get_practice_logs():
         })
 
     return jsonify(practices), 200
+
+
+@app.route('/api/analytics', methods=['GET'])
+def get_analytics():
+    session_id = request.headers.get('X-Session-ID')
+    if not session_exists(session_id):
+        return jsonify({"error": "Session not found"}), 401
+
+    memory = loadAiMemory(session_id)
+
+    practice_logs = memory.get("practice_logs", [])
+    analyses = memory.get("practice_logs_analysis", [])
+
+    # -----------------------------
+    # 1. Build per-session analytics
+    # -----------------------------
+    session_metrics = []
+
+    for idx, log in enumerate(practice_logs):
+        session_metrics.append({
+            "session_index": idx,
+            "date": log['date'],
+            "duration_minites": int(log['duration_minutes']),
+            "difficulty_rating": int(log['difficulty_rating']),
+            "fatigue_level": int(log['fatigue_level'])
+        })
+
+    
+    # ----------------------------------------
+    # 2. Build analysis batches with scope
+    # ----------------------------------------
+    analysis_batches = []
+    mappings = {
+        "session_to_analysis": {},
+        "analysis_to_sessions": {}
+    }
+
+    for analysis_idx, analysis in enumerate(analyses):
+        # Analyzer always runs on last 3 sessions
+        end_idx = (analysis_idx + 1) * 3
+        start_idx = end_idx - 3
+        session_indices = list(range(start_idx, end_idx))
+
+        batch_id = f"analysis_{analysis_idx + 1}"
+
+        analysis_batches.append({
+            "analysis_id": batch_id,
+            "analysis_version": analysis["analysis_version"],
+            "covers_sessions": session_indices,
+            "effort_level": analysis["session_analysis"]["effort_level"],
+            "challenge_alignment": analysis["session_analysis"]["challenge_alignment"],
+            "flags": analysis["flags"],
+            "confidence": analysis["analysis_confidence"],
+            "notes": analysis["analysis_notes"]
+        })
+
+        mappings['analysis_to_sessions'][batch_id] = session_indices
+        
+        for s_idx in session_indices:
+            mappings['session_to_analysis'].setdefault(s_idx, []).append(batch_id)
+
+    # ----------------------------------------
+    # 3. Compute high-level summary stats
+    # ----------------------------------------
+    if session_metrics:
+        avg_difficulty = sum(s["difficulty_rating"]
+                             for s in session_metrics) / len(session_metrics)
+        avg_fatigue = sum(s["fatigue_level"]
+                          for s in session_metrics) / len(session_metrics)
+    else:
+        avg_difficulty = 0
+        avg_fatigue = 0
+
+    overload_flags = [
+        a["flags"]["overload_risk"]
+        for a in analyses
+    ]
+
+    summary = {
+        "total_sessions": len(practice_logs),
+        "total_analyses": len(analyses),
+        "average_difficulty": round(avg_difficulty, 2),
+        "average_fatigue": round(avg_fatigue, 2),
+        "overload_detected": any(overload_flags)
+    }
+
+    # ----------------------------------------
+    # 4. Final analytics payload
+    # ----------------------------------------
+    return jsonify({
+        "sessions": session_metrics,
+        "analysis_batches": analysis_batches,
+        "summary": summary,
+        "mappings": mappings
+    }), 200
 
 
 if __name__ == '__main__':
