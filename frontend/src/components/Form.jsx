@@ -200,7 +200,7 @@ export default function Form() {
                   name="timeCommitment"
                   type="range"
                   min="1"
-                  max="84"
+                  max="40"
                   value={decision_Data.timeCommitment}
                   onChange={handleInputChange}
                 />
@@ -215,7 +215,7 @@ export default function Form() {
                   }}
                 >
                   <p>Casual(1h)</p>
-                  <p>Intense(84h)</p>
+                  <p>Intense(40h)</p>
                 </div>
               </fieldset>
             </div>
