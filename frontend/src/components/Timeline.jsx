@@ -45,7 +45,7 @@ export default function Timeline() {
             {timeline_data.map((item) => (
               <div className="timeline_card" key={item.id}>
                 <div className="circle-section">
-                  <p>{item.timestamp.slice(0, 10)}</p>
+                  <p>{item.timestamp.slice(0,10)}</p>
                   <div className="circle"></div>
                 </div>
                 <div
@@ -56,7 +56,7 @@ export default function Timeline() {
                     gap: "10px",
                   }}
                 >
-                  <small>{item.timestamp}</small>
+                  <small>{item.displayTime}</small>
                   <p>{item.title}</p>
                   <em>{item.summary}</em>
                   <b>{item.details.reason}</b>
