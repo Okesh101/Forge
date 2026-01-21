@@ -29,6 +29,7 @@ export default function Form() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -91,6 +92,12 @@ export default function Form() {
         if (data.status === "success") {
           setIsLoading(false);
           navigate("/narration");
+          resetForm();
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          setErrorModal(true);
+          setIsLoading(false);
+          resetForm();
         }
       } catch (error) {
         console.log(error.message);
@@ -98,6 +105,16 @@ export default function Form() {
       }
     }
   };
+
+  // Function to reset the form
+  function resetForm() {
+    setDecision_Data({
+      goal: "",
+      currentLevel: "",
+      goalLevel: "",
+      timeCommitment: 1,
+    });
+  }
 
   return (
     <>
@@ -208,160 +225,18 @@ export default function Form() {
           </button>
         </div>
         {isLoading && <Loading />}
+        {errorModal && (
+          <div className="error_modal" onClick={() => setErrorModal(false)}>
+            <div className="modal_content">
+              <h2>Submission Failed</h2>
+              <p>
+                There was an issue submitting your form. Please try again later.
+              </p>
+              <button onClick={() => setErrorModal(false)}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
-}
-
-{
-  /* <div className="field">
-<fieldset>
-  <label htmlFor="timeCommitment">
-    <FiClock /> How much time can you realistically commit?
-  </label>
-  <select
-    name="timeCommitment"
-    value={decision_Data.timeCommitment}
-    onChange={handleInputChange}
-  >
-    <option value="" disabled>
-      Select time commitment
-    </option>
-    <option value="10-15">10-15 minutes/day</option>
-    <option value="30">30 minutes/day</option>
-    <option value="60">1 hour/day</option>
-    <option value="flexible">Flexible / inconsistent</option>
-    <option value="not-sure">Not sure yet</option>
-  </select>
-</fieldset>
-{errors.timeCommitment && (
-  <p className="errorMssg">{errors.timeCommitment}</p>
-)}
-</div> */
-}
-{
-  /* <select name="goal" value={decision_Data.goal} onChange={handleInputChange}>
-  <option value="" disabled>
-    Select an option
-  </option>
-  <option value="skill">Acquire a new skill</option>
-  <option value="habit">Form a new habit</option>
-  <option value="improve">Improve existing skill</option>
-</select>; */
-}
-{
-  /* <div className="field">
-  <fieldset>
-    <label htmlFor="learningStyle">
-      <FiBook /> How do you learn best?
-    </label>
-    <div className="radio-group">
-      {learningOptions.map((option) => (
-        <motion.div
-          className="option"
-          key={option.id}
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: "spring", stiffness: 120 }}
-        >
-          <input
-            type="radio"
-            name="learningStyle"
-            value={option.id}
-            checked={decision_Data.learningStyle === option.id}
-            onChange={handleInputChange}
-          />
-          <p>{option.label}</p>
-        </motion.div>
-      ))}
-    </div>
-  </fieldset>
-  {errors.learningStyle && (
-    <p className="errorMssg">{errors.learningStyle}</p>
-  )}
-</div>
-
-<div className="field">
-  <fieldset>
-    <label htmlFor="challenges">
-      <FiZap />
-      What usually slows you down or stops you?
-    </label>
-    <div className="radio-group">
-      {challengeOptions.map((option) => (
-        <motion.div
-          className="option"
-          key={option.id}
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: "spring", stiffness: 120 }}
-        >
-          <input
-            type="radio"
-            name="challenge"
-            value={option.id}
-            checked={decision_Data.challenge === option.id}
-            onChange={handleInputChange}
-          />
-          <p>{option.label}</p>
-        </motion.div>
-      ))}
-    </div>
-  </fieldset>
-  {errors.challenge && (
-    <p className="errorMssg">{errors.challenge}</p>
-  )}
-</div>
-
-<section>
-  <div className="field">
-    <fieldset>
-      <label htmlFor="failureResponse">
-        <FiAlertTriangle /> When you fail or stop, what usually
-        happens next?
-      </label>
-      <select
-        name="failureResponse"
-        value={decision_Data.failureResponse}
-        onChange={handleInputChange}
-      >
-        <option value="" disabled>
-          Select your typical response
-        </option>
-        <option value="restart">I restart from scratch</option>
-        <option value="break">I take a long break</option>
-        <option value="expectation">I lower my expectations</option>
-        <option value="quit">I quit silently</option>
-        <option value="try-again">
-          I try again with a new method
-        </option>
-      </select>
-    </fieldset>
-    {errors.failureResponse && (
-      <p className="errorMssg">{errors.failureResponse}</p>
-    )}
-  </div>
-
-  <div className="field">
-    <fieldset>
-      <label htmlFor="coachingStyle">
-        <FiMessageCircle /> How do you want this system to treat
-        you?
-      </label>
-      <select
-        name="coachingStyle"
-        value={decision_Data.coachingStyle}
-        onChange={handleInputChange}
-      >
-        <option value="" disabled>
-          Select coaching style
-        </option>
-        <option value="gentle">Gentle and supportive</option>
-        <option value="direct">Direct and honest</option>
-        <option value="strict">Strict and challenging</option>
-      </select>
-    </fieldset>
-    {errors.coachingStyle && (
-      <p className="errorMssg">{errors.coachingStyle}</p>
-    )}
-  </div>
-</section> */
 }

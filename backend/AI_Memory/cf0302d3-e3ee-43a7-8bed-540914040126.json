@@ -1,0 +1,253 @@
+{
+    "session_id": "cf0302d3-e3ee-43a7-8bed-540914040126",
+    "created_at": "2026-01-21T10:12:38.449129",
+    "skill": {
+        "name": "Learn Typescript",
+        "level": "beginner",
+        "targetLevel": "intermediate",
+        "weekly_time_hours": "3"
+    },
+    "current_strategy": {
+        "strategy_version": 1,
+        "skill_model": {
+            "core_components": [
+                "Static Type Annotations",
+                "Interfaces and Type Aliases",
+                "Generics",
+                "Union and Intersection Types",
+                "The TypeScript Compiler (tsconfig.json)"
+            ],
+            "supporting_components": [
+                "IDE Tooling (LSP)",
+                "Type Inference",
+                "Third-party definitions (@types)",
+                "Utility Types (Pick, Omit, Partial)"
+            ]
+        },
+        "practice_cycles": [
+            {
+                "cycle_index": 1,
+                "duration_weeks": 4,
+                "focus_summary": "Type Literacy and Annotation Basics",
+                "short_explanation_for_cycle": "This phase builds your basic vocabulary for describing data shapes so you can stop relying on the 'any' type in your code.",
+                "weekly_loop": {
+                    "primary_activity": "Refactoring existing small JavaScript functions into TypeScript by adding explicit parameter and return types.",
+                    "secondary_activity": "Reading and interpreting compiler error messages in your IDE to understand type mismatches."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Annotating primitives like strings, numbers, and simple arrays.",
+                    "challenging": "Defining complex object shapes using interfaces and handling optional properties."
+                },
+                "success_markers": {
+                    "objective": [
+                        "Project compiles with no-implicit-any enabled",
+                        "Zero instances of explicit 'any' type in practice files"
+                    ],
+                    "subjective": [
+                        "Increased comfort when reading TypeScript library documentation",
+                        "Reduced anxiety when the compiler flags a type error"
+                    ]
+                }
+            },
+            {
+                "cycle_index": 2,
+                "duration_weeks": 8,
+                "focus_summary": "Abstraction and Reusability through Generics",
+                "short_explanation_for_cycle": "This phase shifts your focus from static definitions to dynamic, reusable types which is the hallmark of intermediate proficiency.",
+                "weekly_loop": {
+                    "primary_activity": "Creating generic functions and classes that can operate on multiple types while maintaining safety.",
+                    "secondary_activity": "Implementing built-in utility types like Partial or Record to transform existing interfaces."
+                },
+                "difficulty_profile": {
+                    "comfortable": "Using union types to allow multiple specific values.",
+                    "challenging": "Writing generic constraints using the 'extends' keyword within type definitions."
+                },
+                "success_markers": {
+                    "objective": [
+                        "Successful implementation of a generic API wrapper or data transformer",
+                        "Use of at least three different utility types in a project"
+                    ],
+                    "subjective": [
+                        "Ability to predict how a type will flow through a generic function",
+                        "Sense of control when configuring tsconfig.json strictness levels"
+                    ]
+                }
+            }
+        ],
+        "evaluation_metrics": {
+            "objective": [
+                "Compilation success rate on first attempt",
+                "Depth of type nesting handled without compiler errors",
+                "Ratio of inferred types vs explicit annotations in logic blocks"
+            ],
+            "subjective": [
+                "Perceived speed of bug resolution using type hints",
+                "Confidence in refactoring internal logic without breaking external contracts",
+                "Ease of navigating new TypeScript-based codebases"
+            ]
+        },
+        "architect_notes": [
+            "Your 3-hour weekly window is tight; prioritize consistency over session length (e.g., 3 sessions of 1 hour).",
+            "Avoid 'any' at all costs to ensure you are actually practicing the type system's logic.",
+            "The duration of Cycle 2 is doubled to account for the steep conceptual climb of generics at your current time commitment."
+        ]
+    },
+    "practice_logs": [],
+    "practice_logs_analysis": [],
+    "strategy_history": [
+        {
+            "version": 1,
+            "reason": "Initial strategy",
+            "created_at": "2026-01-21T10:12:38.449129"
+        }
+    ],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "f97bd2db-f6b5-11f0-b6f0-d4bed912d276",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-21T10:12:38.449129",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        },
+        {
+            "id": "33110d14-f6b6-11f0-8383-d4bed912d276",
+            "event": "initial_strategy_created",
+            "actor": "ai",
+            "timestamp": "2026-01-21T10:12:38.449129",
+            "title": "Initial Practice Strategy Created",
+            "summary": "Initial practice strategy created for ['Learn Typescript'].",
+            "details": {
+                "reason": "Sufficient information provided to create initial practice system.",
+                "changes": {
+                    "strategy_version": 1
+                },
+                "evidence": [
+                    "Skill: Learn Typescript",
+                    "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {
+            "skill_name": "TypeScript",
+            "current_level": 1,
+            "target_level": 3,
+            "weekly_time_hours": 3,
+            "constraints": {
+                "learning_style": "applied project-based integration",
+                "dropout_risk": "frustration with strict compiler rules during low-hour weeks"
+            },
+            "inferred_fields": [
+                "current_level (mapped 'beginner' to 1)",
+                "target_level (mapped 'intermediate' to 3)",
+                "learning_style (inferred from common technical skill acquisition)",
+                "dropout_risk (inferred from time constraints and language strictness)"
+            ]
+        },
+        "normalized_strategy": {
+            "strategy_version": 1,
+            "skill_model": {
+                "core_components": [
+                    "Static Type Annotations",
+                    "Interfaces and Type Aliases",
+                    "Generics",
+                    "Union and Intersection Types",
+                    "The TypeScript Compiler (tsconfig.json)"
+                ],
+                "supporting_components": [
+                    "IDE Tooling (LSP)",
+                    "Type Inference",
+                    "Third-party definitions (@types)",
+                    "Utility Types (Pick, Omit, Partial)"
+                ]
+            },
+            "practice_cycles": [
+                {
+                    "cycle_index": 1,
+                    "duration_weeks": 4,
+                    "focus_summary": "Type Literacy and Annotation Basics",
+                    "short_explanation_for_cycle": "This phase builds your basic vocabulary for describing data shapes so you can stop relying on the 'any' type in your code.",
+                    "weekly_loop": {
+                        "primary_activity": "Refactoring existing small JavaScript functions into TypeScript by adding explicit parameter and return types.",
+                        "secondary_activity": "Reading and interpreting compiler error messages in your IDE to understand type mismatches."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Annotating primitives like strings, numbers, and simple arrays.",
+                        "challenging": "Defining complex object shapes using interfaces and handling optional properties."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Project compiles with no-implicit-any enabled",
+                            "Zero instances of explicit 'any' type in practice files"
+                        ],
+                        "subjective": [
+                            "Increased comfort when reading TypeScript library documentation",
+                            "Reduced anxiety when the compiler flags a type error"
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 2,
+                    "duration_weeks": 8,
+                    "focus_summary": "Abstraction and Reusability through Generics",
+                    "short_explanation_for_cycle": "This phase shifts your focus from static definitions to dynamic, reusable types which is the hallmark of intermediate proficiency.",
+                    "weekly_loop": {
+                        "primary_activity": "Creating generic functions and classes that can operate on multiple types while maintaining safety.",
+                        "secondary_activity": "Implementing built-in utility types like Partial or Record to transform existing interfaces."
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Using union types to allow multiple specific values.",
+                        "challenging": "Writing generic constraints using the 'extends' keyword within type definitions."
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Successful implementation of a generic API wrapper or data transformer",
+                            "Use of at least three different utility types in a project"
+                        ],
+                        "subjective": [
+                            "Ability to predict how a type will flow through a generic function",
+                            "Sense of control when configuring tsconfig.json strictness levels"
+                        ]
+                    }
+                }
+            ],
+            "evaluation_metrics": {
+                "objective": [
+                    "Compilation success rate on first attempt",
+                    "Depth of type nesting handled without compiler errors",
+                    "Ratio of inferred types vs explicit annotations in logic blocks"
+                ],
+                "subjective": [
+                    "Perceived speed of bug resolution using type hints",
+                    "Confidence in refactoring internal logic without breaking external contracts",
+                    "Ease of navigating new TypeScript-based codebases"
+                ]
+            },
+            "architect_notes": [
+                "Your 3-hour weekly window is tight; prioritize consistency over session length (e.g., 3 sessions of 1 hour).",
+                "Avoid 'any' at all costs to ensure you are actually practicing the type system's logic.",
+                "The duration of Cycle 2 is doubled to account for the steep conceptual climb of generics at your current time commitment."
+            ]
+        }
+    }
+}
