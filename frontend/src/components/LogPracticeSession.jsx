@@ -86,11 +86,11 @@ export default function LogPracticeSession() {
         });
         const data = await res.json();
         console.log(data);
-        // if (data.status === "success") {
-        //   window.location.reload();
-        // } else {
-        //   alert("Error sending log practice data to the backend");
-        // }
+        if (data.status === "success") {
+          window.location.reload();
+        } else {
+          alert("Error sending log practice data to the backend");
+        }
       } catch (error) {
         console.log(error.message);
       }
@@ -98,26 +98,31 @@ export default function LogPracticeSession() {
     setFieldError(newErrors);
   };
 
-  // useEffect(() => {
-  //   // Fetch log history from backend when component mounts
-  //   const fetchLogHistory = async () => {
-  //     try {
-  //       const res = await fetch("http://localhost:5000/api/practice/logs", {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "X-Session-ID": SESSION_ID,
-  //         },
-  //       });
-  //       const data = await res.json();
-  //       setLogHistory(data);
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   };
+  useEffect(() => {
+    // Fetch log history from backend when component mounts
+    const fetchLogHistory = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/practice/logs", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": SESSION_ID,
+          },
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+          // window.location.reload();
+          setLogHistory(data);
+        } else {
+          alert("Error retrieving log practice data from the backend");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
 
-  //   fetchLogHistory();
-  // }, []);
+    fetchLogHistory();
+  }, []);
 
   return (
     <>
