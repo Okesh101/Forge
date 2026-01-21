@@ -736,7 +736,7 @@ def get_analytics():
         session_metrics.append({
             "session_index": idx,
             "date": log['date'],
-            "duration_minites": int(log['duration_minutes']),
+            "duration_minutes": int(log['duration_minutes']),
             "difficulty_rating": int(log['difficulty_rating']),
             "fatigue_level": int(log['fatigue_level'])
         })
