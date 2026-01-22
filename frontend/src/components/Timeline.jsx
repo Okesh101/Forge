@@ -7,14 +7,16 @@ import PageNav from "../Utilities/PageNav";
 export default function Timeline() {
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
+  const BACKEND_API = "http://localhost:5000";
 
   // State to hold time line data
   const [timeline_data, setTimeline_Data] = useState([]);
   useEffect(() => {
     // Fetch timeline data from backend
     const fetchTimeLine = async () => {
+      // "http://localhost:5000/api/timeline"
       try {
-        const res = await fetch("http://localhost:5000/api/timeline", {
+        const res = await fetch(`${BACKEND_API}/api/timeline`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -45,7 +47,7 @@ export default function Timeline() {
             {timeline_data.map((item) => (
               <div className="timeline_card" key={item.id}>
                 <div className="circle-section">
-                  <p>{item.timestamp.slice(0,10)}</p>
+                  <p>{item.timestamp.slice(0, 10)}</p>
                   <div className="circle"></div>
                 </div>
                 <div

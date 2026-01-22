@@ -1,0 +1,281 @@
+{
+    "session_id": "f1036919-24eb-4056-88e1-770c043bae95",
+    "created_at": "2026-01-22T16:55:06.271101",
+    "skill": {
+        "name": "Learn how to type",
+        "level": "beginner",
+        "targetLevel": "intermediate",
+        "weekly_time_hours": "3"
+    },
+    "current_strategy": {
+        "strategy_version": 1,
+        "skill_model": {
+            "core_components": [
+                "Home row positioning",
+                "Finger independence",
+                "Visual-to-tactile mapping",
+                "Muscle memory for alpha keys"
+            ],
+            "supporting_components": [
+                "Ergonomic posture",
+                "Rhythmic typing cadence",
+                "Peripheral vision utilization",
+                "Non-alpha key reach"
+            ]
+        },
+        "practice_cycles": [
+            {
+                "cycle_index": 1,
+                "duration_weeks": 4,
+                "focus_summary": "Accuracy and Home Row Foundation",
+                "short_explanation_for_cycle": "This phase focuses on your ability to map each finger to its designated key without looking at the board, which is essential because building a foundation of accuracy prevents the formation of bad habits that would eventually limit your maximum speed at the intermediate level. By prioritizing correct form over raw words per minute, you ensure that your muscle memory becomes reliable and efficient, allowing you to gradually increase your typing tempo without suffering from the high error rates that often lead to frustration and burnout during the initial learning stages.",
+                "weekly_loop": {
+                    "primary_activity": "Single-row accuracy drills (Home, Top, Bottom)",
+                    "secondary_activity": "Short common-word repetition bursts"
+                },
+                "difficulty_profile": {
+                    "comfortable": "Home row (ASDF JKL;) character isolation",
+                    "challenging": "Bottom row pinky and ring finger reaches"
+                },
+                "success_markers": {
+                    "objective": [
+                        "Maintain 95% accuracy on row-specific drills",
+                        "Zero glances at the keyboard for 5-minute intervals"
+                    ],
+                    "subjective": [
+                        "Reduced cognitive load when locating home row",
+                        "Consistent hand placement without visual verification"
+                    ]
+                }
+            },
+            {
+                "cycle_index": 2,
+                "duration_weeks": 4,
+                "focus_summary": "Key Integration and Rhythm",
+                "short_explanation_for_cycle": "This phase introduces your hands to the complexity of full-sentence typing by integrating all keyboard rows and common punctuation markers, which serves as the bridge between isolated drills and real-world application. By focusing on a steady rhythmic cadence rather than rapid bursts, you allow your brain to process the transition between letters smoothly, minimizing the pauses between words that typically hinder intermediate progress and ensuring your hands move as a coordinated unit rather than individual fingers reacting to disparate stimuli in isolation.",
+                "weekly_loop": {
+                    "primary_activity": "N-gram and common bigram/trigram repetition",
+                    "secondary_activity": "Full sentence typing with punctuation focus"
+                },
+                "difficulty_profile": {
+                    "comfortable": "Three-letter word sequences",
+                    "challenging": "Integrating 'Q', 'Z', and 'X' into sentences"
+                },
+                "success_markers": {
+                    "objective": [
+                        "Consistent 20-25 WPM with 90%+ accuracy",
+                        "Reduced variance in time-between-keystrokes"
+                    ],
+                    "subjective": [
+                        "Feeling of 'flow' while typing continuous text",
+                        "Awareness of errors immediately after they occur"
+                    ]
+                }
+            }
+        ],
+        "evaluation_metrics": {
+            "objective": [
+                "Words Per Minute (WPM) on standard prose",
+                "Accuracy percentage over 10-minute tests",
+                "Error rate per specific finger reach"
+            ],
+            "subjective": [
+                "Confidence level in finger positioning",
+                "Physical comfort and lack of strain in wrists/fingers",
+                "Decrease in the urge to look at the keys"
+            ]
+        },
+        "architect_notes": [
+            "Initial progress will feel slow; do not trade accuracy for speed in the first 4 weeks.",
+            "The 'intermediate' goal is defined as subconscious key location at a conversational pace.",
+            "Practice sessions should be split into 30-minute blocks to avoid fatigue."
+        ]
+    },
+    "practice_logs": [
+        {
+            "date": "2026-01-22T16:55:06.271101",
+            "activity": "I learnt short common words",
+            "duration_minutes": "12",
+            "difficulty_rating": "1",
+            "fatigue_level": "3"
+        }
+    ],
+    "practice_logs_analysis": [],
+    "strategy_history": [
+        {
+            "version": 1,
+            "reason": "Initial strategy",
+            "created_at": "2026-01-22T16:55:06.271101"
+        }
+    ],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "0bf45f1d-f7ab-11f0-825d-d4bed912d276",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-22T16:55:06.271101",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        },
+        {
+            "id": "e561207a-f7ab-11f0-90ba-d4bed912d276",
+            "event": "initial_strategy_created",
+            "actor": "ai",
+            "timestamp": "2026-01-22T16:55:06.271101",
+            "title": "Initial Practice Strategy Created",
+            "summary": "Initial practice strategy created for ['Learn how to type'].",
+            "details": {
+                "reason": "Sufficient information provided to create initial practice system.",
+                "changes": {
+                    "strategy_version": 1
+                },
+                "evidence": [
+                    "Skill: Learn how to type",
+                    "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "4102ebf9-f7ae-11f0-b5f6-d4bed912d276",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-22T16:55:06.271101",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn how to type.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 1
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {
+            "skill_name": "Touch Typing",
+            "current_level": 1,
+            "target_level": 2,
+            "weekly_time_hours": 3,
+            "constraints": {
+                "learning_style": "Kinesthetic repetition",
+                "dropout_risk": "Frustration with low initial speed and accuracy trade-offs"
+            },
+            "inferred_fields": [
+                "current_level",
+                "target_level",
+                "learning_style",
+                "dropout_risk"
+            ]
+        },
+        "normalized_strategy": {
+            "strategy_version": 1,
+            "skill_model": {
+                "core_components": [
+                    "Home row positioning",
+                    "Finger independence",
+                    "Visual-to-tactile mapping",
+                    "Muscle memory for alpha keys"
+                ],
+                "supporting_components": [
+                    "Ergonomic posture",
+                    "Rhythmic typing cadence",
+                    "Peripheral vision utilization",
+                    "Non-alpha key reach"
+                ]
+            },
+            "practice_cycles": [
+                {
+                    "cycle_index": 1,
+                    "duration_weeks": 4,
+                    "focus_summary": "Accuracy and Home Row Foundation",
+                    "short_explanation_for_cycle": "This phase focuses on your ability to map each finger to its designated key without looking at the board, which is essential because building a foundation of accuracy prevents the formation of bad habits that would eventually limit your maximum speed at the intermediate level. By prioritizing correct form over raw words per minute, you ensure that your muscle memory becomes reliable and efficient, allowing you to gradually increase your typing tempo without suffering from the high error rates that often lead to frustration and burnout during the initial learning stages.",
+                    "weekly_loop": {
+                        "primary_activity": "Single-row accuracy drills (Home, Top, Bottom)",
+                        "secondary_activity": "Short common-word repetition bursts"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Home row (ASDF JKL;) character isolation",
+                        "challenging": "Bottom row pinky and ring finger reaches"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Maintain 95% accuracy on row-specific drills",
+                            "Zero glances at the keyboard for 5-minute intervals"
+                        ],
+                        "subjective": [
+                            "Reduced cognitive load when locating home row",
+                            "Consistent hand placement without visual verification"
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 2,
+                    "duration_weeks": 4,
+                    "focus_summary": "Key Integration and Rhythm",
+                    "short_explanation_for_cycle": "This phase introduces your hands to the complexity of full-sentence typing by integrating all keyboard rows and common punctuation markers, which serves as the bridge between isolated drills and real-world application. By focusing on a steady rhythmic cadence rather than rapid bursts, you allow your brain to process the transition between letters smoothly, minimizing the pauses between words that typically hinder intermediate progress and ensuring your hands move as a coordinated unit rather than individual fingers reacting to disparate stimuli in isolation.",
+                    "weekly_loop": {
+                        "primary_activity": "N-gram and common bigram/trigram repetition",
+                        "secondary_activity": "Full sentence typing with punctuation focus"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Three-letter word sequences",
+                        "challenging": "Integrating 'Q', 'Z', and 'X' into sentences"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Consistent 20-25 WPM with 90%+ accuracy",
+                            "Reduced variance in time-between-keystrokes"
+                        ],
+                        "subjective": [
+                            "Feeling of 'flow' while typing continuous text",
+                            "Awareness of errors immediately after they occur"
+                        ]
+                    }
+                }
+            ],
+            "evaluation_metrics": {
+                "objective": [
+                    "Words Per Minute (WPM) on standard prose",
+                    "Accuracy percentage over 10-minute tests",
+                    "Error rate per specific finger reach"
+                ],
+                "subjective": [
+                    "Confidence level in finger positioning",
+                    "Physical comfort and lack of strain in wrists/fingers",
+                    "Decrease in the urge to look at the keys"
+                ]
+            },
+            "architect_notes": [
+                "Initial progress will feel slow; do not trade accuracy for speed in the first 4 weeks.",
+                "The 'intermediate' goal is defined as subconscious key location at a conversational pace.",
+                "Practice sessions should be split into 30-minute blocks to avoid fatigue."
+            ]
+        }
+    }
+}

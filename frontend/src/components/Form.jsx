@@ -33,8 +33,8 @@ export default function Form() {
 
   const navigate = useNavigate();
 
-  // Getting sessionId from contextApi
-  const { sessionId } = useContext(SessionContext);
+  // Getting sessionId and BACKEND_API from contextApi
+  const { sessionId, BACKEND_API } = useContext(SessionContext);
 
   // Function to handle input changes
   function handleInputChange(e) {
@@ -75,8 +75,9 @@ export default function Form() {
     if (isValid) {
       // Send form data to backend
       setIsLoading(true);
+      // "http://127.0.0.1:5000/api/decision/new"
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/decision/new", {
+        const res = await fetch(`${BACKEND_API}/decision/new`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -94,7 +95,7 @@ export default function Form() {
           navigate("/narration");
           resetForm();
         } else {
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+          // await new Promise((resolve) => setTimeout(resolve, 5000));
           setErrorModal(true);
           setIsLoading(false);
           resetForm();
