@@ -2,7 +2,14 @@
 .narration-page {
   @include pageReset;
   header {
-    @include headerStyle;
+    h1 {
+      @include headerStyle;
+      font-size: 2.5rem;
+      margin-bottom: 7px;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      @include webkitText;
+    }
     text-align: start;
     p {
       display: flex;
@@ -37,6 +44,22 @@
           p {
             text-decoration: underline;
           }
+        }
+      }
+    }
+    .error {
+      opacity: 0.6;
+      // padding: 20px;
+      margin-top: -1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      span {
+        em {
+          color: #ff6a1a;
+          text-decoration: underline;
+          cursor: pointer;
         }
       }
     }

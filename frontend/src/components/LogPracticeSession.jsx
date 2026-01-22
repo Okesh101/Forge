@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { useNavigate } from "react-router-dom";
 // import { LineChart } from "lucide-react";
 import { Activity } from "lucide-react";
+import { SessionContext } from "../contextApi/SessionContext";
 
 export default function LogPracticeSession() {
   // State to hold log practice session data
@@ -16,6 +17,9 @@ export default function LogPracticeSession() {
   const [logHistory, setLogHistory] = useState([]);
   // State for field errors
   const [fieldError, setFieldError] = useState({});
+
+  // Getting BACKEND_API from sessionContext
+  const BACKEND_API = useContext(SessionContext);
 
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
@@ -76,7 +80,8 @@ export default function LogPracticeSession() {
 
       // Send form data to backend
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/practice/new", {
+        // "http://127.0.0.1:5000/api/practice/new"
+        const res = await fetch(`${BACKEND_API}/practice/new`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -102,9 +107,12 @@ export default function LogPracticeSession() {
 
   useEffect(() => {
     // Fetch log history from backend when component mounts
+
+    // "http://127.0.0.1:5000/api/practice/logs"
+
     const fetchLogHistory = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/practice/logs", {
+        const res = await fetch(`${BACKEND_API}/practice/logs`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

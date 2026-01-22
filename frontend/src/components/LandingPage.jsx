@@ -8,13 +8,15 @@ import { SessionContext } from "../contextApi/SessionContext";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { setSessionId } = useContext(SessionContext);
+  const { setSessionId, BACKEND_API } = useContext(SessionContext);
 
   // function to handle navigation to form page
   const handleNavigate = async () => {
     // Create a new session before navigating
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/create_session");
+      // "http://127.0.0.1:5000/api/create_session"
+
+      const res = await fetch(`${BACKEND_API}/create_session`);
       const data = await res.json();
 
       setSessionId(data.session_id);
