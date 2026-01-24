@@ -7,6 +7,7 @@ import Timeline from "./components/Timeline";
 import Narration from "./components/Narration";
 import ScrollToTop from "./components/ScrollToTop";
 import LogPracticeSession from "./components/LogPracticeSession";
+import HowForgeWorks from "./components/HowForgeWorks";
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/narration" element={<Narration />} />
+        <Route path="/how-it-works" element={<HowForgeWorks />} />
       </Routes>
     </>
   );

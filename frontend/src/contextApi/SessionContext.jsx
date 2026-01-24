@@ -7,7 +7,7 @@ export const SessionContext = createContext();
 export const SessionProvider = ({ children }) => {
   const [sessionId, setSessionId] = useState("");
   const navigate = useNavigate();
-  const BACKEND_API = "http://127.0.0.1:5000/api";
+  const BACKEND_API = "http://127.0.0.1:5000";
   const handleNavigation = () => {
     navigate("/");
   };

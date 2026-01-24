@@ -16,7 +16,7 @@ export default function LandingPage() {
     try {
       // "http://127.0.0.1:5000/api/create_session"
 
-      const res = await fetch(`${BACKEND_API}/create_session`);
+      const res = await fetch(`${BACKEND_API}/api/create_session`);
       const data = await res.json();
 
       setSessionId(data.session_id);

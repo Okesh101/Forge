@@ -77,7 +77,7 @@ export default function Form() {
       setIsLoading(true);
       // "http://127.0.0.1:5000/api/decision/new"
       try {
-        const res = await fetch(`${BACKEND_API}/decision/new`, {
+        const res = await fetch(`${BACKEND_API}/api/decision/new`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
