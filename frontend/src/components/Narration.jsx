@@ -17,7 +17,7 @@ export default function Narration() {
     if (!SESSION_ID) return;
     const fetchNarrationData = async () => {
       try {
-        const res = await fetch(`${BACKEND_API}/decision/get`, {
+        const res = await fetch(`${BACKEND_API}/api/decision/get`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

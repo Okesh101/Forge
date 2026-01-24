@@ -19,7 +19,8 @@ export default function LogPracticeSession() {
   const [fieldError, setFieldError] = useState({});
 
   // Getting BACKEND_API from sessionContext
-  const BACKEND_API = useContext(SessionContext);
+  const BACKEND_API = "http://127.0.0.1:5000";
+  // const BACKEND_API = useContext(SessionContext);
 
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
@@ -81,7 +82,7 @@ export default function LogPracticeSession() {
       // Send form data to backend
       try {
         // "http://127.0.0.1:5000/api/practice/new"
-        const res = await fetch(`${BACKEND_API}/practice/new`, {
+        const res = await fetch(`${BACKEND_API}/api/practice/new`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -112,7 +113,7 @@ export default function LogPracticeSession() {
 
     const fetchLogHistory = async () => {
       try {
-        const res = await fetch(`${BACKEND_API}/practice/logs`, {
+        const res = await fetch(`${BACKEND_API}/api/practice/logs`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

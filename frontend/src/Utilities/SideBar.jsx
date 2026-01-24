@@ -36,6 +36,10 @@ export default function SideBar() {
         // Handle timeline button click
         setActiveButton("timeline");
         break;
+      case "/how-it-works":
+        // Handle how-it-works button click
+        setActiveButton("how-it-works");
+        break;
       default:
         // Set default active button as form
         setActiveButton("form");
@@ -98,6 +102,15 @@ export default function SideBar() {
         className={buttonFunction("timeline")}
       >
         Timeline
+      </button>
+      <button
+        onClick={() => {
+          navigate("/how-it-works");
+          setActiveButton("how-it-works");
+        }}
+        className={buttonFunction("how-it-works")}
+      >
+        How It Works
       </button>
       <button onClick={() => navigate("/")}>Back to HomePage</button>
     </motion.div>
