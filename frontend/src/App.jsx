@@ -8,11 +8,13 @@ import Narration from "./components/Narration";
 import ScrollToTop from "./components/ScrollToTop";
 import LogPracticeSession from "./components/LogPracticeSession";
 import HowForgeWorks from "./components/HowForgeWorks";
+import LogIn from "./components/LogIn";
 function App() {
   return (
     <>
       <ScrollToTop />
       <Routes>
+        {/* <Route path="/" element={<LogIn />} /> */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/form" element={<Form />} />
         <Route path="/logSession" element={<LogPracticeSession />} />
