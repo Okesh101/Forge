@@ -1,0 +1,30 @@
+@use "mixins" as *;
+
+.how_it_works {
+  @include pageReset;
+
+  // display: flex;
+  // align-items: center;
+  // flex-direction: column;
+  //   padding: 13px;
+  h1 {
+    @include webkitText;
+    // @include headerStyle;
+    // text-align: start;
+  }
+  .box {
+    padding: 20px;
+    padding-top: 0 !important;
+    .item {
+      margin-top: 20px;
+      font-family: "Times New Roman";
+      p {
+        font-size: 22px;
+        margin-bottom: -4px;
+      }
+      span {
+        font-size: 17px;
+      }
+    }
+  }
+}

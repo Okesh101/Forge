@@ -48,8 +48,28 @@
       line-height: 1.6;
     }
 
-    .cta-btn {
-      @include btnStyle;
+    .hero-btns {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      .cta-btn {
+        @include btnStyle;
+      }
+      .btn {
+        border: 1px solid rgba(255, 106, 26, 0.2);
+        background-color: rgba(92, 89, 89, 0.103);
+        padding: 15px 50px;
+        border-radius: 12px;
+        font-size: 0.98rem;
+        // font-weight: 600;
+        color: white;
+        transition: all 0.9s ease;
+        cursor: pointer;
+        &:hover {
+          transform: translateY(-3px);
+        }
+      }
     }
   }
 

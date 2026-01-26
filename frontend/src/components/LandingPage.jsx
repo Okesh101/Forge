@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiPlayCircle, FiTarget } from "react-icons/fi";
 import { Brain, PlayCircle, Repeat, TrendingUp, Zap } from "lucide-react";
 import { motion, useAnimate } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { SessionContext } from "../contextApi/SessionContext";
+import LogIn from "./LogIn";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { setSessionId, BACKEND_API } = useContext(SessionContext);
+
+  const [showLogin, setShowLogin] = useState(false);
 
   // function to handle navigation to form page
   const handleNavigate = async () => {
@@ -29,6 +32,7 @@ export default function LandingPage() {
       alert(error.message);
     }
   };
+
   return (
     <motion.div
       className="container"
@@ -49,16 +53,32 @@ export default function LandingPage() {
           An intelligent, adaptive system that evolves with you. Forge doesn't
           just train, it learns, adapts, and refines your path to expertise.
         </p>
-        <motion.button
-          className="cta-btn"
-          whileHover={{
-            scale: 1.1,
-            boxShadow: "0px 0px 8px #ff6a1a",
-          }}
-          onClick={handleNavigate}
-        >
-          Start Forging
-        </motion.button>
+        {/* <div className="cta-btns">
+         
+       
+        </div> */}
+        <div className="hero-btns">
+          <motion.button
+            className="cta-btn"
+            whileHover={{
+              scale: 1.03,
+              boxShadow: "0px 0px 8px #ff6a1a",
+            }}
+            onClick={handleNavigate}
+          >
+            Start Forging
+          </motion.button>
+          <motion.button
+            className="btn"
+            whileHover={{
+              scale: 1.03,
+              // boxShadow: "0px 0px 8px #ff6a1a",
+            }}
+            onClick={() => setShowLogin(true)}
+          >
+            I Have a Session ID
+          </motion.button>
+        </div>
       </section>
 
       <main>
@@ -236,6 +256,7 @@ export default function LandingPage() {
           Start Your Mastery Journey
         </button>
       </section>
+      {showLogin && <LogIn setShowLogin={setShowLogin} />}
     </motion.div>
   );
 }

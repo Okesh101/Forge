@@ -1,0 +1,120 @@
+@use "mixins" as *;
+.login_page {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  .content {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+    border: 1px solid rgba(255, 106, 26, 0.2);
+    max-width: 500px;
+    width: 100%;
+    padding: 16px;
+    margin: 0 auto;
+    border-radius: 10px;
+    nav {
+      // @include headerStyle;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 0;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #e24f00, transparent);
+        border-radius: 2px;
+      }
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 7px;
+        line-height: 1.2;
+        letter-spacing: -1px;
+        @include webkitText;
+      }
+      .icon {
+        background-color: #0b1224;
+        border-radius: 50px;
+        padding: 6px;
+        position: absolute;
+        right: 0;
+        cursor: pointer;
+      }
+    }
+    header {
+      text-align: center;
+      margin: 35px 0;
+      h2 {
+        @include webkitText;
+      }
+      p {
+        line-height: 1.1;
+        margin-top: 6px;
+        opacity: 0.6;
+      }
+    }
+    main {
+      margin-top: -10px;
+      fieldset {
+        border: none;
+        width: 100%;
+        label {
+          font-size: 14px;
+          font-weight: bold;
+          color: rgb(138, 134, 134);
+        }
+        section {
+          display: flex;
+          align-items: center;
+          border: 1px solid rgb(150, 67, 8);
+          padding: 0px 0px 0px 10px;
+          gap: 20px;
+          border-radius: 10px;
+          input {
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 15px;
+          }
+          button {
+            padding: 5px 15px;
+            border-radius: 0 7px 7px 0;
+            border: none;
+            background-color: rgb(150, 67, 8);
+            color: rgba(255, 255, 255, 0.842);
+          }
+        }
+      }
+      p {
+        font-size: 14px;
+        margin-top: 10px;
+        opacity: 0.7;
+      }
+      .login_btn {
+        @include btnStyle;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        // justify-content: center;
+        margin: 0 auto;
+        padding: 10px 90px;
+        font-size: 15px;
+        margin-top: 40px;
+        border-radius: 5px;
+      }
+    }
+  }
+}
