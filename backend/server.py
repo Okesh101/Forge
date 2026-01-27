@@ -493,12 +493,15 @@ def createSession():
     return jsonify({"session_id": session_id}), 201
 
 
-@app.route('/api/show_session', methods=['GET'])
-def show_session():
-    session_id = request.headers.get('X-Session-ID')
-    if session_exists(session_id) == False:
+@app.route('/api/auth/login', methods=['POST'])
+def login_session():
+    session_id = request.json.get('X-Session-ID')
+    if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
-    return jsonify(loadAiMemory(session_id)), 200
+    return jsonify({
+        "status": "success",
+        "message": "Session Found!"
+    }), 200
 
 
 @app.route('/api/decision/new', methods=['POST'])
