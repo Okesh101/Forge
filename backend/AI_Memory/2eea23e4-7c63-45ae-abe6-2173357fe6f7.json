@@ -1,0 +1,436 @@
+{
+    "session_id": "2eea23e4-7c63-45ae-abe6-2173357fe6f7",
+    "created_at": "2026-01-27T03:41:42.361751",
+    "skill": {
+        "name": "Learn how to type fast",
+        "level": "beginner",
+        "targetLevel": "expert",
+        "weekly_time_hours": "13"
+    },
+    "current_strategy": {
+        "strategy_version": 1,
+        "skill_model": {
+            "core_components": [
+                "Home row muscle memory",
+                "Key-to-finger mapping",
+                "Accuracy discipline",
+                "Tactile feedback recognition"
+            ],
+            "supporting_components": [
+                "Typing posture",
+                "Wrist ergonomics",
+                "Peripheral vision utilization",
+                "Rhythmic breathing"
+            ]
+        },
+        "practice_cycles": [
+            {
+                "cycle_index": 1,
+                "duration_weeks": 4,
+                "focus_summary": "Absolute Accuracy and Spatial Mapping",
+                "short_explanation_for_cycle": "This phase is necessary because your muscle memory requires a sterile environment where accuracy is prioritized over raw speed to prevent the cementation of bad habits that will limit your ceiling later. By focusing on correct finger placement and keeping your eyes off the keys, you are building the neural pathways required for subconscious execution, which ensures that your speed gains in later cycles are not hindered by frequent corrections or hunt-and-peck regressions during high-pressure typing tasks.",
+                "weekly_loop": {
+                    "primary_activity": "No-look home row and vertical reach drills",
+                    "secondary_activity": "Common bigram and trigram repetition"
+                },
+                "difficulty_profile": {
+                    "comfortable": "Slower-paced typing of high-frequency short words",
+                    "challenging": "Top-row and bottom-row reaches without visual confirmation"
+                },
+                "success_markers": {
+                    "objective": [
+                        "98% accuracy on home row drills",
+                        "Consistent 25-30 WPM"
+                    ],
+                    "subjective": [
+                        "Decreased urge to look at hands",
+                        "Confident finger placement on the 'F' and 'J' nubs"
+                    ]
+                }
+            },
+            {
+                "cycle_index": 2,
+                "duration_weeks": 8,
+                "focus_summary": "Fluidity and Burst Speed",
+                "short_explanation_for_cycle": "This phase is necessary because your brain needs to transition from processing individual letters to recognizing and executing whole word shapes to break past the initial speed plateaus. You will be training your hands to move in fluid bursts rather than discrete staccato steps, which balances your output and reduces the cognitive load of typing each character, ultimately allowing your fingers to keep pace with your thoughts without causing the mental fatigue that usually accompanies conscious letter-by-letter processing during long sessions.",
+                "weekly_loop": {
+                    "primary_activity": "Whole-word recognition sprints",
+                    "secondary_activity": "Variable text length endurance sessions"
+                },
+                "difficulty_profile": {
+                    "comfortable": "Typing common English sentences in rhythm",
+                    "challenging": "Pushing WPM ceilings on unfamiliar vocabulary"
+                },
+                "success_markers": {
+                    "objective": [
+                        "Consistent 60-70 WPM",
+                        "Sub-5ms variation in keypress rhythm"
+                    ],
+                    "subjective": [
+                        "Feeling a flow state during medium-length paragraphs",
+                        "Automatic correction of typos without looking"
+                    ]
+                }
+            },
+            {
+                "cycle_index": 3,
+                "duration_weeks": 12,
+                "focus_summary": "Technical Mastery and Complexity",
+                "short_explanation_for_cycle": "This phase is necessary because your transition to expert status requires the ability to handle non-standard text and technical punctuation with the same fluidity as common prose. By introducing high-complexity drills involving symbols, numbers, and technical vocabulary, you are hardening your skills against environmental changes and ensuring that your peak performance becomes your baseline. This focus prevents accuracy decay during high-stakes work, allowing your hands to operate autonomously while your conscious mind focuses entirely on the creative or analytical content of your writing.",
+                "weekly_loop": {
+                    "primary_activity": "Code-snippet and special character drills",
+                    "secondary_activity": "Blind transcription of audio content"
+                },
+                "difficulty_profile": {
+                    "comfortable": "High-speed typing of standard literary prose",
+                    "challenging": "Mixing alphanumeric strings and symbols at speed"
+                },
+                "success_markers": {
+                    "objective": [
+                        "100+ WPM on diverse text types",
+                        "Accuracy maintained above 97% on symbols"
+                    ],
+                    "subjective": [
+                        "Complete disconnect between cognitive effort and typing physical action",
+                        "Ability to type complex thoughts in real-time"
+                    ]
+                }
+            }
+        ],
+        "evaluation_metrics": {
+            "objective": [
+                "Words Per Minute (WPM) on 10-minute tests",
+                "Raw vs. Adjusted Accuracy percentage",
+                "Burst speed on top 1000 English words"
+            ],
+            "subjective": [
+                "Perceived level of physical tension",
+                "Confidence in hitting non-alpha keys",
+                "Recovery speed after a typing error"
+            ]
+        },
+        "architect_notes": [
+            "Total time commitment of 13 hours allows for two 45-minute sessions daily plus a longer weekend review.",
+            "The jump from level 1 to level 4 is significant and requires strict adherence to the 'no-look' rule from week one.",
+            "Incorporate ergonomic breaks every 25 minutes to mitigate the high dropout risk associated with repetitive strain."
+        ]
+    },
+    "practice_logs": [
+        {
+            "date": "2026-01-27T03:41:42.361751",
+            "activity": "I started trying small small words without looking at the home keys but i was a bit slow",
+            "duration_minutes": "30",
+            "difficulty_rating": "3",
+            "fatigue_level": "3"
+        },
+        {
+            "date": "2026-01-27T03:41:42.361751",
+            "activity": "I tried keeping my eyes off the keyboard, but it's not that easy",
+            "duration_minutes": "30",
+            "difficulty_rating": "4",
+            "fatigue_level": "4"
+        },
+        {
+            "date": "2026-01-27T03:41:42.361751",
+            "activity": "Tried getting to top and bottom row reaches...Mehhnnn, it wasn't easy ooo",
+            "duration_minutes": "40",
+            "difficulty_rating": "7",
+            "fatigue_level": "7"
+        }
+    ],
+    "practice_logs_analysis": [
+        {
+            "analysis_version": 1,
+            "session_analysis": {
+                "effort_level": "high",
+                "challenge_alignment": "over-challenged",
+                "friction_signals": [
+                    "Difficulty and fatigue ratings (7) exceed the defined 1\u20135 scale parameters",
+                    "Verbal feedback ('Mehhnnn, it wasn't easy ooo') indicates significant cognitive or physical strain",
+                    "Sharp escalation in fatigue across three consecutive sessions on the same date"
+                ],
+                "positive_signals": [
+                    "Strict adherence to intended strategy (vertical reaches without visual confirmation)",
+                    "Increase in session duration (40 minutes) despite rising difficulty"
+                ]
+            },
+            "flags": {
+                "fatigue_risk": true,
+                "motivation_risk": false,
+                "overload_risk": true
+            },
+            "analysis_confidence": 0.95,
+            "analysis_notes": [
+                "The user self-reported difficulty and fatigue levels of 7, which is an outlier relative to the 1\u20135 scale, signaling extreme perceived exertion.",
+                "Practice activity (top and bottom row reaches) is aligned with the 'challenging' profile of the current strategy cycle.",
+                "The progression from home row (Diff 3) to vertical reaches (Diff 7) within a single day has resulted in rapid fatigue accumulation.",
+                "No evidence of accuracy or speed metrics provided; assessment relies on self-reported exertion and activity description."
+            ]
+        }
+    ],
+    "strategy_history": [
+        {
+            "version": 1,
+            "reason": "Initial strategy",
+            "created_at": "2026-01-27T03:41:42.361751"
+        }
+    ],
+    "agent_insights": {},
+    "timeline": [
+        {
+            "id": "da38edbb-fb29-11f0-8d8f-a0481cdf2fa0",
+            "event": "session_created",
+            "actor": "system",
+            "timestamp": "2026-01-27T03:41:42.361751",
+            "title": "Session Created",
+            "summary": "Your learning journey started here.",
+            "details": {
+                "reason": "User initiated a new learning session.",
+                "changes": {},
+                "evidence": []
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": false
+            }
+        },
+        {
+            "id": "f7c6a7d9-fb29-11f0-ab5a-a0481cdf2fa0",
+            "event": "initial_strategy_created",
+            "actor": "ai",
+            "timestamp": "2026-01-27T03:41:42.361751",
+            "title": "Initial Practice Strategy Created",
+            "summary": "Initial practice strategy created for ['Learn how to type fast'].",
+            "details": {
+                "reason": "Sufficient information provided to create initial practice system.",
+                "changes": {
+                    "strategy_version": 1
+                },
+                "evidence": [
+                    "Skill: Learn how to type fast",
+                    "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "2e24f7be-fb2a-11f0-9c85-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-27T03:41:42.361751",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn how to type fast.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 1
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "60260ebc-fb2a-11f0-96c4-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-27T03:41:42.361751",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn how to type fast.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 2
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "91913159-fb2a-11f0-8d16-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-27T03:41:42.361751",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn how to type fast.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 3
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "973bf7fe-fb2a-11f0-acdc-a0481cdf2fa0",
+            "event": "session_analyzed",
+            "actor": "ai",
+            "timestamp": "2026-01-27T03:41:42.361751",
+            "title": "Practice Session Analyzed",
+            "summary": "Analyzed 3 consecutive practice sessions",
+            "details": {
+                "reason": "User logged up to 3 practice sessions.",
+                "changes": {
+                    "analysis_count": 1
+                },
+                "evidence": [
+                    "Challenge Alignment: over-challenged",
+                    "Analyzer Confidence: 0.95"
+                ]
+            },
+            "visibilty": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        }
+    ],
+    "meta": {
+        "agent_version": "forge-v1",
+        "last_analyzed": null
+    },
+    "normalized_return": {
+        "normalized_input": {
+            "skill_name": "Touch Typing",
+            "current_level": 1,
+            "target_level": 4,
+            "weekly_time_hours": 13,
+            "constraints": {
+                "learning_style": "High-frequency deliberate practice with feedback loops",
+                "dropout_risk": "Physical fatigue and plateau-induced frustration"
+            },
+            "inferred_fields": [
+                "learning_style",
+                "dropout_risk"
+            ]
+        },
+        "normalized_strategy": {
+            "strategy_version": 1,
+            "skill_model": {
+                "core_components": [
+                    "Home row muscle memory",
+                    "Key-to-finger mapping",
+                    "Accuracy discipline",
+                    "Tactile feedback recognition"
+                ],
+                "supporting_components": [
+                    "Typing posture",
+                    "Wrist ergonomics",
+                    "Peripheral vision utilization",
+                    "Rhythmic breathing"
+                ]
+            },
+            "practice_cycles": [
+                {
+                    "cycle_index": 1,
+                    "duration_weeks": 4,
+                    "focus_summary": "Absolute Accuracy and Spatial Mapping",
+                    "short_explanation_for_cycle": "This phase is necessary because your muscle memory requires a sterile environment where accuracy is prioritized over raw speed to prevent the cementation of bad habits that will limit your ceiling later. By focusing on correct finger placement and keeping your eyes off the keys, you are building the neural pathways required for subconscious execution, which ensures that your speed gains in later cycles are not hindered by frequent corrections or hunt-and-peck regressions during high-pressure typing tasks.",
+                    "weekly_loop": {
+                        "primary_activity": "No-look home row and vertical reach drills",
+                        "secondary_activity": "Common bigram and trigram repetition"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Slower-paced typing of high-frequency short words",
+                        "challenging": "Top-row and bottom-row reaches without visual confirmation"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "98% accuracy on home row drills",
+                            "Consistent 25-30 WPM"
+                        ],
+                        "subjective": [
+                            "Decreased urge to look at hands",
+                            "Confident finger placement on the 'F' and 'J' nubs"
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 2,
+                    "duration_weeks": 8,
+                    "focus_summary": "Fluidity and Burst Speed",
+                    "short_explanation_for_cycle": "This phase is necessary because your brain needs to transition from processing individual letters to recognizing and executing whole word shapes to break past the initial speed plateaus. You will be training your hands to move in fluid bursts rather than discrete staccato steps, which balances your output and reduces the cognitive load of typing each character, ultimately allowing your fingers to keep pace with your thoughts without causing the mental fatigue that usually accompanies conscious letter-by-letter processing during long sessions.",
+                    "weekly_loop": {
+                        "primary_activity": "Whole-word recognition sprints",
+                        "secondary_activity": "Variable text length endurance sessions"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "Typing common English sentences in rhythm",
+                        "challenging": "Pushing WPM ceilings on unfamiliar vocabulary"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "Consistent 60-70 WPM",
+                            "Sub-5ms variation in keypress rhythm"
+                        ],
+                        "subjective": [
+                            "Feeling a flow state during medium-length paragraphs",
+                            "Automatic correction of typos without looking"
+                        ]
+                    }
+                },
+                {
+                    "cycle_index": 3,
+                    "duration_weeks": 12,
+                    "focus_summary": "Technical Mastery and Complexity",
+                    "short_explanation_for_cycle": "This phase is necessary because your transition to expert status requires the ability to handle non-standard text and technical punctuation with the same fluidity as common prose. By introducing high-complexity drills involving symbols, numbers, and technical vocabulary, you are hardening your skills against environmental changes and ensuring that your peak performance becomes your baseline. This focus prevents accuracy decay during high-stakes work, allowing your hands to operate autonomously while your conscious mind focuses entirely on the creative or analytical content of your writing.",
+                    "weekly_loop": {
+                        "primary_activity": "Code-snippet and special character drills",
+                        "secondary_activity": "Blind transcription of audio content"
+                    },
+                    "difficulty_profile": {
+                        "comfortable": "High-speed typing of standard literary prose",
+                        "challenging": "Mixing alphanumeric strings and symbols at speed"
+                    },
+                    "success_markers": {
+                        "objective": [
+                            "100+ WPM on diverse text types",
+                            "Accuracy maintained above 97% on symbols"
+                        ],
+                        "subjective": [
+                            "Complete disconnect between cognitive effort and typing physical action",
+                            "Ability to type complex thoughts in real-time"
+                        ]
+                    }
+                }
+            ],
+            "evaluation_metrics": {
+                "objective": [
+                    "Words Per Minute (WPM) on 10-minute tests",
+                    "Raw vs. Adjusted Accuracy percentage",
+                    "Burst speed on top 1000 English words"
+                ],
+                "subjective": [
+                    "Perceived level of physical tension",
+                    "Confidence in hitting non-alpha keys",
+                    "Recovery speed after a typing error"
+                ]
+            },
+            "architect_notes": [
+                "Total time commitment of 13 hours allows for two 45-minute sessions daily plus a longer weekend review.",
+                "The jump from level 1 to level 4 is significant and requires strict adherence to the 'no-look' rule from week one.",
+                "Incorporate ergonomic breaks every 25 minutes to mitigate the high dropout risk associated with repetitive strain."
+            ]
+        }
+    }
+}

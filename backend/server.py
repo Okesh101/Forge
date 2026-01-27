@@ -150,8 +150,8 @@ Inputs you receive:
 1. Practice Session Data (array of 3 consecutive practice sessions log):
    - activity (string)
    - duration_minutes (number)
-   - difficulty_rating (1–5)
-   - fatigue_level (1–5)
+   - difficulty_rating (1–10)
+   - fatigue_level (1–10)
    - optional reflection text
 
 2. Current Strategy Snapshot:
@@ -493,12 +493,15 @@ def createSession():
     return jsonify({"session_id": session_id}), 201
 
 
-@app.route('/api/show_session', methods=['GET'])
-def show_session():
-    session_id = request.headers.get('X-Session-ID')
-    if session_exists(session_id) == False:
+@app.route('/api/auth/login', methods=['POST'])
+def login_session():
+    session_id = request.json.get('X-Session-ID')
+    if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
-    return jsonify(loadAiMemory(session_id)), 200
+    return jsonify({
+        "status": "success",
+        "message": "Session Found!"
+    }), 200
 
 
 @app.route('/api/decision/new', methods=['POST'])
