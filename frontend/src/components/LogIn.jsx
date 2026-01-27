@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { BsKey, BsKeyFill } from "react-icons/bs";
 import { FiEye, FiEyeOff, FiX } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { SessionContext } from "../contextApi/SessionContext";
 
 export default function LogIn({ setShowLogin }) {
   const [showId, setShowId] = useState(false);
   const [session_Id, setSession_Id] = useState("");
+  const [session_Id_Error, setSession_Id_Error] = useState("");
+  const navigate = useNavigate();
+  const { BACKEND_API } = useContext(SessionContext);
+
+  const SESSION_ID = sessionStorage.getItem("sessionId");
 
   const toggleIdVisibility = () => {
     setShowId((prev) => !prev);
@@ -14,11 +21,36 @@ export default function LogIn({ setShowLogin }) {
   const onClose = () => {
     setShowLogin(false);
     setSession_Id("");
+    setSession_Id_Error("");
   };
 
-  const handleSubmit = () => {
-    console.log(session_Id);
-    setSession_Id("");
+  const handleSubmit = async () => {
+    let isValid = true;
+    if (!session_Id) {
+      setSession_Id_Error("This field is required");
+    }
+    if (isValid) {
+      try {
+        const res = await fetch(`${BACKEND_API}/api/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "applicationn/json",
+            "X-Session-ID": SESSION_ID,
+          },
+        });
+
+        const data = await res.json();
+
+        if (data.status === "success") {
+          navigate("/logSession");
+          setSession_Id_Error("");
+        } else if (data.error) {
+          setSession_Id_Error(data.error);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
   };
   return (
     <div className="login_page" onClick={onClose}>
@@ -41,12 +73,12 @@ export default function LogIn({ setShowLogin }) {
             <section>
               <BsKeyFill size={30} style={{ color: "#df4e00" }} />
               <input
-                type={showId === false ? "password" : "text"}
+                type={showId === true ? "text" : "password"}
                 placeholder="Enter your session ID"
                 value={session_Id}
                 onChange={(e) => setSession_Id(e.target.value)}
+                autoComplete="new-password"
               />
-              {/* <input type="text"  /> */}
               <button onClick={toggleIdVisibility}>
                 {showId === false ? (
                   <FiEye size={24} />
@@ -55,6 +87,9 @@ export default function LogIn({ setShowLogin }) {
                 )}
               </button>
             </section>
+            {session_Id_Error && (
+              <small style={{ color: "red" }}>{session_Id_Error}</small>
+            )}
           </fieldset>
           <button className="login_btn" onClick={handleSubmit}>
             Login

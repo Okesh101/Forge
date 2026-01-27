@@ -2,15 +2,8 @@
 
 .how_it_works {
   @include pageReset;
-
-  // display: flex;
-  // align-items: center;
-  // flex-direction: column;
-  //   padding: 13px;
   h1 {
     @include webkitText;
-    // @include headerStyle;
-    // text-align: start;
   }
   .box {
     padding: 20px;
@@ -26,5 +19,10 @@
         font-size: 17px;
       }
     }
+  }
+  @media (max-width: 883px) {
+    padding: 40px 24px;
+    margin: 40px 0;
+    margin-top: 60px;
   }
 }
