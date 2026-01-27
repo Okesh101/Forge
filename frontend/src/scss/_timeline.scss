@@ -93,9 +93,6 @@
           max-width: 10px;
           height: 10px;
           border-radius: 50%;
-          // position: absolute;
-          // right: -13px;
-          // // left: -4px;
           margin: 0;
           cursor: pointer;
           transition: transform 0.2s ease;
@@ -110,6 +107,15 @@
         }
       }
     }
+    // @media (max-width: 818px) {
+    //   padding: 1rem 0;
+    //   margin-left: 60px;
+    //   .timeline_card {
+    //     .circle-section {
+    //       left: -60px;
+    //     }
+    //   }
+    // }
   }
   .error {
     opacity: 0.6;
@@ -124,6 +130,90 @@
         color: #ff6a1a;
         text-decoration: underline;
         cursor: pointer;
+      }
+    }
+  }
+  @media (max-width: 883px) {
+    padding: 40px 24px;
+    margin: 40px 0;
+    margin-top: 60px;
+    .timeline_details {
+      margin-left: 40px;
+      padding: 1rem 0;
+      // &::before,
+      // &::after {
+      //   display: none;
+      // }
+      .timeline_card {
+        .circle-section {
+          left: -82px;
+          // width: 80px;
+        }
+        p {
+          font-size: 0.85rem;
+        }
+        .circle {
+          width: 8px;
+          height: 8px;
+        }
+      }
+      // .card_details {
+      //   min-width: 250px;
+      //   margin-left: 15px;
+      //   padding: 16px;
+      //   font-size: 0.9rem;
+      // }
+    }
+  }
+
+  @media (max-width: 764px) {
+    .timeline_page {
+      padding: 15px 12px;
+    }
+    .timeline_details {
+      margin-left: 30px;
+      // background-size: 30px 30px;
+      .timeline_card {
+        .circle-section {
+          left: -35px;
+          // width: 70px;
+          flex-direction: column;
+          background: linear-gradient(
+            135deg,
+            #0f0f1a 0%,
+            #1a1a2e 50%,
+            #16213e 100%
+          );
+          padding: 23px;
+          border-radius: 50%;
+          width: 65px;
+          height: 65px;
+          p {
+            font-size: 0.75rem;
+          }
+          .circle {
+            display: none;
+          }
+        }
+        .card_details {
+          min-width: 200px;
+          margin-left: 10px;
+          padding: 12px;
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+  @media (max-width: 375px) {
+    .timeline_page {
+      .timeline_details {
+        margin-left: 25px;
+        .timeline_card {
+          .card_details {
+            min-width: 180px;
+            max-width: 180px;
+          }
+        }
       }
     }
   }

@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Doughnut } from "react-chartjs-2";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
+import { SessionContext } from "../contextApi/SessionContext";
 
 export default function Analytics() {
+  const SESSION_ID = sessionStorage.getItem("sessionId");
+  const [analytics_Data, setAnalytics_Data] = useState({});
+  // Getting and BACKEND_API from contextApi
+  const { BACKEND_API } = useContext(SessionContext);
   const analyticsData = {
     summary: {
       totalWeeks: 5,
@@ -37,68 +42,60 @@ export default function Analytics() {
       ctx.restore();
     },
   };
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/analytics", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": SESSION_ID,
+          },
+        });
+        const data = await res.json();
+        setAnalytics_Data(data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
   return (
     <>
       <SideBar />
       <div className="container">
         <PageNav />
         <div className="analytics-page">
-          <div className="header">
-            <h2>Analytics</h2>
+          <header>
+            <h1>Analytics</h1>
             <p>
               Insight into your practice strategy's performance and evolution.
             </p>
-          </div>
-          <div className="box">
-            <div className="chart">
-              <Doughnut
-                data={{
-                  labels: analyticsData.charts.labels,
-                  datasets: [
-                    {
-                      data: analyticsData.charts.values,
-                      backgroundColor: [
-                        "#ff8c42",
-                        "#4caf50",
-                        "#e53935",
-                        "#9e9e9e",
-                      ],
-                      borderWidth: 0,
-                    },
-                  ],
-                }}
-                options={{
-                  plugins: {
-                    legend: {
-                      position: "bottom",
-                      align: "start",
-                      labels: {
-                        color: "#bdbdbd",
-                        padding: 16,
-                        font: {
-                          size: 14,
-                        },
-                      },
-                    },
-                  },
-                }}
-                plugins={[centerTextPlugin]}
-              />
+          </header>
+          <main>
+            <div className="stats">
+              <div className="stat_item">
+                {analytics_Data.summary?.total_sessions}
+                <small>Total Sessions</small>
+              </div>
+              <div className="stat_item">
+                {analytics_Data.summary?.average_difficulty}
+                <small>Average Difficulty</small>
+              </div>
+              <div className="stat_item">
+                {analytics_Data.summary?.average_fatigue}
+                <small>Average Fatigue</small>
+              </div>
+              <div className="stat_item">
+                {analytics_Data.summary.overload_detected === true
+                  ? "Yes"
+                  : "No"}
+                <small>Overload Detected</small>
+              </div>
             </div>
-            <div className="highlight-section">
-              <h1>Highlights</h1>
-              <ul>
-                <li>60% of your total sessions led to productive outcomes</li>
-                <li>One strategic adjustment was made to restore momentum</li>
-                <li>Plateau detected after three weeks of linear growth</li>
-                <li>Recovery strategy stabilized progression</li>
-                <li>
-                  Over a 5-week period, the strategy was revised 1 time, had 3
-                  weeks of progression, and encountered 1 plateau moment.
-                </li>
-              </ul>
-            </div>
-          </div>
+          </main>
         </div>
       </div>
     </>
