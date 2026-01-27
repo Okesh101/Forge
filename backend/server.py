@@ -150,8 +150,8 @@ Inputs you receive:
 1. Practice Session Data (array of 3 consecutive practice sessions log):
    - activity (string)
    - duration_minutes (number)
-   - difficulty_rating (1–5)
-   - fatigue_level (1–5)
+   - difficulty_rating (1–10)
+   - fatigue_level (1–10)
    - optional reflection text
 
 2. Current Strategy Snapshot:
