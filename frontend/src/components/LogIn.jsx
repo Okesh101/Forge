@@ -11,8 +11,6 @@ export default function LogIn({ setShowLogin }) {
   const navigate = useNavigate();
   const { BACKEND_API } = useContext(SessionContext);
 
-  const SESSION_ID = sessionStorage.getItem("sessionId");
-
   const toggleIdVisibility = () => {
     setShowId((prev) => !prev);
   };
@@ -23,7 +21,6 @@ export default function LogIn({ setShowLogin }) {
     setSession_Id("");
     setSession_Id_Error("");
   };
-
   const handleSubmit = async () => {
     let isValid = true;
     if (!session_Id) {
@@ -34,14 +31,15 @@ export default function LogIn({ setShowLogin }) {
         const res = await fetch(`${BACKEND_API}/api/auth/login`, {
           method: "POST",
           headers: {
-            "Content-Type": "applicationn/json",
-            "X-Session-ID": SESSION_ID,
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({session_Id})
         });
 
         const data = await res.json();
 
         if (data.status === "success") {
+          sessionStorage.setItem("sessionId", session_Id);
           navigate("/logSession");
           setSession_Id_Error("");
         } else if (data.error) {

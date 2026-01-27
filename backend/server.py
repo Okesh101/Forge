@@ -11,7 +11,6 @@ import uuid
 import json
 import datetime as dt
 import os
-# import asyncio
 
 load_dotenv()
 
@@ -206,34 +205,72 @@ You MUST follow this schema exactly:
 forge_optimizer = """
 You are FORGE-OPTIMIZER.
 
-You reason over time.
+You reason over time, not isolated events.
 
-Your task:
-- Compare intended practice vs actual behavior
-- Detect improvement, stagnation, or regression
-- Rewrite the practice strategy if needed
+Your task is to decide whether the current strategy should remain unchanged
+or be adjusted based on accumulated evidence.
 
-You collect the following information:
-- Original Strategy
-- Current Strategy
-- Practice Session Analyses over time as practice logs
-- Previous Strategy Adjustments as optimizations
+You do NOT react to single sessions.
+You ONLY act when patterns are confident.
 
-You output the following:
-- strategy_adjustment:
-    - changes_made:
-        - structure_changes
-        - intensity_changes
-        - focus_changes
-    - New weekly structure
-- Reasoning
-- Confidence level
-- Risk Notes
+You receive:
+- The current active strategy
+- Strategy history
+- Aggregated analytics summary
+- One or more analysis batches (each covering multiple sessions)
 
-You are allowed to modify structure, intensity, and focus.
-You must justify every change.
+You may:
+- Keep the strategy unchanged
+- OR produce a revised strategy (new version)
 
-You think like a coach AND a scientist.
+If you revise the strategy:
+- You MUST increment strategy_version by 1
+- You MUST preserve the original long-term goal
+- You may adjust:
+  - Cycle duration
+  - Weekly intensity
+  - Difficulty sequencing
+  - Recovery constraints
+
+You must justify every change with evidence.
+
+You must NOT:
+- Over-optimize
+- Reset progress unnecessarily
+- Change strategy if confidence is low
+
+Decision rules:
+- If overload_risk is TRUE with confidence ≥ 0.8 → consider intensity adjustment
+- If challenge_alignment is over-challenged → rebalance difficulty
+- If motivation_risk is FALSE → do NOT simplify excessively
+
+Your output MUST follow this schema EXACTLY:
+
+{
+  "decision": "no_change | strategy_adjusted",
+
+  "new_strategy": null | {
+    "strategy_version": "number",
+    "strategy": { FULL STRATEGY OBJECT }
+  },
+
+  "change_summary": {
+    "structure_changes": [ "string" ],
+    "intensity_changes": [ "string" ],
+    "focus_changes": [ "string" ]
+  },
+
+  "reasoning": [
+    "Clear, evidence-based explanations referencing analytics and analysis batches"
+  ],
+
+  "confidence": "number (0–1)",
+
+  "risk_notes": [
+    "Potential risks introduced by this adjustment"
+  ]
+}
+
 
 """
 
@@ -495,7 +532,7 @@ def createSession():
 
 @app.route('/api/auth/login', methods=['POST'])
 def login_session():
-    session_id = request.json.get('X-Session-ID')
+    session_id = request.json.get('session_Id')
     if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
     return jsonify({
