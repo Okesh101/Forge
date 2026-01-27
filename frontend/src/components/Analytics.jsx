@@ -46,7 +46,7 @@ export default function Analytics() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/analytics", {
+        const res = await fetch(`${BACKEND_API}/api/analytics`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -89,7 +89,7 @@ export default function Analytics() {
                 <small>Average Fatigue</small>
               </div>
               <div className="stat_item">
-                {analytics_Data.summary.overload_detected === true
+                {analytics_Data.summary?.overload_detected === true
                   ? "Yes"
                   : "No"}
                 <small>Overload Detected</small>
