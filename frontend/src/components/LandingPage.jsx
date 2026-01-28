@@ -44,6 +44,7 @@ export default function LandingPage() {
         initial={{ y: "-400px" }}
         animate={{ y: "-10px" }}
         transition={{ delay: 0.1, type: "spring", stiffness: 120 }}
+        className="logo"
       >
         Forge
       </motion.nav>

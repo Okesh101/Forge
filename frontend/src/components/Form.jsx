@@ -17,6 +17,7 @@ import PageNav from "../Utilities/PageNav";
 import { SessionContext } from "../contextApi/SessionContext";
 import Loading from "../Loading";
 import { useNavigate } from "react-router-dom";
+import SessionIdModal from "../Utilities/SessionIdModal";
 
 export default function Form() {
   const SESSION_ID = sessionStorage.getItem("sessionId");
@@ -30,6 +31,7 @@ export default function Form() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
+  const [sessionIdModal, setSessionIdModal] = useState(true);
 
   const navigate = useNavigate();
 
@@ -225,6 +227,9 @@ export default function Form() {
             Create My Practice Plan <FiArrowRight />
           </button>
         </div>
+        {sessionIdModal && (
+          <SessionIdModal onClose={() => setSessionIdModal(false)} />
+        )}
         {isLoading && <Loading />}
         {errorModal && (
           <div className="error_modal" onClick={() => setErrorModal(false)}>
@@ -241,3 +246,4 @@ export default function Form() {
     </>
   );
 }
+// 31e015ea-aebe-4719-9b7f-8971c67b4ccf

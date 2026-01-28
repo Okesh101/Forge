@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut, Line } from "react-chartjs-2";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { SessionContext } from "../contextApi/SessionContext";
@@ -10,38 +10,6 @@ export default function Analytics() {
   const [analytics_Data, setAnalytics_Data] = useState({});
   // Getting and BACKEND_API from contextApi
   const { BACKEND_API } = useContext(SessionContext);
-  const analyticsData = {
-    summary: {
-      totalWeeks: 5,
-    },
-    charts: {
-      labels: ["Initial", "Progress", "Plateau", "Revision"],
-      values: [1, 3, 1, 1],
-    },
-  };
-
-  const centerTextPlugin = {
-    id: "centerText",
-    beforeDraw(chart) {
-      const { ctx, chartArea } = chart;
-      const { top, width, left, height } = chartArea;
-
-      ctx.save();
-
-      ctx.font = "500 16px Times New Romans";
-      ctx.fillStyle = "#ededed";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      ctx.fillText(
-        `${analyticsData.summary.totalWeeks} Practice Weeks`,
-        left + width / 2,
-        top + height / 2
-      );
-
-      ctx.restore();
-    },
-  };
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -95,6 +63,35 @@ export default function Analytics() {
                 <small>Overload Detected</small>
               </div>
             </div>
+            <Line
+              data={{
+                labels: analytics_Data.sessions?.map((session) =>
+                  session.date.slice(0, 10)
+                ),
+                datasets: [
+                  {
+                    label: "Practice Progress",
+                    data: analytics_Data.sessions?.map((_, index) => index + 1),
+                    borderColor: "#007bff",
+                    backgroundColor: "#007bff",
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: "top",
+                  },
+                },
+                scales: {
+                  y: {
+                    min: 1,
+                    max: 10,
+                  },
+                },
+              }}
+            />
           </main>
         </div>
       </div>

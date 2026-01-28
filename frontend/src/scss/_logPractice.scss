@@ -1,8 +1,68 @@
 @use "mixins" as *;
 .logSession-page {
   @include pageReset;
+  nav {
+    font-weight: 800;
+    .user-icon {
+      background-color: orange;
+      font-size: 50px;
+      padding: 5px;
+      border-radius: 50%;
+      position: fixed;
+      top: 100px;
+      right: 125px;
+      @media (max-width: 1260px) {
+        right: 50px;
+      }
+      @media (max-width: 472px) {
+        font-size: 40px;
+      }
+    }
+    .content {
+      position: fixed;
+      top: 160px;
+      right: 120px;
+      z-index: 1000;
+      text-align: center;
+      padding: 15px;
+      background-color: #11255c;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 3);
+      border-radius: 10px;
+      max-width: 240px;
+      word-break: break-all;
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        right: 20px;
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent transparent #11255c transparent;
+      }
+      .cancel-btn {
+        margin-top: 10px;
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: none;
+        &:hover {
+          box-shadow: none;
+          transform: none;
+        }
+      }
+      @media (max-width: 1260px) {
+        right: 45px;
+      }
+      @media (max-width: 472px) {
+        top: 150px;
+        right: 40px;
+      }
+    }
+  }
   header {
     @include headerStyle;
+    @media (min-width: 883px) {
+      margin-top: 0.7rem;
+    }
   }
   form {
     margin-top: 40px;
@@ -25,7 +85,6 @@
   .logSession_list {
     background: rgba(30, 30, 40, 0.8);
     border-radius: 5px;
-    // padding: 48px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 40px;
     padding: 20px;
@@ -64,5 +123,23 @@
     padding: 40px 24px;
     margin: 40px 0;
     margin-top: 60px;
+  }
+  @media (max-width: 638px) {
+    header {
+      h1 {
+        font-size: 28px;
+      }
+    }
+    .field_container {
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 438px) {
+    header {
+      h1 {
+        font-size: 23px;
+        margin-top: 0.8rem;
+      }
+    }
   }
 }
