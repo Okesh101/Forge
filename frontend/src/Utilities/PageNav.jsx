@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useWindowSize } from "./useWindowSize";
+import { useWindowSize } from "../hook/useWindowSize";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 

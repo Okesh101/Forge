@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // import { LineChart } from "lucide-react";
 import { Activity } from "lucide-react";
 import { SessionContext } from "../contextApi/SessionContext";
+import { FiUser, FiUserX, FiX } from "react-icons/fi";
 
 export default function LogPracticeSession() {
   // State to hold log practice session data
@@ -15,6 +16,7 @@ export default function LogPracticeSession() {
     fatigueLevel: 1,
   });
   const [logHistory, setLogHistory] = useState([]);
+  const [showSessionId, setShowSessionId] = useState(false);
   // State for field errors
   const [fieldError, setFieldError] = useState({});
 
@@ -134,12 +136,34 @@ export default function LogPracticeSession() {
     fetchLogHistory();
   }, []);
 
+  // Handle sessionID visbility
+  const handleIdVisibility = () => {
+    setShowSessionId((prev) => !prev);
+  };
+
   return (
     <>
       <SideBar />
       <div className="container">
         <PageNav />
         <div className="logSession-page">
+          <nav onClick={handleIdVisibility}>
+            <FiUser className="user-icon" />
+
+            {showSessionId && (
+              <div className="content" onClick={(e) => e.stopPropagation()}>
+                <span>
+                  <strong>Session Id</strong> : {SESSION_ID}
+                </span>
+                <button
+                  className="cancel-btn"
+                  onClick={() => setShowSessionId(false)}
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </nav>
           <header>
             <h1>Log Practice Session</h1>
           </header>
@@ -166,6 +190,7 @@ export default function LogPracticeSession() {
                 margin: "20px 0",
                 gap: "18px",
               }}
+              className="field_container"
             >
               <div className="field" style={{ width: "100%" }}>
                 <fieldset>
@@ -249,3 +274,5 @@ export default function LogPracticeSession() {
     </>
   );
 }
+
+// 686c1c32-418b-44e2-8e11-85af4fd01703

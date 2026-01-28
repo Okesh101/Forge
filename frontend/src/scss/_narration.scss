@@ -65,8 +65,20 @@
     }
   }
   @media (max-width: 883px) {
-    padding: 40px 24px;
+    padding: 14px 10px;
     margin: 40px 0;
+    // width: 400px;
     margin-top: 60px;
+    header {
+      h1 {
+        margin-bottom: 20px;
+      }
+    }
+    .card_container {
+      grid-template-columns: 1fr;
+      & > :first-child {
+        grid-column: auto;
+      }
+    }
   }
 }
