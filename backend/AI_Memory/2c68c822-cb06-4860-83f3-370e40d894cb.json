@@ -100,6 +100,13 @@
             "duration_minutes": "50",
             "difficulty_rating": "10",
             "fatigue_level": "5"
+        },
+        {
+            "date": "2026-01-27T07:05:00.408570",
+            "activity": "Translating the hig-logic code in python to c++",
+            "duration_minutes": "20",
+            "difficulty_rating": "7",
+            "fatigue_level": "6"
         }
     ],
     "practice_logs_analysis": [],
@@ -162,6 +169,28 @@
                 "reason": "User logged a new practice session.",
                 "changes": {
                     "practice_log_count": 1
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "14222ee2-fb47-11f0-9c83-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-27T07:05:00.408570",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn Python and c++.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 2
                 },
                 "evidence": [
                     "Activity: None",

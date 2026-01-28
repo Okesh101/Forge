@@ -7,6 +7,7 @@ from google.genai.errors import ClientError, ServerError
 from google.genai import types
 from dotenv import load_dotenv
 from datetime import datetime
+from pathlib import Path
 import uuid
 import json
 import datetime as dt
@@ -301,11 +302,23 @@ You output the following:
 
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
+memoryPath = Path(AI_MEMORY_DIR)
 
 
 # UTILITY FUNCTIONS
 def printer():
     print("Scheduled task executed.")
+
+def try_dispatch_optimizer(file):
+    memory = loadAiMemory(file)
+    return
+
+def optimizer_dispatcher():
+    for user_file in memoryPath.iterdir():
+        if user_file.is_file():
+            print(user_file.name)
+            # try_dispatch_optimizer(user_file.name)
+            return
 
 
 def call_gemini(prompt: str, payload: dict) -> dict:
@@ -852,7 +865,7 @@ def get_analytics():
 
 
 if __name__ == '__main__':
-    # scheduler.add_job(id='Scheduled Task', func=printer, trigger='interval', seconds=30)
+    scheduler.add_job(id='Dispatch Optimizer  ', func=optimizer_dispatcher, trigger='interval', seconds=5)
     scheduler.start()
     app.run(debug=True)
 
