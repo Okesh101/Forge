@@ -7,6 +7,8 @@ from google.genai.errors import ClientError, ServerError
 from google.genai import types
 from dotenv import load_dotenv
 from datetime import datetime
+from pathlib import Path
+from collections import Counter
 import uuid
 import json
 import datetime as dt
@@ -100,7 +102,7 @@ Schema you must follow exactly:
         "cycle_index": 1,
         "duration_weeks": "number",
         "focus_summary": "string",
-        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses) (The sentence must not be less than 70 words),
+        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses) (The sentence must not be less than 55 words),
         "weekly_loop": {
           "primary_activity": "string",
           "secondary_activity": "string"
@@ -301,11 +303,23 @@ You output the following:
 
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
+memoryPath = Path(AI_MEMORY_DIR)
 
 
 # UTILITY FUNCTIONS
 def printer():
     print("Scheduled task executed.")
+
+def try_dispatch_optimizer(file):
+    memory = loadAiMemory(file)
+    return
+
+def optimizer_dispatcher():
+    for user_file in memoryPath.iterdir():
+        if user_file.is_file():
+            print(user_file.name)
+            try_dispatch_optimizer(user_file.name)
+            # return
 
 
 def call_gemini(prompt: str, payload: dict) -> dict:
@@ -780,6 +794,15 @@ def get_analytics():
             "difficulty_rating": int(log['difficulty_rating']),
             "fatigue_level": int(log['fatigue_level'])
         })
+    
+    dateCounts = []
+    counts = Counter(item['date'] for item in practice_logs)
+    for date, number in counts.items():
+        dateCounts.append({
+            "date": date[:10],
+            "number": number
+        })
+
 
     # ----------------------------------------
     # 2. Build analysis batches with scope
@@ -847,12 +870,13 @@ def get_analytics():
         "sessions": session_metrics,
         "analysis_batches": analysis_batches,
         "summary": summary,
-        "mappings": mappings
+        "mappings": mappings,
+        "dateCounts": dateCounts
     }), 200
 
 
 if __name__ == '__main__':
-    # scheduler.add_job(id='Scheduled Task', func=printer, trigger='interval', seconds=30)
+    scheduler.add_job(id='Dispatch Optimizer  ', func=optimizer_dispatcher, trigger='interval', seconds=30)
     scheduler.start()
     app.run(debug=True)
 
