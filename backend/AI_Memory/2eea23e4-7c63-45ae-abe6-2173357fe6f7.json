@@ -136,6 +136,13 @@
             "duration_minutes": "40",
             "difficulty_rating": "7",
             "fatigue_level": "7"
+        },
+        {
+            "date": "2026-01-29T05:44:22.162115",
+            "activity": "No-look home row and vertical reach drills",
+            "duration_minutes": "20",
+            "difficulty_rating": "5",
+            "fatigue_level": "5"
         }
     ],
     "practice_logs_analysis": [
@@ -300,6 +307,28 @@
                 ]
             },
             "visibilty": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "9b8429f9-fcce-11f0-8ae0-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-29T05:44:22.162115",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn how to type fast.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 4
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
                 "show_on_timeline": true,
                 "clickable": true
             }
