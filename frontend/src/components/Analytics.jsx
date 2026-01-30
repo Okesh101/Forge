@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Bar, Line, Scatter } from "react-chartjs-2";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { FiX } from "react-icons/fi";
 import { Check } from "lucide-react";
+import { SessionContext } from "../contextApi/SessionContext";
 
 ChartJS.defaults.font.size = 14;
 ChartJS.defaults.color = "#666";
@@ -13,6 +14,31 @@ export default function Analytics() {
   // Demo data matching the image template
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const SESSION_ID = sessionStorage.getItem("sessionId");
+  const [analytics_Data, setAnalytics_Data] = useState({});
+  // Getting and BACKEND_API from contextApi
+  const { BACKEND_API } = useContext(SessionContext);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await fetch(`${BACKEND_API}/api/analytics`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Session-ID": SESSION_ID,
+          },
+        });
+        const data = await res.json();
+        setAnalytics_Data(data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -107,11 +133,11 @@ export default function Analytics() {
 
   // Chart 1: Practice Frequency (Line Chart)
   const practiceFrequencyData = {
-    labels: demoData.sessions.map((d) => d.date.slice(0, 10)),
+    labels: analytics_Data.dateCounts?.map((d) => d.date),
     datasets: [
       {
         label: "Practice Frequency",
-        data: [2, 2, 1, 2, 5, 3, 2, 1, 3, 4, 5, 8],
+        data: analytics_Data.dateCounts?.map((n) => n.number),
         borderColor: "#007bff",
         backgroundColor: "rgba(0, 123, 255, 0.1)",
         fill: true,
@@ -125,17 +151,11 @@ export default function Analytics() {
 
   // Chart 2: Duration per Session (Bar Chart)
   const durationPerSessionData = {
-    labels: [
-      "2024-01-20",
-      "2024-01-23",
-      "2024-01-26",
-      "2024-01-28",
-      "2025-01-28",
-    ],
+    labels: analytics_Data.dateCounts?.map((d) => d.date),
     datasets: [
       {
         label: "Avg Duration (min)",
-        data: [52.5, 60, 40, 62.5, 42.5],
+        data: analytics_Data.dateCounts?.map((du) => du.duration),
         backgroundColor: "#f7894e",
         borderColor: "#ff6a1a",
         borderWidth: 1,
@@ -431,15 +451,15 @@ export default function Analytics() {
           <main>
             <div className="stats">
               <div className="stat_item">
-                {demoData.summary.total_sessions}
+                {analytics_Data.summary?.total_sessions}
                 <small>Total Sessions</small>
               </div>
               <div className="stat_item">
-                {demoData.summary.average_difficulty}
+                {analytics_Data.summary?.average_difficulty}
                 <small>Average Difficulty</small>
               </div>
               <div className="stat_item">
-                {demoData.summary.average_fatigue}
+                {analytics_Data.summary?.average_fatigue}
                 <small>Average Fatigue</small>
               </div>
               <div
@@ -471,7 +491,7 @@ export default function Analytics() {
               </div>
 
               <div className="chart-box">
-                <h3>Duration per Session</h3>
+                <h3>Duration per Day</h3>
                 <div className="chart-container" style={scrollableChartStyle}>
                   <Bar
                     data={simplifiedDurationPerSessionData}
