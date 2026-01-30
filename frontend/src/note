@@ -1,0 +1,672 @@
+import React from "react";
+import { Chart as ChartJS, defaults } from "chart.js/auto";
+import { Bar, Line, Scatter } from "react-chartjs-2";
+import SideBar from "../Utilities/SideBar";
+import PageNav from "../Utilities/PageNav";
+import { FiX } from "react-icons/fi";
+import { Check, CheckCheck } from "lucide-react";
+
+ChartJS.defaults.font.size = 14;
+ChartJS.defaults.color = "#666";
+
+export default function Analytics() {
+  // Demo data matching the image template
+  const demoData = {
+    summary: {
+      total_sessions: 7,
+      average_difficulty: 8.57,
+      average_fatigue: 7.14,
+      overload_detected: true,
+    },
+    sessions: [
+      {
+        date: "2024-01-23T14:00:00",
+        duration_minutes: 90,
+        difficulty_rating: 9,
+        fatigue_level: 9,
+      },
+      {
+        date: "2024-01-26T11:00:00",
+        duration_minutes: 40,
+        difficulty_rating: 8,
+        fatigue_level: 7,
+      },
+      {
+        date: "2024-01-28T10:30:00",
+        duration_minutes: 75,
+        difficulty_rating: 10,
+        fatigue_level: 9,
+      },
+      {
+        date: "2025-04-28T16:00:00",
+        duration_minutes: 50,
+        difficulty_rating: 9,
+        fatigue_level: 8,
+      },
+    ],
+  };
+
+  // Chart 1: Practice Frequency (Line Chart)
+  const practiceFrequencyData = {
+    labels: demoData.sessions.map((d) => d.date.slice(0, 10)),
+    datasets: [
+      {
+        label: "Practice Frequency",
+        data: [2, 2, 1, 2],
+        borderColor: "#007bff",
+        backgroundColor: "rgba(0, 123, 255, 0.1)",
+        fill: true,
+        tension: 0.5,
+        pointRadius: 5,
+        pointBackgroundColor: "#007bff",
+        pointBorderColor: "#fff",
+        // pointBorderWidth: 1,
+      },
+    ],
+  };
+
+  // Chart 2: Duration per Session (Bar Chart)
+  const durationPerSessionData = {
+    labels: [
+      "2024-01-20",
+      "2024-01-23",
+      "2024-01-26",
+      "2024-01-28",
+      "2025-01-28",
+    ],
+    datasets: [
+      {
+        label: "Avg Duration (min)",
+        data: [52.5, 60, 40, 62.5, 42.5], // Average durations
+        backgroundColor: "#f7894e",
+        borderColor: "#ff6a1a",
+        borderWidth: 1,
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  // Chart 3: Difficulty Rating (Horizontal Bar)
+  const difficultyData = {
+    labels: [
+      "2024-01-20",
+      "2024-01-23",
+      "2024-01-26",
+      "2024-01-28",
+      "2025-05-28",
+      "2025-06-28",
+    ],
+    datasets: [
+      {
+        label: "Avg Difficulty",
+        data: [8.5, 8.0, 8.0, 9.5, 10, 7], // Average difficulties
+        backgroundColor: ["#4e73df", "#1cc88a", "#36b9cc", "#f6c23e"],
+        borderColor: "#fff",
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  // Chart 4: Fatigue Rating (Horizontal Bar)
+  const fatigueData = {
+    labels: ["2024-01-20", "2024-01-23", "2024-01-26", "2024-01-28"],
+    datasets: [
+      {
+        label: "Avg Fatigue",
+        data: [7.5, 7.5, 7.0, 8.5], // Average fatigue levels
+        backgroundColor: ["#e74a3b", "#f6c23e", "#1cc88a", "#4e73df"],
+        borderColor: "#fff",
+        // borderWidth: 2,
+      },
+    ],
+  };
+
+  // Chart 5: Session Duration vs Difficulty (Scatter Plot)
+  const durationVsDifficultyData = {
+    datasets: [
+      {
+        label: "Sessions",
+        data: [
+          { x: 45, y: 9 },
+          { x: 60, y: 8 },
+          { x: 30, y: 7 },
+          { x: 90, y: 9 },
+          { x: 40, y: 8 },
+          { x: 75, y: 10 },
+          { x: 50, y: 9 },
+        ],
+        backgroundColor: "#4e73df",
+        borderColor: "#2e59d9",
+        pointRadius: 4,
+        // pointHoverRadius: 1,
+      },
+    ],
+  };
+
+  // Chart 6: Session Duration vs Fatigue (Scatter Plot)
+  const durationVsFatigueData = {
+    datasets: [
+      {
+        label: "Sessions",
+        data: [
+          { x: 45, y: 8 },
+          { x: 60, y: 7 },
+          { x: 30, y: 6 },
+          { x: 90, y: 9 },
+          { x: 40, y: 7 },
+          { x: 75, y: 9 },
+          { x: 50, y: 8 },
+        ],
+        backgroundColor: "#e74a3b",
+        borderColor: "#d52a1e",
+        pointRadius: 4,
+        // pointHoverRadius: 10,
+      },
+    ],
+  };
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+        },
+      },
+    },
+  };
+
+  const lineChartOptions = {
+    ...commonOptions,
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        max: 10,
+        ticks: {
+          //   stepSize: 0, // 👈 forces whole numbers
+          precision: 0, // 👈 removes decimals like 1.0, 1.5
+          stepSize: 1.2,
+        },
+        title: {
+          display: true,
+          text: "Number of Sessions",
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Date",
+        },
+      },
+    },
+  };
+
+  const barChartOptions = {
+    ...commonOptions,
+    indexAxis: "x",
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        title: {
+          display: true,
+          text: "Duration (minutes)",
+        },
+      },
+    },
+  };
+
+  const horizontalBarOptions = {
+    ...commonOptions,
+    indexAxis: "y",
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 10,
+        title: {
+          display: true,
+          text: "Rating",
+        },
+      },
+    },
+  };
+
+  const scatterOptions = {
+    ...commonOptions,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Session Duration (min)",
+        },
+      },
+      y: {
+        beginAtZero: true,
+        max: 10,
+        title: {
+          display: true,
+          text: "Difficulty/Fatigue",
+        },
+      },
+    },
+  };
+
+  return (
+    <>
+      <SideBar />
+      <div className="container">
+        <PageNav />
+        <div className="analytics-page">
+          <header>
+            <h1>Analytics</h1>
+            <p>
+              Insight into your practice strategy's performance and evolution.
+            </p>
+          </header>
+
+          <main>
+            <div className="stats">
+              <div className="stat_item">
+                {demoData.summary.total_sessions}
+                <small>Total Sessions</small>
+              </div>
+              <div className="stat_item">
+                {demoData.summary.average_difficulty}
+                <small>Average Difficulty</small>
+              </div>
+              <div className="stat_item">
+                {demoData.summary.average_fatigue}
+                <small>Average Fatigue</small>
+              </div>
+              <div
+                className="stat_item"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                {demoData.summary.overload_detected === true ? (
+                  <Check />
+                ) : (
+                  <FiX />
+                )}
+                <small>Overload Detected</small>
+              </div>
+            </div>
+
+            <div className="charts-grid">
+              <div className="chart-box">
+                <h3>Practice Frequency</h3>
+                <div
+                  className="chart-container"
+                  style={{
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                  }}
+                >
+                  <Line
+                    className="line_chart"
+                    data={practiceFrequencyData}
+                    options={lineChartOptions}
+                  />
+                </div>
+              </div>
+
+              <div className="chart-box">
+                <h3>Duration per Session</h3>
+                <div className="chart-container">
+                  <Bar
+                    data={durationPerSessionData}
+                    options={barChartOptions}
+                  />
+                </div>
+              </div>
+
+              <div className="chart-box">
+                <h3>Difficulty Rating</h3>
+                <div className="chart-container">
+                  <Bar data={difficultyData} options={horizontalBarOptions} />
+                </div>
+              </div>
+
+              <div className="chart-box">
+                <h3>Fatigue Rating</h3>
+                <div className="chart-container">
+                  <Bar data={fatigueData} options={horizontalBarOptions} />
+                </div>
+              </div>
+            </div>
+
+            <div className="bottom-charts">
+              <div className="chart-box">
+                <h3>Session Duration (min) vs Difficulty</h3>
+                <div className="chart-container">
+                  <Scatter
+                    data={durationVsDifficultyData}
+                    options={scatterOptions}
+                  />
+                </div>
+              </div>
+
+              <div className="chart-box">
+                <h3>Session Duration (min) vs Fatigue</h3>
+                <div className="chart-container">
+                  <Scatter
+                    data={durationVsFatigueData}
+                    options={scatterOptions}
+                  />
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </>
+  );
+}
+// 3d510a78-b994-4d71-b40e-36d50a972415
+// import React, { useContext, useEffect, useState } from "react";
+// import { Chart as ChartJS, defaults } from "chart.js/auto";
+// import { Bar, Line } from "react-chartjs-2";
+// import SideBar from "../Utilities/SideBar";
+// import PageNav from "../Utilities/PageNav";
+// import { SessionContext } from "../contextApi/SessionContext";
+
+// export default function Analytics() {
+//   const SESSION_ID = sessionStorage.getItem("sessionId");
+//   const [analytics_Data, setAnalytics_Data] = useState({});
+//   // Getting and BACKEND_API from contextApi
+//   const { BACKEND_API } = useContext(SessionContext);
+
+//   useEffect(() => {
+//     const fetchAnalytics = async () => {
+//       try {
+//         const res = await fetch(`${BACKEND_API}/api/analytics`, {
+//           method: "GET",
+//           headers: {
+//             "Content-Type": "application/json",
+//             "X-Session-ID": SESSION_ID,
+//           },
+//         });
+//         const data = await res.json();
+//         setAnalytics_Data(data);
+//       } catch (error) {
+//         console.log(error.message);
+//       }
+//     };
+
+//     fetchAnalytics();
+//   }, []);
+
+//   // ====== FUNCTION TO GROUP SESSIONS BY DATE ======
+//   // This function takes all sessions and groups them by their date
+//   // So if you have 3 sessions on the same date, they'll be in one group
+//   const groupSessionsByDate = () => {
+//     // Create an empty object to store grouped sessions
+//     // Format: { "2026-01-28": [session1, session2, ...], "2026-01-27": [...] }
+//     const grouped = {};
+
+//     // Loop through each session from the backend
+//     analytics_Data.sessions?.forEach((session) => {
+//       // Extract just the date part (YYYY-MM-DD) from the full timestamp
+//       const dateKey = session.date.slice(0, 10);
+
+//       // If this date doesn't exist in our grouped object yet, create an empty array
+//       if (!grouped[dateKey]) {
+//         grouped[dateKey] = [];
+//       }
+
+//       // Add this session to the array for this date
+//       grouped[dateKey].push(session);
+//     });
+
+//     return grouped;
+//   };
+
+//   // Get the grouped data
+//   const groupedSessions = groupSessionsByDate();
+
+//   // ====== FUNCTION TO PREPARE CHART DATA ======
+//   // This function transforms the grouped sessions into data that the chart can use
+//   const prepareChartData = () => {
+//     // Get all unique dates and sort them (oldest to newest)
+//     const dates = Object.keys(groupedSessions).sort();
+
+//     // Create an array of labels (dates) for the x-axis
+//     const labels = dates;
+
+//     // Create an array of data points - each point is the COUNT of sessions on that date
+//     // So if 3 sessions happened on 2026-01-28, that date gets a value of 3
+//     const dataPoints = dates.map((date) => groupedSessions[date].length);
+
+//     return { labels, dataPoints };
+//   };
+
+//   const { labels, dataPoints } = prepareChartData();
+//   // defaults.label.font = 30;
+//   return (
+//     <>
+//       <SideBar />
+//       <div className="container">
+//         <PageNav />
+//         <div className="analytics-page">
+//           <header>
+//             <h1>Analytics</h1>
+//             <p>
+//               Insight into your practice strategy's performance and evolution.
+//             </p>
+//           </header>
+//           <main>
+//             <div className="stats">
+//               <div className="stat_item">
+//                 {analytics_Data.summary?.total_sessions}
+//                 <small>Total Sessions</small>
+//               </div>
+//               <div className="stat_item">
+//                 {analytics_Data.summary?.average_difficulty}
+//                 <small>Average Difficulty</small>
+//               </div>
+//               <div className="stat_item">
+//                 {analytics_Data.summary?.average_fatigue}
+//                 <small>Average Fatigue</small>
+//               </div>
+//               <div className="stat_item">
+//                 {analytics_Data.summary?.overload_detected === true
+//                   ? "Yes"
+//                   : "No"}
+//                 <small>Overload Detected</small>
+//               </div>
+//             </div>
+//             <div className="chart_container">
+//               <div className="line_chart">
+//                 <Line
+//                   data={{
+//                     // X-axis labels: unique dates grouped from sessions
+//                     labels: labels,
+//                     datasets: [
+//                       {
+//                         label: "Practice Frequency",
+//                         // Y-axis data: the number of sessions that occurred on each date
+//                         data: dataPoints,
+//                         borderColor: "#007bff",
+//                         backgroundColor: "#007bff",
+//                         // Make the dots bigger and more visible
+//                         pointRadius: 6,
+//                         pointHoverRadius: 8,
+//                         pointBorderWidth: 2,
+//                         pointBorderColor: "#0056a8",
+//                       },
+//                     ],
+//                   }}
+//                   options={{
+//                     responsive: true,
+//                     maintainAspectRatio: false,
+//                     plugins: {
+//                       legend: {
+//                         position: "top",
+//                         labels: {
+//                           font: {
+//                             size: 16,
+//                             weight: "bold",
+//                           },
+//                         },
+//                       },
+//                       // ====== CUSTOM TOOLTIP CONFIGURATION ======
+//                       // This controls what appears when you hover over a dot on the chart
+//                       tooltip: {
+//                         backgroundColor: "rgba(0, 0, 0, 0.8)",
+//                         padding: 12,
+//                         cornerRadius: 6,
+//                         // Custom callback function that runs when you hover over a data point
+//                         callbacks: {
+//                           // This function generates the title of the tooltip (shown at the top)
+//                           title: (context) => {
+//                             // context[0].label is the date (e.g., "2026-01-28")
+//                             return `📅 ${context[0].label}`;
+//                           },
+//                           // This function generates the body of the tooltip (the main content)
+//                           // It shows a list of all activities/sessions that happened on that date
+//                           label: (context) => {
+//                             // Get the date from the label
+//                             const date = context.label;
+//                             // Get all sessions that happened on this date
+//                             const sessionsOnDate = groupedSessions[date];
+//                             // Get the count of sessions
+//                             const count = sessionsOnDate.length;
+
+//                             return `Total Sessions: ${count}`;
+
+//                             // return "";
+//                           },
+//                           // This function adds extra lines after the label
+//                           // It shows details about each individual session
+//                           afterLabel: (context) => {
+//                             const date = context.label;
+//                             const sessionsOnDate = groupedSessions[date];
+
+//                             // Create a string that lists each session with details
+//                             let sessionDetails =
+//                               "\n(D = Difficulty, F = Fatigue)\n";
+//                             sessionsOnDate.forEach((session, index) => {
+//                               // Add each session as a bullet point with its details
+//                               // Note: The correct field names from backend are:
+//                               // - difficulty_rating (not difficulty)
+//                               // - fatigue_level (not fatigue)
+//                               // - duration_minutes (how long the practice session was)
+//                               sessionDetails += `\n${index + 1}. Duration: ${
+//                                 session.duration_minutes
+//                               }min | D: ${session.difficulty_rating} | F: ${
+//                                 session.fatigue_level
+//                               }`;
+//                             });
+
+//                             return sessionDetails;
+//                           },
+//                         },
+//                       },
+//                     },
+//                     scales: {
+//                       y: {
+//                         // Dynamic scaling: the max value is the highest count + 1 (for breathing room)
+//                         max:
+//                           dataPoints.length > 0
+//                             ? Math.max(...dataPoints) + 1
+//                             : 10,
+//                         min: 0,
+//                         title: {
+//                           display: true,
+//                           text: "Number of Sessions",
+//                         },
+//                       },
+//                       x: {
+//                         title: {
+//                           display: true,
+//                           text: "Date",
+//                         },
+//                       },
+//                     },
+//                   }}
+//                 />
+//               </div>
+//               <div className="bar_chart">
+//                 <Bar
+//                   data={{
+//                     // Using the same grouped sessions data as the Line chart
+//                     labels: labels,
+//                     datasets: [
+//                       {
+//                         label: "Average Duration Per Day",
+//                         // Calculate average duration for each date
+//                         data: labels.map((date) => {
+//                           const sessionsOnDate = groupedSessions[date];
+//                           // Add up all durations and divide by number of sessions
+//                           const avgDuration =
+//                             sessionsOnDate.reduce(
+//                               (sum, session) => sum + session.duration_minutes,
+//                               0
+//                             ) / sessionsOnDate.length;
+//                           return parseFloat(avgDuration.toFixed(1));
+//                         }),
+//                         backgroundColor: "#f7894e",
+//                         borderColor: "#ff6a1a",
+//                         borderWidth: 1,
+//                       },
+//                     ],
+//                   }}
+//                   options={{
+//                     responsive: true,
+//                     plugins: {
+//                       legend: {
+//                         position: "top",
+//                         labels: {
+//                           font: {
+//                             size: 16,
+//                             weight: "bold",
+//                           },
+//                         },
+//                       },
+//                       // tooltip: {
+//                       //   backgroundColor: "rgba(0, 0, 0, 0.8)",
+//                       //   padding: 12,
+//                       //   cornerRadius: 6,
+//                       //   callbacks: {
+//                       //     title: (context) => {
+//                       //       return `📅 ${context[0].label}`;
+//                       //     },
+//                       //     label: (context) => {
+//                       //       return `Avg Duration: ${context.parsed.y} minutes`;
+//                       //     },
+//                       //   },
+//                       // },
+//                     },
+//                     scales: {
+//                       y: {
+//                         title: {
+//                           display: true,
+//                           text: "Duration (minutes)",
+//                         },
+//                       },
+//                       x: {
+//                         title: {
+//                           display: true,
+//                           text: "Date",
+//                         },
+//                       },
+//                     },
+//                   }}
+//                 />
+//               </div>
+//             </div>
+//           </main>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
