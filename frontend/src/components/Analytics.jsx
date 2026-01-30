@@ -151,11 +151,11 @@ export default function Analytics() {
 
   // Chart 2: Duration per Session (Bar Chart)
   const durationPerSessionData = {
-    labels: analytics_Data.dateCounts?.map((d) => d.date),
+    labels: analytics_Data.durationCounts?.map((d) => d.date),
     datasets: [
       {
         label: "Avg Duration (min)",
-        data: analytics_Data.dateCounts?.map((du) => du.duration),
+        data: analytics_Data.durationCounts?.map((du) => du.duration),
         backgroundColor: "#f7894e",
         borderColor: "#ff6a1a",
         borderWidth: 1,
