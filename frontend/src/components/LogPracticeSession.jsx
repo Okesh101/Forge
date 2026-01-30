@@ -61,6 +61,9 @@ export default function LogPracticeSession() {
     } else if (logSessionData.duration < 1) {
       newErrors.duration = "Must not be less than 1";
       isValid = false;
+    } else if (logSessionData.duration > 60) {
+      newErrors.duration = "Must not be greater than 60min";
+      isValid = false;
     }
     if (!logSessionData.difficulty) {
       newErrors.difficulty = "This field is required";
@@ -147,23 +150,6 @@ export default function LogPracticeSession() {
       <div className="container">
         <PageNav />
         <div className="logSession-page">
-          <nav onClick={handleIdVisibility}>
-            <FiUser className="user-icon" />
-
-            {showSessionId && (
-              <div className="content" onClick={(e) => e.stopPropagation()}>
-                <span>
-                  <strong>Session Id</strong> : {SESSION_ID}
-                </span>
-                <button
-                  className="cancel-btn"
-                  onClick={() => setShowSessionId(false)}
-                >
-                  Close
-                </button>
-              </div>
-            )}
-          </nav>
           <header>
             <h1>Log Practice Session</h1>
           </header>
@@ -196,7 +182,9 @@ export default function LogPracticeSession() {
                 <fieldset>
                   <label htmlFor="duration">DURATION (MINUTES)</label>
                   <input
-                    type="text"
+                    type="number"
+                    min="1"
+                    max="60"
                     value={logSessionData.duration}
                     name="duration"
                     inputMode="numeric"
@@ -211,10 +199,13 @@ export default function LogPracticeSession() {
                 <fieldset>
                   <label htmlFor="difficulty">DIFFICULTY (1-10)</label>
                   <input
-                    type="text"
+                    type="number"
+                    min="1"
+                    max="10"
                     value={logSessionData.difficulty}
                     name="difficulty"
                     inputMode="numeric"
+                    placeholder="1"
                     onChange={handleChange}
                   />
                 </fieldset>
@@ -225,7 +216,15 @@ export default function LogPracticeSession() {
             </section>
             <div className="field">
               <fieldset>
-                <label htmlFor="fatigueLevel">FATIGUE LEVEL (1-10)</label>
+                <label
+                  htmlFor="fatigueLevel"
+                  style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                >
+                  FATIGUE LEVEL:{" "}
+                  <span style={{ color: "#ff6a1a", fontSize: "18px" }}>
+                    {logSessionData.fatigueLevel}
+                  </span>
+                </label>
                 <input
                   type="range"
                   value={logSessionData.fatigueLevel}
@@ -234,6 +233,19 @@ export default function LogPracticeSession() {
                   max="10"
                   onChange={handleChange}
                 />
+                <div
+                  className="footer"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "-23px",
+                    opacity: 0.5,
+                    fontWeight: "bold",
+                  }}
+                >
+                  <p>Energetic(1)</p>
+                  <p>Burnout(10)</p>
+                </div>
               </fieldset>
             </div>
           </form>

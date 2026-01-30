@@ -9,6 +9,8 @@ export default function PageNav() {
 
   const [showSideBar, setShowSideBar] = useState(false);
 
+  const SESSION_ID = sessionStorage.getItem("sessionId");
+
   const navigate = useNavigate();
   const [activeMobileBtn, setActiveMobileBtn] = useState("form");
   const location = useLocation();
@@ -57,12 +59,21 @@ export default function PageNav() {
     <>
       {!isMobile && (
         <div className="page-nav">
+          <motion.span
+            className="session_id"
+            initial={{ x: "-1800px" }}
+            animate={{ x: "0px" }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 50 }}
+          >
+            <strong>Session Id</strong> : {SESSION_ID}
+          </motion.span>
           <motion.h1
             initial={{ x: "400px" }}
             animate={{ x: "10px" }}
-            transition={{ delay: 0.1, type: "spring", stiffness: 120 }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 50 }}
           >
             Forge
+            {/* <strong>Session Id</strong> : {SESSION_ID} */}
           </motion.h1>
         </div>
       )}
@@ -70,13 +81,18 @@ export default function PageNav() {
       {isMobile && (
         <div className="mobile_nav">
           <div className="page-nav">
-            <motion.h1
-              initial={{ x: "400px" }}
-              animate={{ x: "10px" }}
-              transition={{ delay: 0.1, type: "spring", stiffness: 120 }}
-            >
-              Forge
-            </motion.h1>
+            <section>
+              <motion.h1
+                initial={{ x: "400px" }}
+                animate={{ x: "10px" }}
+                transition={{ delay: 0.1, type: "spring", stiffness: 120 }}
+              >
+                Forge
+              </motion.h1>
+              <span>
+                <strong>Session Id</strong> : {SESSION_ID}
+              </span>
+            </section>
 
             <motion.button
               initial={{ x: "-400px" }}

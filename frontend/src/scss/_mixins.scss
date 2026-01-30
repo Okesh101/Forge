@@ -11,6 +11,15 @@
   border-radius: 24px;
   border: 1px solid rgba(255, 106, 26, 0.2);
   margin-top: 50px;
+  @media (max-width: 769px) {
+    margin-top: 80px !important;
+  }
+  @media (max-width: 525px) {
+    margin-top: 110px !important;
+  }
+  @media (max-width: 378px) {
+    margin-top: 120px !important;
+  }
 }
 
 @mixin webkitText {

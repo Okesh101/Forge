@@ -14,7 +14,16 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "2. Resuming Progress",
+      title: "2. Session ID popup",
+      info: (
+        <span>
+          When you start forging for the first time, a popup displays your
+          Session ID with a reminder to copy and save it for future access.
+        </span>
+      ),
+    },
+    {
+      title: "3. Resuming Progress",
       info: (
         <span>
           If you already have a Session ID, log in to continue from where you
@@ -23,7 +32,16 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "3. Initial Plan Generation",
+      title: "4. Viewing Your Session ID",
+      info: (
+        <span>
+          Click the user icon in the Log Practice page to view your active
+          session ID at any time.
+        </span>
+      ),
+    },
+    {
+      title: "5. Initial Plan Generation",
       info: (
         <span>
           Forge breaks your chosen skills into sub-skills and creates an initial
@@ -32,7 +50,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "4. Logging Practice",
+      title: "6. Logging Practice",
       info: (
         <span>
           Log what you practiced or add short reflections. Detailed explanations
@@ -41,7 +59,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "5. Autonomous Analysis",
+      title: "7. Autonomous Analysis",
       info: (
         <span>
           The system analyzes your practice history overtime, detecting
@@ -50,7 +68,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "6. Strategy Updates",
+      title: "8. Strategy Updates",
       info: (
         <span>
           Practice strategies are automatically adjusted. Difficulty, focus
@@ -59,7 +77,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "7. Narration & Timeline",
+      title: "9. Narration & Timeline",
       info: (
         <span>
           Narration explains what to focus on next and why. The Timeline shows
@@ -68,7 +86,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "8. Continuous Learning",
+      title: "10. Continuous Learning",
       info: (
         <span>
           No re-prompting or restrating is needed. Forge continues learning and
