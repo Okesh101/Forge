@@ -133,6 +133,27 @@
             "duration_minutes": "39",
             "difficulty_rating": "7",
             "fatigue_level": "8"
+        },
+        {
+            "date": "2026-01-30T15:35:25.525384",
+            "activity": "I tried explicit type annotations",
+            "duration_minutes": "23",
+            "difficulty_rating": "9",
+            "fatigue_level": "8"
+        },
+        {
+            "date": "2026-01-30T15:35:25.525384",
+            "activity": "I tried escaping compiler errors",
+            "duration_minutes": "20",
+            "difficulty_rating": "8",
+            "fatigue_level": "6"
+        },
+        {
+            "date": "2026-01-30T15:51:23.356741",
+            "activity": "I think i might have gotten a hold of strict typing slowly sha",
+            "duration_minutes": "42",
+            "difficulty_rating": "5",
+            "fatigue_level": "6"
         }
     ],
     "practice_logs_analysis": [
@@ -199,6 +220,40 @@
                 "Subjective difficulty peaked at 10/10, suggesting the current task complexity exceeds the user's current baseline.",
                 "Fatigue ratings of 8 and 9 within a total of ~100 minutes of practice indicate high cognitive load and potential for rapid burnout.",
                 "The friction associated with migrating from 'any' to strict types is significantly higher than the 'challenging' balance intended by the strategy."
+            ]
+        },
+        {
+            "analysis_version": 1,
+            "session_analysis": {
+                "effort_level": "high",
+                "challenge_alignment": "aligned",
+                "friction_signals": [
+                    "High fatigue (8/10) during initial explicit annotation task",
+                    "Perceived difficulty peaked at 9/10 while handling compiler errors",
+                    "Short duration in first two sessions suggests high cognitive load causing early termination"
+                ],
+                "positive_signals": [
+                    "Significant difficulty reduction (9 to 5) in the final session",
+                    "Increased duration (42 minutes) in the final session indicating higher flow state",
+                    "Self-report indicates breakthrough in mental model ('gotten a hold of strict typing')"
+                ]
+            },
+            "flags": {
+                "fatigue_risk": true,
+                "motivation_risk": false,
+                "overload_risk": false
+            },
+            "analysis_confidence": 0.9,
+            "optimizer_signal": {
+                "should_optimize": false,
+                "reason_codes": [],
+                "confidence": 0.85
+            },
+            "analysis_notes": [
+                "Initial sessions show high friction with compiler errors, consistent with Cycle 1 'challenging' profile.",
+                "The 44% drop in perceived difficulty between sessions 1 and 3 suggests rapid adaptation to the current strategy.",
+                "The fatigue spike (8/10) is a point of concern but appears to be trending toward stabilization (6/10).",
+                "Positive trend in duration and reflection outweighs the initial high-difficulty signals."
             ]
         }
     ],
@@ -463,6 +518,94 @@
                 "evidence": [
                     "Challenge Alignment: over-challenged",
                     "Analyzer Confidence: 0.95"
+                ]
+            },
+            "visibilty": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "30de0c0c-fdea-11f0-8de5-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-30T15:35:25.525384",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn TypeScript.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 7
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "4e9c1680-fdea-11f0-aa97-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-30T15:35:25.525384",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn TypeScript.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 8
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "26ea0e10-fdeb-11f0-b7f0-a0481cdf2fa0",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-01-30T15:51:23.356741",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn TypeScript.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 9
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "3212e112-fdeb-11f0-ba13-a0481cdf2fa0",
+            "event": "session_analyzed",
+            "actor": "ai",
+            "timestamp": "2026-01-30T15:51:23.356741",
+            "title": "Practice Session Analyzed",
+            "summary": "Analyzed 3 consecutive practice sessions",
+            "details": {
+                "reason": "User logged up to 3 practice sessions.",
+                "changes": {
+                    "analysis_count": 3
+                },
+                "evidence": [
+                    "Challenge Alignment: aligned",
+                    "Analyzer Confidence: 0.9"
                 ]
             },
             "visibilty": {

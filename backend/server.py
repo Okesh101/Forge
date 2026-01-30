@@ -368,13 +368,13 @@ def run_optimizer(file):
 def try_dispatch_optimizer(file):
     memory = loadAiMemory(file[:-5])
 
-    if not memory['practice_logs_analysis']:
+    if not memory.get('practice_logs_analysis'):
         print("No analysis has been done yet.")
         return
 
     latest_analysis = memory['practice_logs_analysis'][-1]
 
-    if not latest_analysis['optimizer_signal']:
+    if not latest_analysis.get('optimizer_signal'):
         print("No analysis signal to work with.")
         return
 
@@ -885,6 +885,34 @@ def get_analytics():
             "number": number
         })
 
+    durationCounts = []
+    counts = Counter()
+    for items in practice_logs:
+        counts.update(items)
+    print(dict(counts))
+
+    for date, duration in counts.items():
+        durationCounts.append({
+            "date": date[:10],
+            "duration": duration
+        })
+
+    difficultyCounts = []
+    counts = Counter(item['difficulty_rating'] for item in practice_logs)
+    for date, difficulty in counts.items():
+        difficultyCounts.append({
+            "date": date[:10],
+            "difficulty": difficulty
+        })
+
+    fatigueCounts = []
+    counts = Counter(item['fatigue_level'] for item in practice_logs)
+    for date, fatgue in counts.items():
+        fatigueCounts.append({
+            "date": date[:10],
+            "fatigue": fatgue
+        })
+
     # ----------------------------------------
     # 2. Build analysis batches with scope
     # ----------------------------------------
@@ -952,7 +980,10 @@ def get_analytics():
         "analysis_batches": analysis_batches,
         "summary": summary,
         "mappings": mappings,
-        "dateCounts": dateCounts
+        "dateCounts": dateCounts,
+        "durationCounts": durationCounts,
+        "difficultyCounts": difficultyCounts,
+        "fatigueCounts": fatigueCounts
     }), 200
 
 
