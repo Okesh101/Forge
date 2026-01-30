@@ -885,6 +885,7 @@ def get_analytics():
             "number": number
         })
 
+
     # Duration
     durationSum = defaultdict(lambda: {"total_dur": 0, "count": 0})
     for entry in practice_logs:
@@ -892,33 +893,44 @@ def get_analytics():
         dur = int(entry.get("duration_minutes"))
         durationSum[dates[:10]]["total_dur"] += dur
         durationSum[dates[:10]]["count"] += 1
-    # print(f"Count: {dict(durationSum)}")
-    
     durationCounts = []
     for dat, duration in durationSum.items():
         durationCounts.append({
             "date": dat,
             "duration": duration["total_dur"] / duration["count"]
         })
-    print(durationCounts)
-    
-    # {"dvsids": 27, "dvwidvqw": 21}
 
-    # difficultyCounts = []
-    # counts = Counter(item['difficulty_rating'] for item in practice_logs)
-    # for date, difficulty in counts.items():
-    #     difficultyCounts.append({
-    #         "date": date[:10],
-    #         "difficulty": difficulty
-    #     })
 
-    # fatigueCounts = []
-    # counts = Counter(item['fatigue_level'] for item in practice_logs)
-    # for date, fatgue in counts.items():
-    #     fatigueCounts.append({
-    #         "date": date[:10],
-    #         "fatigue": fatgue
-    #     })
+    # Difficulty
+    difficultySum = defaultdict(lambda: {"total_diff": 0, "count": 0})
+    for entryDiff in practice_logs:
+        datesDiff = entryDiff.get("date")
+        diff = int(entryDiff.get("difficulty_rating"))
+        difficultySum[datesDiff[:10]]["total_diff"] += diff
+        difficultySum[datesDiff[:10]]["count"] += 1
+    difficultyCounts = []
+    for datDiff, difficulty in difficultySum.items():
+        difficultyCounts.append({
+            "date": datDiff,
+            "difficulty": difficulty["total_diff"] / difficulty["count"]
+        })
+    # print(difficultyCounts)
+
+
+    # Fatigue
+    fatigueSum = defaultdict(lambda: {"total_fat": 0, "count": 0})
+    for entryFat in practice_logs:
+        datesFat = entryFat.get("date")
+        fat = int(entryFat.get("fatigue_level"))
+        fatigueSum[datesFat[:10]]["total_fat"] += fat
+        fatigueSum[datesFat[:10]]["count"] += 1
+    fatigueCounts = []
+    for datFat, fatigue in fatigueSum.items():
+        fatigueCounts.append({
+            "date": datFat,
+            "fatigue": fatigue["total_fat"] / fatigue["count"]
+        })
+        
 
     # ----------------------------------------
     # 2. Build analysis batches with scope
@@ -989,8 +1001,8 @@ def get_analytics():
         "mappings": mappings,
         "dateCounts": dateCounts,
         "durationCounts": durationCounts,
-        # "difficultyCounts": difficultyCounts,
-        # "fatigueCounts": fatigueCounts
+        "difficultyCounts": difficultyCounts,
+        "fatigueCounts": fatigueCounts
     }), 200
 
 
