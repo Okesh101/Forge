@@ -353,7 +353,7 @@ def printer():
 def run_optimizer(file):
     user_id = file[:-5]
     print(f"Optimizer Ran: {file}, timestamp: {current_time.time()}")
-    
+
     # RUNNING OPTIMIZER
     callOptimizer(user_id)
 
@@ -613,10 +613,13 @@ def callAnalyzer(session_id: str) -> dict:
     else:
         return {}
 
+
 def callOptimizer(session_id: str) -> dict:
     return {}
 
 # API ROUTES
+
+
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
