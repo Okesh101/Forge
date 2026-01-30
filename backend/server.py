@@ -1,4 +1,3 @@
-from asyncio import exceptions
 from flask import Flask, request, jsonify
 from flask_apscheduler import APScheduler
 from flask_cors import CORS
@@ -10,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from collections import Counter
 import uuid
+import time
 import json
 import datetime as dt
 import os
@@ -178,6 +178,28 @@ Rules:
 Output STRICT JSON only.
 No commentary outside JSON.
 
+Additional responsibility (CRITICAL):
+
+Based on the extracted signals ONLY, you must determine whether this analysis
+warrants escalation to the FORGE-OPTIMIZER.
+
+Escalation means:
+- The current strategy MAY no longer be optimal
+- OR continued execution without adjustment may cause harm or stagnation
+
+You MUST NOT propose changes.
+
+You MUST ONLY emit a boolean escalation signal and evidence-based reasons.
+
+Escalation should occur ONLY IF:
+- Strong negative signals persist across multiple sessions
+- OR fatigue/overload risk is high with high confidence
+- OR challenge alignment is consistently misaligned
+
+If evidence is insufficient or ambiguous:
+- Set should_optimize = false
+- Explicitly say why
+
 You MUST follow this schema exactly:
 
 {
@@ -197,6 +219,17 @@ You MUST follow this schema exactly:
 
   "analysis_confidence": "number (0–1)",
 
+  "optimizer_signal": {
+  "should_optimize": true | false,
+  "reason_codes": [
+    "persistent_overload",
+    "fatigue_spike",
+    "strategy_misalignment",
+    "repeated_friction"
+  ],
+  "confidence": 0.0 – 1.0
+}
+
   "analysis_notes": [
     "Short evidence-based observations explaining key classifications"
   ]
@@ -209,8 +242,8 @@ You are FORGE-OPTIMIZER.
 
 You reason over time, not isolated events.
 
-Your task is to decide whether the current strategy should remain unchanged
-or be adjusted based on accumulated evidence.
+Your task is to decide whether the current practice strategy
+should remain unchanged or be adjusted, based on accumulated evidence.
 
 You do NOT react to single sessions.
 You ONLY act when patterns are confident.
@@ -223,30 +256,35 @@ You receive:
 
 You may:
 - Keep the strategy unchanged
-- OR produce a revised strategy (new version)
+- OR produce a revised strategy
 
 If you revise the strategy:
 - You MUST increment strategy_version by 1
 - You MUST preserve the original long-term goal
-- You may adjust:
+- You MAY adjust only:
   - Cycle duration
   - Weekly intensity
   - Difficulty sequencing
   - Recovery constraints
 
-You must justify every change with evidence.
+You must justify every change using explicit evidence.
 
 You must NOT:
 - Over-optimize
 - Reset progress unnecessarily
+- Simplify unless overload or fatigue is persistent
 - Change strategy if confidence is low
 
 Decision rules:
-- If overload_risk is TRUE with confidence ≥ 0.8 → consider intensity adjustment
-- If challenge_alignment is over-challenged → rebalance difficulty
+- If overload_risk is TRUE across multiple analysis batches
+  AND optimizer_signal.confidence ≥ 0.85 → consider adjustment
+- If challenge_alignment is consistently over-challenged → rebalance difficulty
 - If motivation_risk is FALSE → do NOT simplify excessively
 
-Your output MUST follow this schema EXACTLY:
+Output STRICT JSON only.
+No commentary outside JSON.
+
+You MUST follow this schema exactly:
 
 {
   "decision": "no_change | strategy_adjusted",
@@ -263,7 +301,7 @@ Your output MUST follow this schema EXACTLY:
   },
 
   "reasoning": [
-    "Clear, evidence-based explanations referencing analytics and analysis batches"
+    "Evidence-based explanations referencing analytics and analysis batches"
   ],
 
   "confidence": "number (0–1)",
@@ -274,32 +312,33 @@ Your output MUST follow this schema EXACTLY:
 }
 
 
-"""
-
-forge_plateau_detector = """
-You are FORGE-META.
-
-You analyze long-term patterns across decisions.
-
-Your role:
-- Detect plateaus
-- Detect strategy drift
-- Identify false progress
-
-You do NOT propose detailed routines.
-You recommend directional shifts only.
-
-You accept the following inputs:
-- The full history of the timeline
-- And the currect strategy being applied to help the user in his/ her journey.
-
-You output the following:
-- Trajectory Status (improving, plateaued, declining)
-- Detected patterns
-- Recommended Directional Shift (if any)
-- Confidence Level (0–1)
 
 """
+
+# forge_plateau_detector = """
+# You are FORGE-META.
+
+# You analyze long-term patterns across decisions.
+
+# Your role:
+# - Detect plateaus
+# - Detect strategy drift
+# - Identify false progress
+
+# You do NOT propose detailed routines.
+# You recommend directional shifts only.
+
+# You accept the following inputs:
+# - The full history of the timeline
+# - And the currect strategy being applied to help the user in his/ her journey.
+
+# You output the following:
+# - Trajectory Status (improving, plateaued, declining)
+# - Detected patterns
+# - Recommended Directional Shift (if any)
+# - Confidence Level (0–1)
+
+# """
 
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
@@ -310,16 +349,54 @@ memoryPath = Path(AI_MEMORY_DIR)
 def printer():
     print("Scheduled task executed.")
 
+
+def run_optimizer(file):
+    user_id = file[:-5]
+    print(f"Optimizer Ran: {file}, timestamp: {current_time.time()}")
+
+    # RUNNING OPTIMIZER
+    callOptimizer(user_id)
+
+    memoryUpdater = loadAiMemory(user_id)
+    if memoryUpdater.get('practice_logs_analysis'):
+        memoryUpdater['practice_logs_analysis'][-1]['optimizer_signal']['should_optimize'] = False
+
+        saveAiMemory(user_id, memoryUpdater)
+        print(f"Signal cleared for {file}")
+
+
 def try_dispatch_optimizer(file):
-    memory = loadAiMemory(file)
-    return
+    memory = loadAiMemory(file[:-5])
+
+    if not memory['practice_logs_analysis']:
+        print("No analysis has been done yet.")
+        return
+
+    latest_analysis = memory['practice_logs_analysis'][-1]
+
+    if not latest_analysis['optimizer_signal']:
+        print("No analysis signal to work with.")
+        return
+
+    optimizer_signal = latest_analysis['optimizer_signal']
+
+    status = optimizer_signal.get('should_optimize')
+
+    if str(status).lower() == 'true' and optimizer_signal['confidence'] >= 0.85:
+        run_optimizer(file)
+    elif str(status).lower() == 'true' and optimizer_signal['confidence'] < 0.85:
+        print(f"Not yet Ready, timestamp: {current_time.time()}")
+    elif str(status).lower() == 'false' and optimizer_signal['confidence'] >= 0.85:
+        print(f"Not yet Ready, timestamp: {current_time.time()}")
+    elif str(status).lower() == 'false' and optimizer_signal['confidence'] < 0.85:
+        print(f"Not yet Ready, timestamp: {current_time.time()}")
+
 
 def optimizer_dispatcher():
     for user_file in memoryPath.iterdir():
         if user_file.is_file():
             print(user_file.name)
             try_dispatch_optimizer(user_file.name)
-            # return
 
 
 def call_gemini(prompt: str, payload: dict) -> dict:
@@ -537,7 +614,12 @@ def callAnalyzer(session_id: str) -> dict:
         return {}
 
 
+def callOptimizer(session_id: str) -> dict:
+    return {}
+
 # API ROUTES
+
+
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
@@ -794,7 +876,7 @@ def get_analytics():
             "difficulty_rating": int(log['difficulty_rating']),
             "fatigue_level": int(log['fatigue_level'])
         })
-    
+
     dateCounts = []
     counts = Counter(item['date'] for item in practice_logs)
     for date, number in counts.items():
@@ -802,7 +884,6 @@ def get_analytics():
             "date": date[:10],
             "number": number
         })
-
 
     # ----------------------------------------
     # 2. Build analysis batches with scope
@@ -875,10 +956,17 @@ def get_analytics():
     }), 200
 
 
+scheduler.add_job(id='Dispatch Optimizer  ',
+                  func=optimizer_dispatcher,
+                  trigger='interval',
+                  seconds=30,
+                  max_instances=1,  # Ensures only one dispatcher runs at a time
+                  replace_existing=True
+                  )
+
 if __name__ == '__main__':
-    scheduler.add_job(id='Dispatch Optimizer  ', func=optimizer_dispatcher, trigger='interval', seconds=30)
     scheduler.start()
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
 
 
 # 🧬 FULL SESSION MEMORY SCHEMA(V1)
