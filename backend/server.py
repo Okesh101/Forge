@@ -7,7 +7,7 @@ from google.genai import types
 from dotenv import load_dotenv
 from datetime import datetime
 from pathlib import Path
-from collections import Counter
+from collections import Counter, defaultdict
 import uuid
 import time
 import json
@@ -885,33 +885,40 @@ def get_analytics():
             "number": number
         })
 
+    # Duration
+    durationSum = defaultdict(lambda: {"total_dur": 0, "count": 0})
+    for entry in practice_logs:
+        dates = entry.get("date")
+        dur = int(entry.get("duration_minutes"))
+        durationSum[dates[:10]]["total_dur"] += dur
+        durationSum[dates[:10]]["count"] += 1
+    # print(f"Count: {dict(durationSum)}")
+    
     durationCounts = []
-    counts = Counter()
-    for items in practice_logs:
-        counts.update(items)
-    print(dict(counts))
-
-    for date, duration in counts.items():
+    for dat, duration in durationSum.items():
         durationCounts.append({
-            "date": date[:10],
-            "duration": duration
+            "date": dat,
+            "duration": duration["total_dur"] / duration["count"]
         })
+    print(durationCounts)
+    
+    # {"dvsids": 27, "dvwidvqw": 21}
 
-    difficultyCounts = []
-    counts = Counter(item['difficulty_rating'] for item in practice_logs)
-    for date, difficulty in counts.items():
-        difficultyCounts.append({
-            "date": date[:10],
-            "difficulty": difficulty
-        })
+    # difficultyCounts = []
+    # counts = Counter(item['difficulty_rating'] for item in practice_logs)
+    # for date, difficulty in counts.items():
+    #     difficultyCounts.append({
+    #         "date": date[:10],
+    #         "difficulty": difficulty
+    #     })
 
-    fatigueCounts = []
-    counts = Counter(item['fatigue_level'] for item in practice_logs)
-    for date, fatgue in counts.items():
-        fatigueCounts.append({
-            "date": date[:10],
-            "fatigue": fatgue
-        })
+    # fatigueCounts = []
+    # counts = Counter(item['fatigue_level'] for item in practice_logs)
+    # for date, fatgue in counts.items():
+    #     fatigueCounts.append({
+    #         "date": date[:10],
+    #         "fatigue": fatgue
+    #     })
 
     # ----------------------------------------
     # 2. Build analysis batches with scope
@@ -982,8 +989,8 @@ def get_analytics():
         "mappings": mappings,
         "dateCounts": dateCounts,
         "durationCounts": durationCounts,
-        "difficultyCounts": difficultyCounts,
-        "fatigueCounts": fatigueCounts
+        # "difficultyCounts": difficultyCounts,
+        # "fatigueCounts": fatigueCounts
     }), 200
 
 

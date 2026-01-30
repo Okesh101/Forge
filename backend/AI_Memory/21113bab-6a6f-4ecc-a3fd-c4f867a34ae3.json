@@ -149,12 +149,20 @@
             "fatigue_level": "6"
         },
         {
-            "date": "2026-01-30T15:51:23.356741",
-            "activity": "I think i might have gotten a hold of strict typing slowly sha",
-            "duration_minutes": "42",
-            "difficulty_rating": "5",
+            "date": "2026-01-31T15:35:25.525384",
+            "activity": "I tried explicit type annotations",
+            "duration_minutes": "23",
+            "difficulty_rating": "9",
+            "fatigue_level": "8"
+        },
+        {
+            "date": "2026-01-31T15:35:25.525384",
+            "activity": "I tried escaping compiler errors",
+            "duration_minutes": "20",
+            "difficulty_rating": "8",
             "fatigue_level": "6"
         }
+
     ],
     "practice_logs_analysis": [
         {
