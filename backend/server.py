@@ -7,7 +7,7 @@ from google.genai import types
 from dotenv import load_dotenv
 from datetime import datetime
 from pathlib import Path
-from collections import Counter
+from collections import Counter, defaultdict
 import uuid
 import time
 import json
@@ -368,13 +368,13 @@ def run_optimizer(file):
 def try_dispatch_optimizer(file):
     memory = loadAiMemory(file[:-5])
 
-    if not memory['practice_logs_analysis']:
+    if not memory.get('practice_logs_analysis'):
         print("No analysis has been done yet.")
         return
 
     latest_analysis = memory['practice_logs_analysis'][-1]
 
-    if not latest_analysis['optimizer_signal']:
+    if not latest_analysis.get('optimizer_signal'):
         print("No analysis signal to work with.")
         return
 
@@ -885,6 +885,41 @@ def get_analytics():
             "number": number
         })
 
+    # Duration
+    durationSum = defaultdict(lambda: {"total_dur": 0, "count": 0})
+    for entry in practice_logs:
+        dates = entry.get("date")
+        dur = int(entry.get("duration_minutes"))
+        durationSum[dates[:10]]["total_dur"] += dur
+        durationSum[dates[:10]]["count"] += 1
+    # print(f"Count: {dict(durationSum)}")
+    
+    durationCounts = []
+    for dat, duration in durationSum.items():
+        durationCounts.append({
+            "date": dat,
+            "duration": duration["total_dur"] / duration["count"]
+        })
+    print(durationCounts)
+    
+    # {"dvsids": 27, "dvwidvqw": 21}
+
+    # difficultyCounts = []
+    # counts = Counter(item['difficulty_rating'] for item in practice_logs)
+    # for date, difficulty in counts.items():
+    #     difficultyCounts.append({
+    #         "date": date[:10],
+    #         "difficulty": difficulty
+    #     })
+
+    # fatigueCounts = []
+    # counts = Counter(item['fatigue_level'] for item in practice_logs)
+    # for date, fatgue in counts.items():
+    #     fatigueCounts.append({
+    #         "date": date[:10],
+    #         "fatigue": fatgue
+    #     })
+
     # ----------------------------------------
     # 2. Build analysis batches with scope
     # ----------------------------------------
@@ -952,7 +987,10 @@ def get_analytics():
         "analysis_batches": analysis_batches,
         "summary": summary,
         "mappings": mappings,
-        "dateCounts": dateCounts
+        "dateCounts": dateCounts,
+        "durationCounts": durationCounts,
+        # "difficultyCounts": difficultyCounts,
+        # "fatigueCounts": fatigueCounts
     }), 200
 
 
