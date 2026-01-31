@@ -631,6 +631,29 @@ def login_session():
     session_id = request.json.get('session_Id')
     if not session_exists(session_id):
         return jsonify({"error": "Session not found"}), 401
+
+    memory = loadAiMemory(session_id)
+    memory['timeline'].append({
+        "id": str(uuid.uuid1()),
+        "event": "logged_in",
+        "actor": "user",
+        "timestamp": current_time.isoformat(),
+        "title": "Logged in to continue forging",
+        "summary": f"User logged in to continue the skill: {[memory['skill']['name']]}.",
+        "details": {
+            "reason": "Session_id provided to continue forging.",
+            "changes": {},
+            "evidence": [
+                f"Skill: {memory['skill']['name']}",
+                f"Experience Level: {memory['skill']['level']}",
+            ]
+        },
+        "visibility": {
+            "show_on_timeline": True,
+            "clickable": False
+        }
+    })
+
     return jsonify({
         "status": "success",
         "message": "Session Found!"
@@ -885,7 +908,6 @@ def get_analytics():
             "number": number
         })
 
-
     # Duration
     durationSum = defaultdict(lambda: {"total_dur": 0, "count": 0})
     for entry in practice_logs:
@@ -899,7 +921,6 @@ def get_analytics():
             "date": dat,
             "duration": duration["total_dur"] / duration["count"]
         })
-
 
     # Difficulty
     difficultySum = defaultdict(lambda: {"total_diff": 0, "count": 0})
@@ -916,7 +937,6 @@ def get_analytics():
         })
     # print(difficultyCounts)
 
-
     # Fatigue
     fatigueSum = defaultdict(lambda: {"total_fat": 0, "count": 0})
     for entryFat in practice_logs:
@@ -930,7 +950,6 @@ def get_analytics():
             "date": datFat,
             "fatigue": fatigue["total_fat"] / fatigue["count"]
         })
-        
 
     # ----------------------------------------
     # 2. Build analysis batches with scope
