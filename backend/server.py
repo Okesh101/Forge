@@ -291,7 +291,38 @@ You MUST follow this schema exactly:
 
   "new_strategy": null | {
     "strategy_version": "number",
-    "strategy": { FULL STRATEGY OBJECT }
+    "skill_model": {
+      "core_components": [ "string" ],
+      "supporting_components": [ "string" ]
+    },
+
+    "practice_cycles": [
+      {
+        "cycle_index": 1,
+        "duration_weeks": "number",
+        "focus_summary": "string",
+        "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses) (The sentence must not be less than 55 words),
+        "weekly_loop": {
+          "primary_activity": "string",
+          "secondary_activity": "string"
+        },
+        "difficulty_profile": {
+          "comfortable": "string",
+          "challenging": "string"
+        },
+        "success_markers": {
+          "objective": [ "string" ],
+          "subjective": [ "string" ]
+        }
+      }
+    ],
+
+    "evaluation_metrics": {
+      "objective": [ "string" ],
+      "subjective": [ "string" ]
+    },
+
+    "architect_notes": [ "string" ]
   },
 
   "change_summary": {
@@ -343,6 +374,7 @@ You MUST follow this schema exactly:
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
 memoryPath = Path(AI_MEMORY_DIR)
+summaryLife = {}
 
 
 # UTILITY FUNCTIONS
@@ -354,15 +386,20 @@ def run_optimizer(file):
     user_id = file[:-5]
     print(f"Optimizer Ran: {file}, timestamp: {current_time.time()}")
 
+    opt = {}
+    opt.update(callOptimizer(user_id))
+
     # RUNNING OPTIMIZER
-    callOptimizer(user_id)
+    if opt["status"] == "optimized":
+        memoryUpdater = loadAiMemory(user_id)
+        if memoryUpdater.get('practice_logs_analysis'):
+            memoryUpdater['practice_logs_analysis'][-1]['optimizer_signal']['should_optimize'] = False
 
-    memoryUpdater = loadAiMemory(user_id)
-    if memoryUpdater.get('practice_logs_analysis'):
-        memoryUpdater['practice_logs_analysis'][-1]['optimizer_signal']['should_optimize'] = False
+            saveAiMemory(user_id, memoryUpdater)
+            print(f"Signal cleared for {file}")
 
-        saveAiMemory(user_id, memoryUpdater)
-        print(f"Signal cleared for {file}")
+    print("===OPTIMIZER OUTPUT===")
+    print(opt)
 
 
 def try_dispatch_optimizer(file):
@@ -486,6 +523,11 @@ def createAiMemory(session_id):
         "practice_logs_analysis": [],
         "strategy_history": [],
         "agent_insights": {},
+        "optimizer_state": {
+            "last_run_at": None,
+            "cooldown_days": 3,
+            "times_optimized": 0
+        },
         "timeline": [
             {
                 "id": str(uuid.uuid1()),
@@ -598,6 +640,11 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
     }
 
 
+def storeSummary(summary: dict) -> dict:
+    summaryLife.update(summary)
+    return summaryLife
+
+
 def callAnalyzer(session_id: str) -> dict:
     memory = loadAiMemory(session_id)
     countLogs = memory['practice_logs'].__len__()
@@ -615,11 +662,95 @@ def callAnalyzer(session_id: str) -> dict:
 
 
 def callOptimizer(session_id: str) -> dict:
-    return {}
+    if not session_exists(session_id):
+        return {"status": "error", "message": "Session doesn't exist"}
+    memoryRaw = loadAiMemory(session_id)
+
+    normalized_strategy = memoryRaw['normalized_return']['normalized_strategy']
+    practice_logs_analysis = memoryRaw['practice_logs_analysis']
+    # timeline = memoryRaw['timeline']
+    optimizer_state = memoryRaw.get('optimizer_state', {})
+
+    if not optimizer_state:
+        memoryRaw['optimizer_state'] = {
+            "last_run_at": None,
+            "cooldown_days": 3,
+            "times_optimized": 0
+        }
+        saveAiMemory(session_id, memoryRaw)
+    memory = loadAiMemory(session_id)
+
+    optimizer_state = memory.get('optimizer_state', {})
+
+    last_run = optimizer_state.get("last_run_at")
+    cooldown = optimizer_state.get("cooldown_days", 3)
+
+    # if last_run and days_since(last_run) < cooldown:
+    #     return {"status": "skipped", "reason": "cooldown_active"}
+
+    eligible_batches = []
+    for analysis in practice_logs_analysis:
+        signal = analysis.get("optimizer_signal", {})
+        if signal.get("should_optimize") and signal.get("confidence", 0) >= 0.85:
+            eligible_batches.append(analysis)
+    if len(eligible_batches) < 2:
+        return {"status": "skipped",
+                "reason": "insufficient_evidence",
+                "eligible_batches": len(eligible_batches),
+                "required_batches": 2
+                }
+
+    optimizer_payload = {
+        "current_strategy": normalized_strategy,
+        "strategy_history": memory.get("strategy_history", []),
+        "analytics_summary": summaryLife if summaryLife else {},
+        "analytics_batches": eligible_batches
+    }
+
+    optimizer_result = call_gemini_with_retry(
+        prompt=forge_optimizer,
+        payload=optimizer_payload
+    )
+
+    # Strategy not adjusted
+    if optimizer_result['decision'] == "no_change":
+        memory['timeline'].append({
+            "id": str(uuid.uuid1()),
+            "event": "strategy_reviewed",
+            "actor": "ai",
+            "timestamp": current_time.isoformat(),
+            "title": "Strategy Reviewed",
+            "summary": "Strategy reviewed; no change required."
+        })
+        saveAiMemory(session_id, memory)
+        return {"status": "no_change"}
+
+    # Strategy adjusted safely
+    elif optimizer_result['decision'] == "strategy_adjusted" and int(optimizer_result['confidence']) >= 0.85:
+        memory['strategy_history'].append({
+            "version": memory['normalized_return']['normalized_strategy']['strategy_version'],
+            "ended_at": current_time.isoformat(),
+            "reason": "Optimizer revision"
+        })
+        memory['normalized_return']['normalized_strategy'] = optimizer_result['new_strategy']
+
+        memory["timeline"].append({
+            "id": str(uuid.uuid1()),
+            "event": "strategy_adjusted",
+            "actor": "ai",
+            "timestamp": current_time.isoformat(),
+            "title": "Practice Strategy Adjusted",
+            "summary": "Practice strategy adjusted due to overload signals.",
+            "details": optimizer_result["change_summary"]
+        })
+        memory["optimizer_state"]["last_run_at"] = current_time.isoformat(),
+        memory["optimizer_state"]["times_optimized"] += 1
+        saveAiMemory(session_id, memory)
+        return {"status": "optimized"}
+    # return {}
+
 
 # API ROUTES
-
-
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
@@ -1009,6 +1140,8 @@ def get_analytics():
         "average_fatigue": round(avg_fatigue, 2),
         "overload_detected": any(overload_flags)
     }
+
+    storeSummary(summary)
 
     # ----------------------------------------
     # 4. Final analytics payload
