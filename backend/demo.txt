@@ -1,0 +1,93 @@
+# 🧬 FULL SESSION MEMORY SCHEMA(V1)
+# {
+#     "session_id": "7f3c2d...",
+#   "created_at": "2025-07-01T10:12:00Z",
+#   "skill": {
+#       "name": "Jazz Piano",
+#     "level": "Beginner",
+#     "weekly_time_hours": 5
+#   },
+
+#     "current_strategy": {
+#       "version": 3,
+#       "weekly_structure": {},
+#     "focus_distribution": {},
+#     "difficulty_level": "moderate",
+#     "generated_at": "2025-07-14"
+#   },
+
+#     "practice_logs": [
+#       {
+#           "date": "2025-07-10",
+#           "activity": "Left-hand comping",
+#           "difficulty_rating": 4,
+#           "reflection": "Struggled with timing",
+#           "analysis": {
+#               "effort_level": "high",
+#               "friction": ["timing instability"]
+#           }
+#       }
+#   ],
+
+#     "strategy_history": [
+#       {
+#           "version": 1,
+#           "reason": "Initial strategy",
+#           "created_at": "2025-07-01"
+#       },
+#       {
+#           "version": 2,
+#           "reason": "Increased difficulty after under-challenge",
+#           "created_at": "2025-07-07"
+#       }
+#   ],
+
+#     "agent_insights": {
+#       "detected_patterns": [],
+#       "plateau_flags": [],
+#     "confidence_trend": []
+#   },
+
+#     "timeline": [
+#       {
+#           "event": "strategy_revision",
+#           "timestamp": "2025-07-07",
+#           "summary": "Adjusted focus toward rhythm stability"
+#       }
+#   ],
+
+#     "meta": {
+#       "last_analyzed": "2025-07-14",
+#       "next_scheduled_review": "2025-07-21",
+#     "agent_version": "forge-v1"
+#   }
+# }
+
+
+
+
+
+# forge_plateau_detector = """
+# You are FORGE-META.
+
+# You analyze long-term patterns across decisions.
+
+# Your role:
+# - Detect plateaus
+# - Detect strategy drift
+# - Identify false progress
+
+# You do NOT propose detailed routines.
+# You recommend directional shifts only.
+
+# You accept the following inputs:
+# - The full history of the timeline
+# - And the currect strategy being applied to help the user in his/ her journey.
+
+# You output the following:
+# - Trajectory Status (improving, plateaued, declining)
+# - Detected patterns
+# - Recommended Directional Shift (if any)
+# - Confidence Level (0–1)
+
+# """
