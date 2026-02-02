@@ -13,7 +13,13 @@ ChartJS.defaults.color = "#666";
 export default function Analytics() {
   // Demo data matching the image template
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [screenSize, setScreenSize] = useState({
+    isMobile: window.innerWidth <= 768,
+    isSmallMobile: window.innerWidth <= 398,
+    isVerySmallMobile: window.innerWidth <= 320,
+    isTablet: window.innerWidth > 769 && window.innerWidth <= 894,
+  });
+  const [chartKey, setChartKey] = useState(0);
 
   const SESSION_ID = sessionStorage.getItem("sessionId");
   const [analytics_Data, setAnalytics_Data] = useState({});
@@ -42,94 +48,19 @@ export default function Analytics() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setScreenSize({
+        isMobile: window.innerWidth <= 768,
+        isSmallMobile: window.innerWidth <= 398,
+        isVerySmallMobile: window.innerWidth <= 320,
+        isTablet: window.innerWidth <= 769 && window.innerWidth <= 894,
+      });
+
+      setChartKey((prev) => prev + 1);
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const demoData = {
-    summary: {
-      total_sessions: 7,
-      average_difficulty: 8.57,
-      average_fatigue: 7.14,
-      overload_detected: true,
-    },
-    sessions: [
-      {
-        date: "2024-01-23T14:00:00",
-        duration_minutes: 90,
-        difficulty_rating: 9,
-        fatigue_level: 9,
-      },
-      {
-        date: "2024-01-26T11:00:00",
-        duration_minutes: 40,
-        difficulty_rating: 8,
-        fatigue_level: 7,
-      },
-      {
-        date: "2024-01-28T10:30:00",
-        duration_minutes: 75,
-        difficulty_rating: 10,
-        fatigue_level: 9,
-      },
-      {
-        date: "2025-04-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-05-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-06-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-07-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-08-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-09-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-10-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-11-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-      {
-        date: "2025-12-28T16:00:00",
-        duration_minutes: 50,
-        difficulty_rating: 9,
-        fatigue_level: 8,
-      },
-    ],
-  };
 
   // Chart 1: Practice Frequency (Line Chart)
   const practiceFrequencyData = {
@@ -166,18 +97,11 @@ export default function Analytics() {
 
   // Chart 3: Difficulty Rating (Horizontal Bar)
   const difficultyData = {
-    labels: [
-      "2024-01-20",
-      "2024-01-23",
-      "2024-01-26",
-      "2024-01-28",
-      "2025-05-28",
-      "2025-06-28",
-    ],
+    labels: analytics_Data.difficultyCounts?.map((di) => di.date),
     datasets: [
       {
         label: "Avg Difficulty",
-        data: [8.5, 8.0, 8.0, 9.5, 10, 7],
+        data: analytics_Data.difficultyCounts?.map((di) => di.difficulty),
         backgroundColor: ["#4e73df", "#1cc88a", "#36b9cc", "#f6c23e"],
         borderColor: "#fff",
       },
@@ -186,11 +110,11 @@ export default function Analytics() {
 
   // Chart 4: Fatigue Rating (Horizontal Bar)
   const fatigueData = {
-    labels: ["2024-01-20", "2024-01-23", "2024-01-26", "2024-01-28"],
+    labels: analytics_Data.fatigueCounts?.map((f) => f.date),
     datasets: [
       {
         label: "Avg Fatigue",
-        data: [7.5, 7.5, 7.0, 8.5],
+        data: analytics_Data.fatigueCounts?.map((f) => f.fatigue),
         backgroundColor: ["#e74a3b", "#f6c23e", "#1cc88a", "#4e73df"],
         borderColor: "#fff",
       },
@@ -202,15 +126,10 @@ export default function Analytics() {
     datasets: [
       {
         label: "Sessions",
-        data: [
-          { x: 45, y: 9 },
-          { x: 60, y: 8 },
-          { x: 30, y: 7 },
-          { x: 90, y: 9 },
-          { x: 40, y: 8 },
-          { x: 75, y: 10 },
-          { x: 50, y: 9 },
-        ],
+        data: analytics_Data.sessions?.map((session) => ({
+          x: session.duration_minutes,
+          y: session.difficulty_rating,
+        })),
         backgroundColor: "#4e73df",
         borderColor: "#2e59d9",
         pointRadius: 4,
@@ -223,15 +142,10 @@ export default function Analytics() {
     datasets: [
       {
         label: "Sessions",
-        data: [
-          { x: 45, y: 8 },
-          { x: 60, y: 7 },
-          { x: 30, y: 6 },
-          { x: 90, y: 9 },
-          { x: 40, y: 7 },
-          { x: 75, y: 9 },
-          { x: 50, y: 8 },
-        ],
+        data: analytics_Data.sessions?.map((session) => ({
+          x: session.duration_minutes,
+          y: session.fatigue_level,
+        })),
         backgroundColor: "#e74a3b",
         borderColor: "#d52a1e",
         pointRadius: 4,
@@ -247,11 +161,15 @@ export default function Analytics() {
         position: "top",
         labels: {
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
             weight: "bold",
           },
-          boxWidth: isMobile ? 10 : 15,
-          padding: isMobile ? 5 : 10,
+          boxWidth: screenSize.isSmallMobile
+            ? 8
+            : screenSize.isMobile
+            ? 10
+            : 15,
+          padding: screenSize.isSmallMobile ? 3 : screenSize.isMobile ? 5 : 10,
         },
       },
     },
@@ -268,30 +186,52 @@ export default function Analytics() {
           precision: 0,
           stepSize: 1.2,
           font: {
-            size: isMobile ? 9 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 7
+              : screenSize.isSmallMobile
+              ? 8
+              : screenSize.isMobile
+              ? 9
+              : 12,
           },
-          maxTicksLimit: isMobile ? 6 : 10,
+          maxTicksLimit: screenSize.isSmallMobile
+            ? 4
+            : screenSize.isMobile
+            ? 6
+            : 10,
         },
         title: {
-          display: !isMobile,
+          display: !screenSize.isMobile,
           text: "Number of Sessions",
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
         },
       },
       x: {
         ticks: {
           font: {
-            size: isMobile ? 8 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 6
+              : screenSize.isSmallMobile
+              ? 7
+              : screenSize.isMobile
+              ? 8
+              : 12,
           },
-          maxTicksLimit: isMobile ? 4 : 10,
+          maxTicksLimit: screenSize.isVerySmallMobile
+            ? 2
+            : screenSize.isSmallMobile
+            ? 3
+            : screenSize.isMobile
+            ? 4
+            : 10,
         },
         title: {
-          display: !isMobile,
+          display: !screenSize.isMobile,
           text: "Date",
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
         },
       },
@@ -306,25 +246,49 @@ export default function Analytics() {
         beginAtZero: true,
         max: 100,
         ticks: {
+          precision: 0,
+          stepSize: 1.2,
           font: {
-            size: isMobile ? 9 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 7
+              : screenSize.isSmallMobile
+              ? 8
+              : screenSize.isMobile
+              ? 9
+              : 12,
           },
-          maxTicksLimit: isMobile ? 5 : 10,
+          maxTicksLimit: screenSize.isSmallMobile
+            ? 4
+            : screenSize.isMobile
+            ? 6
+            : 10,
         },
         title: {
-          display: !isMobile,
+          display: !screenSize.isMobile,
           text: "Duration (minutes)",
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
         },
       },
       x: {
         ticks: {
           font: {
-            size: isMobile ? 8 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 6
+              : screenSize.isSmallMobile
+              ? 7
+              : screenSize.isMobile
+              ? 8
+              : 12,
           },
-          maxTicksLimit: isMobile ? 4 : 10,
+          maxTicksLimit: screenSize.isVerySmallMobile
+            ? 2
+            : screenSize.isSmallMobile
+            ? 3
+            : screenSize.isMobile
+            ? 4
+            : 10,
         },
       },
     },
@@ -339,23 +303,48 @@ export default function Analytics() {
         max: 10,
         ticks: {
           font: {
-            size: isMobile ? 9 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 6
+              : screenSize.isSmallMobile
+              ? 7
+              : screenSize.isMobile
+              ? 8
+              : 12,
           },
-          maxTicksLimit: isMobile ? 5 : 10,
+          maxTicksLimit: screenSize.isVerySmallMobile
+            ? 2
+            : screenSize.isSmallMobile
+            ? 3
+            : screenSize.isMobile
+            ? 4
+            : 10,
         },
         title: {
-          display: !isMobile,
+          display: !screenSize.isMobile,
           text: "Rating",
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
         },
       },
       y: {
         ticks: {
+          precision: 0,
+          stepSize: 1.2,
           font: {
-            size: isMobile ? 8 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 7
+              : screenSize.isSmallMobile
+              ? 8
+              : screenSize.isMobile
+              ? 9
+              : 12,
           },
+          maxTicksLimit: screenSize.isSmallMobile
+            ? 4
+            : screenSize.isMobile
+            ? 6
+            : 10,
         },
       },
     },
@@ -367,32 +356,56 @@ export default function Analytics() {
       x: {
         ticks: {
           font: {
-            size: isMobile ? 9 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 6
+              : screenSize.isSmallMobile
+              ? 7
+              : screenSize.isMobile
+              ? 8
+              : 12,
           },
-          maxTicksLimit: isMobile ? 5 : 10,
+          maxTicksLimit: screenSize.isVerySmallMobile
+            ? 2
+            : screenSize.isSmallMobile
+            ? 3
+            : screenSize.isMobile
+            ? 4
+            : 10,
         },
         title: {
-          display: !isMobile,
+          display: !screenSize.isMobile,
           text: "Session Duration (min)",
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
         },
       },
       y: {
         beginAtZero: true,
-        max: 10,
+        max: 11,
         ticks: {
+          precision: 0,
+          stepSize: 1.2,
           font: {
-            size: isMobile ? 9 : 12,
+            size: screenSize.isVerySmallMobile
+              ? 7
+              : screenSize.isSmallMobile
+              ? 8
+              : screenSize.isMobile
+              ? 9
+              : 12,
           },
-          maxTicksLimit: isMobile ? 6 : 10,
+          maxTicksLimit: screenSize.isSmallMobile
+            ? 4
+            : screenSize.isMobile
+            ? 6
+            : 10,
         },
         title: {
-          display: !isMobile,
+          display: !screenSize.isMobile,
           text: "Difficulty/Fatigue",
           font: {
-            size: isMobile ? 10 : 14,
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
         },
       },
@@ -403,9 +416,21 @@ export default function Analytics() {
     ...practiceFrequencyData,
     datasets: practiceFrequencyData.datasets.map((dataset) => ({
       ...dataset,
-      pointRadius: isMobile ? 3 : 5,
-      pointHoverRadius: isMobile ? 5 : 7,
-      borderWidth: isMobile ? 1.5 : 2,
+      pointRadius: screenSize.isVerySmallMobile
+        ? 2
+        : screenSize.isSmallMobile
+        ? 2.5
+        : screenSize.isMobile
+        ? 3
+        : 5,
+      pointHoverRadius: screenSize.isVerySmallMobile
+        ? 3
+        : screenSize.isSmallMobile
+        ? 4
+        : screenSize.isMobile
+        ? 5
+        : 7,
+      borderWidth: screenSize.isSmallMobile ? 1 : screenSize.isMobile ? 1.5 : 2,
     })),
   };
 
@@ -413,27 +438,18 @@ export default function Analytics() {
     ...durationPerSessionData,
     datasets: durationPerSessionData.datasets.map((dataset) => ({
       ...dataset,
-      borderRadius: isMobile ? 4 : 6,
-      borderWidth: isMobile ? 0.5 : 1,
+      borderRadius: screenSize.isMobile ? 4 : 6,
+      borderWidth: screenSize.isMobile ? 0.5 : 1,
     })),
   };
 
   const simplifiedScatterData = (data, color) => ({
     datasets: data.datasets.map((dataset) => ({
       ...dataset,
-      pointRadius: isMobile ? 3 : 4,
-      pointHoverRadius: isMobile ? 5 : 6,
+      pointRadius: screenSize.isMobile ? 3 : 4,
+      pointHoverRadius: screenSize.isMobile ? 5 : 6,
     })),
   });
-
-  // Add this style for mobile scrolling
-  const scrollableChartStyle = isMobile
-    ? {
-        overflowX: "auto",
-        WebkitOverflowScrolling: "touch",
-        minWidth: "300px",
-      }
-    : {};
 
   return (
     <>
@@ -482,8 +498,9 @@ export default function Analytics() {
             <div className="charts-grid">
               <div className="chart-box">
                 <h3>Practice Frequency</h3>
-                <div className="chart-container" style={scrollableChartStyle}>
+                <div className="chart-container">
                   <Line
+                    key={chartKey}
                     data={simplifiedPracticeFrequencyData}
                     options={lineChartOptions}
                   />
@@ -492,8 +509,9 @@ export default function Analytics() {
 
               <div className="chart-box">
                 <h3>Duration per Day</h3>
-                <div className="chart-container" style={scrollableChartStyle}>
+                <div className="chart-container">
                   <Bar
+                    key={chartKey}
                     data={simplifiedDurationPerSessionData}
                     options={barChartOptions}
                   />
@@ -502,15 +520,23 @@ export default function Analytics() {
 
               <div className="chart-box">
                 <h3>Difficulty Rating</h3>
-                <div className="chart-container" style={scrollableChartStyle}>
-                  <Bar data={difficultyData} options={horizontalBarOptions} />
+                <div className="chart-container">
+                  <Bar
+                    key={chartKey}
+                    data={difficultyData}
+                    options={horizontalBarOptions}
+                  />
                 </div>
               </div>
 
               <div className="chart-box">
                 <h3>Fatigue Rating</h3>
-                <div className="chart-container" style={scrollableChartStyle}>
-                  <Bar data={fatigueData} options={horizontalBarOptions} />
+                <div className="chart-container">
+                  <Bar
+                    key={chartKey}
+                    data={fatigueData}
+                    options={horizontalBarOptions}
+                  />
                 </div>
               </div>
             </div>
@@ -518,8 +544,9 @@ export default function Analytics() {
             <div className="bottom-charts">
               <div className="chart-box">
                 <h3>Session Duration (min) vs Difficulty</h3>
-                <div className="chart-container" style={scrollableChartStyle}>
+                <div className="chart-container">
                   <Scatter
+                    key={chartKey}
                     data={simplifiedScatterData(durationVsDifficultyData)}
                     options={scatterOptions}
                   />
@@ -528,8 +555,9 @@ export default function Analytics() {
 
               <div className="chart-box">
                 <h3>Session Duration (min) vs Fatigue</h3>
-                <div className="chart-container" style={scrollableChartStyle}>
+                <div className="chart-container">
                   <Scatter
+                    key={chartKey}
                     data={simplifiedScatterData(durationVsFatigueData)}
                     options={scatterOptions}
                   />
