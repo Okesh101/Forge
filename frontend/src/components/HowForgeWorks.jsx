@@ -32,16 +32,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "4. Viewing Your Session ID",
-      info: (
-        <span>
-          Click the user icon in the Log Practice page to view your active
-          session ID at any time.
-        </span>
-      ),
-    },
-    {
-      title: "5. Initial Plan Generation",
+      title: "4. Initial Plan Generation",
       info: (
         <span>
           Forge breaks your chosen skills into sub-skills and creates an initial
@@ -50,7 +41,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "6. Logging Practice",
+      title: "5. Logging Practice",
       info: (
         <span>
           Log what you practiced or add short reflections. Detailed explanations
@@ -59,7 +50,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "7. Autonomous Analysis",
+      title: "6. Autonomous Analysis",
       info: (
         <span>
           The system analyzes your practice history overtime, detecting
@@ -68,7 +59,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "8. Strategy Updates",
+      title: "7. Strategy Updates",
       info: (
         <span>
           Practice strategies are automatically adjusted. Difficulty, focus
@@ -77,7 +68,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "9. Narration & Timeline",
+      title: "8. Narration & Timeline",
       info: (
         <span>
           Narration explains what to focus on next and why. The Timeline shows
@@ -86,7 +77,7 @@ export default function HowForgeWorks() {
       ),
     },
     {
-      title: "10. Continuous Learning",
+      title: "9. Continuous Learning",
       info: (
         <span>
           No re-prompting or restrating is needed. Forge continues learning and

@@ -286,5 +286,3 @@ export default function LogPracticeSession() {
     </>
   );
 }
-
-// 686c1c32-418b-44e2-8e11-85af4fd01703
