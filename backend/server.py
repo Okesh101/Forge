@@ -1148,21 +1148,21 @@ def get_analytics():
     }), 200
 
 
-# scheduler.add_job(id='Dispatch Optimizer  ',
-#                   func=optimizer_dispatcher,
-#                   trigger='interval',
-#                   seconds=30,
-#                   max_instances=1,  # Ensures only one dispatcher runs at a time
-#                   replace_existing=True
-#                   )
-
-scheduler.add_job(id='Testing  ',
-                  func=printer,
+scheduler.add_job(id='Dispatch Optimizer  ',
+                  func=optimizer_dispatcher,
                   trigger='interval',
                   seconds=30,
                   max_instances=1,  # Ensures only one dispatcher runs at a time
                   replace_existing=True
                   )
+
+# scheduler.add_job(id='Testing  ',
+#                   func=printer,
+#                   trigger='interval',
+#                   seconds=30,
+#                   max_instances=1,  # Ensures only one dispatcher runs at a time
+#                   replace_existing=True
+#                   )
 
 if __name__ == '__main__':
     scheduler.start()
