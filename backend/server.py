@@ -22,7 +22,7 @@ app = Flask(__name__)
 CORS(app)
 
 scheduler = APScheduler()
-current_time = dt.datetime.now()
+current_time = dt.datetime
 
 # AI PROMPTS
 forge_decision_architect_prompt = """
@@ -346,31 +346,6 @@ You MUST follow this schema exactly:
 
 """
 
-# forge_plateau_detector = """
-# You are FORGE-META.
-
-# You analyze long-term patterns across decisions.
-
-# Your role:
-# - Detect plateaus
-# - Detect strategy drift
-# - Identify false progress
-
-# You do NOT propose detailed routines.
-# You recommend directional shifts only.
-
-# You accept the following inputs:
-# - The full history of the timeline
-# - And the currect strategy being applied to help the user in his/ her journey.
-
-# You output the following:
-# - Trajectory Status (improving, plateaued, declining)
-# - Detected patterns
-# - Recommended Directional Shift (if any)
-# - Confidence Level (0–1)
-
-# """
-
 # GLOBAL VARIABLES
 AI_MEMORY_DIR = "AI_Memory"
 memoryPath = Path(AI_MEMORY_DIR)
@@ -379,12 +354,24 @@ summaryLife = {}
 
 # UTILITY FUNCTIONS
 def printer():
-    print("Scheduled task executed.")
+    timeT = current_time.now().isoformat()
+    timeN = current_time.now()
+    josn = f"""
+    {{
+            "timeIso": "{timeT}",
+            "timeNow": "{timeN}"
+    }}
+    """
+    # json1 = None
+    # json.dump(josn, indent=4)
+    loaded = json.loads(josn)
+    print(f"Iso Format Time: {loaded["timeIso"]}")
+    print(f"Now Format Time: {loaded["timeNow"]}")
 
 
 def run_optimizer(file):
     user_id = file[:-5]
-    print(f"Optimizer Ran: {file}, timestamp: {current_time.time()}")
+    print(f"Optimizer Ran: {file}, timestamp: {current_time.now()}")
 
     opt = {}
     opt.update(callOptimizer(user_id))
@@ -393,7 +380,10 @@ def run_optimizer(file):
     if opt["status"] == "optimized":
         memoryUpdater = loadAiMemory(user_id)
         if memoryUpdater.get('practice_logs_analysis'):
-            memoryUpdater['practice_logs_analysis'][-1]['optimizer_signal']['should_optimize'] = False
+            for i, should_optimize in enumerate(memoryUpdater['practice_logs_analysis']):
+                optimizable = should_optimize['optimizer_signal']['should_optimize']
+                if optimizable == True:
+                    memoryUpdater['practice_logs_analysis'][i]['optimizer_signal']['should_optimize'] = False
 
             saveAiMemory(user_id, memoryUpdater)
             print(f"Signal cleared for {file}")
@@ -422,11 +412,11 @@ def try_dispatch_optimizer(file):
     if str(status).lower() == 'true' and optimizer_signal['confidence'] >= 0.85:
         run_optimizer(file)
     elif str(status).lower() == 'true' and optimizer_signal['confidence'] < 0.85:
-        print(f"Not yet Ready, timestamp: {current_time.time()}")
+        print(f"Not yet Ready, timestamp: {current_time.now()}")
     elif str(status).lower() == 'false' and optimizer_signal['confidence'] >= 0.85:
-        print(f"Not yet Ready, timestamp: {current_time.time()}")
+        print(f"Not yet Ready, timestamp: {current_time.now()}")
     elif str(status).lower() == 'false' and optimizer_signal['confidence'] < 0.85:
-        print(f"Not yet Ready, timestamp: {current_time.time()}")
+        print(f"Not yet Ready, timestamp: {current_time.now()}")
 
 
 def optimizer_dispatcher():
@@ -437,9 +427,6 @@ def optimizer_dispatcher():
 
 
 def call_gemini(prompt: str, payload: dict) -> dict:
-
-    # await asyncio.sleep(0.6) # To avoid rate limits
-
     try:
         response = client.models.generate_content(
             model="gemini-3-flash-preview",
@@ -450,11 +437,6 @@ def call_gemini(prompt: str, payload: dict) -> dict:
         )
 
         return json.loads(response.text)
-
-    # except exceptions.ResourceExhausted:
-    #     print("Quota hit! Sleeping for 35 seconds...")
-    #     await asyncio.sleep(35)  # Wait for the window to reset
-    #     return await call_gemini(prompt, payload)  # Retry
 
     except ClientError as e:
         raise RuntimeError(
@@ -487,10 +469,13 @@ def call_gemini_for_deeper_reasoning(prompt: str, payload: dict) -> dict:
         raise ValueError("AI response is not valid JSON")
 
 
-def call_gemini_with_retry(prompt, payload, retries=3, delay=5) -> dict:
+def call_gemini_with_retry(prompt, payload, deeper=False, retries=3, delay=5) -> dict:
     for attempt in range(retries):
         try:
-            return call_gemini_for_deeper_reasoning(prompt, payload)
+            if deeper:
+                return call_gemini_for_deeper_reasoning(prompt, payload)
+            else:
+                return call_gemini(prompt, payload)
         except ServerError as e:
             if '503' in str(e):
                 print(
@@ -516,7 +501,7 @@ def createAiMemory(session_id):
 
     memory = {
         "session_id": session_id,
-        "created_at": current_time.isoformat(),
+        "created_at": current_time.now().isoformat(),
         "skill": {},
         "current_strategy": None,
         "practice_logs": [],
@@ -533,7 +518,7 @@ def createAiMemory(session_id):
                 "id": str(uuid.uuid1()),
                 "event": "session_created",
                 "actor": "system",
-                "timestamp": current_time.isoformat(),
+                "timestamp": current_time.now().isoformat(),
                 "title": "Session Created",
                 "summary": "Your learning journey started here.",
                 "details": {
@@ -572,7 +557,7 @@ def saveAiMemory(session_id, memory):
 
 
 def getDecisionStrategy(raw_decision: dict) -> dict:
-    return call_gemini(
+    return call_gemini_with_retry(
         prompt=forge_decision_architect_prompt,
         payload=raw_decision
     )
@@ -655,7 +640,8 @@ def callAnalyzer(session_id: str) -> dict:
             payload={
                 "practice_session": memory['practice_logs'][-3:],
                 "current_strategy_snapshot": memory['current_strategy']
-            }
+            },
+            deeper=True
         )
     else:
         return {}
@@ -682,8 +668,8 @@ def callOptimizer(session_id: str) -> dict:
 
     optimizer_state = memory.get('optimizer_state', {})
 
-    last_run = optimizer_state.get("last_run_at")
-    cooldown = optimizer_state.get("cooldown_days", 3)
+    # last_run = optimizer_state.get("last_run_at")
+    # cooldown = optimizer_state.get("cooldown_days", 3)
 
     # if last_run and days_since(last_run) < cooldown:
     #     return {"status": "skipped", "reason": "cooldown_active"}
@@ -709,7 +695,8 @@ def callOptimizer(session_id: str) -> dict:
 
     optimizer_result = call_gemini_with_retry(
         prompt=forge_optimizer,
-        payload=optimizer_payload
+        payload=optimizer_payload,
+        deeper=True
     )
 
     # Strategy not adjusted
@@ -718,7 +705,7 @@ def callOptimizer(session_id: str) -> dict:
             "id": str(uuid.uuid1()),
             "event": "strategy_reviewed",
             "actor": "ai",
-            "timestamp": current_time.isoformat(),
+            "timestamp": current_time.now().isoformat(),
             "title": "Strategy Reviewed",
             "summary": "Strategy reviewed; no change required."
         })
@@ -726,24 +713,27 @@ def callOptimizer(session_id: str) -> dict:
         return {"status": "no_change"}
 
     # Strategy adjusted safely
-    elif optimizer_result['decision'] == "strategy_adjusted" and int(optimizer_result['confidence']) >= 0.85:
+    elif optimizer_result['decision'] == "strategy_adjusted" and float(optimizer_result['confidence']) >= 0.85:
         memory['strategy_history'].append({
             "version": memory['normalized_return']['normalized_strategy']['strategy_version'],
-            "ended_at": current_time.isoformat(),
+            "ended_at": current_time.now().isoformat(),
             "reason": "Optimizer revision"
         })
         memory['normalized_return']['normalized_strategy'] = optimizer_result['new_strategy']
+        memory['current_strategy']['practice_cycles'] = optimizer_result['new_strategy']['practice_cycles']
+        memory['current_strategy']['evaluation_metrics'] = optimizer_result['new_strategy']['evaluation_metrics']
+        memory['current_strategy']['architect_notes'] = optimizer_result['new_strategy']['architect_notes']
 
         memory["timeline"].append({
             "id": str(uuid.uuid1()),
             "event": "strategy_adjusted",
             "actor": "ai",
-            "timestamp": current_time.isoformat(),
+            "timestamp": current_time.now().isoformat(),
             "title": "Practice Strategy Adjusted",
             "summary": "Practice strategy adjusted due to overload signals.",
             "details": optimizer_result["change_summary"]
         })
-        memory["optimizer_state"]["last_run_at"] = current_time.isoformat(),
+        memory["optimizer_state"]["last_run_at"] = current_time.now().isoformat(),
         memory["optimizer_state"]["times_optimized"] += 1
         saveAiMemory(session_id, memory)
         return {"status": "optimized"}
@@ -768,7 +758,7 @@ def login_session():
         "id": str(uuid.uuid1()),
         "event": "logged_in",
         "actor": "user",
-        "timestamp": current_time.isoformat(),
+        "timestamp": current_time.now().isoformat(),
         "title": "Logged in to continue forging",
         "summary": f"User logged in to continue the skill: {[memory['skill']['name']]}.",
         "details": {
@@ -820,14 +810,14 @@ def new_decision():
     memory['strategy_history'].append({
         "version": len(memory['strategy_history']) + 1,
         "reason": "Initial strategy",
-        "created_at": current_time.isoformat()
+        "created_at": current_time.now().isoformat()
     })
 
     memory['timeline'].append({
         "id": str(uuid.uuid1()),
         "event": "initial_strategy_created",
         "actor": "ai",
-        "timestamp": current_time.isoformat(),
+        "timestamp": current_time.now().isoformat(),
         "title": "Initial Practice Strategy Created",
         "summary": f"Initial practice strategy created for {[memory['skill']['name']]}.",
         "details": {
@@ -913,7 +903,7 @@ def log_practice():
         return jsonify({"error": "No strategy has been created"}), 400
 
     memory['practice_logs'].append({
-        "date": current_time.isoformat(),
+        "date": current_time.now().isoformat(),
         "activity": practice_data.get('focusContent'),
         "duration_minutes": practice_data.get('duration'),
         "difficulty_rating": practice_data.get('difficulty'),
@@ -924,7 +914,7 @@ def log_practice():
         "id": str(uuid.uuid1()),
         "event": "practice_session_logged",
         "actor": "user",
-        "timestamp": current_time.isoformat(),
+        "timestamp": current_time.now().isoformat(),
         "title": "Practice Session Logged",
         "summary": f"Logged practice session for {memory['skill']['name']}.",
         "details": {
@@ -958,7 +948,7 @@ def log_practice():
         "id": str(uuid.uuid1()),
         "event": "session_analyzed",
         "actor": "ai",
-        "timestamp": current_time.isoformat(),
+        "timestamp": current_time.now().isoformat(),
         "title": "Practice Session Analyzed",
         "summary": "Analyzed 3 consecutive practice sessions",
         "details": {
@@ -1166,72 +1156,14 @@ scheduler.add_job(id='Dispatch Optimizer  ',
                   replace_existing=True
                   )
 
+# scheduler.add_job(id='Testing  ',
+#                   func=printer,
+#                   trigger='interval',
+#                   seconds=30,
+#                   max_instances=1,  # Ensures only one dispatcher runs at a time
+#                   replace_existing=True
+#                   )
+
 if __name__ == '__main__':
     scheduler.start()
     app.run(debug=True, use_reloader=False)
-
-
-# 🧬 FULL SESSION MEMORY SCHEMA(V1)
-# {
-#     "session_id": "7f3c2d...",
-#   "created_at": "2025-07-01T10:12:00Z",
-#   "skill": {
-#       "name": "Jazz Piano",
-#     "level": "Beginner",
-#     "weekly_time_hours": 5
-#   },
-
-#     "current_strategy": {
-#       "version": 3,
-#       "weekly_structure": {},
-#     "focus_distribution": {},
-#     "difficulty_level": "moderate",
-#     "generated_at": "2025-07-14"
-#   },
-
-#     "practice_logs": [
-#       {
-#           "date": "2025-07-10",
-#           "activity": "Left-hand comping",
-#           "difficulty_rating": 4,
-#           "reflection": "Struggled with timing",
-#           "analysis": {
-#               "effort_level": "high",
-#               "friction": ["timing instability"]
-#           }
-#       }
-#   ],
-
-#     "strategy_history": [
-#       {
-#           "version": 1,
-#           "reason": "Initial strategy",
-#           "created_at": "2025-07-01"
-#       },
-#       {
-#           "version": 2,
-#           "reason": "Increased difficulty after under-challenge",
-#           "created_at": "2025-07-07"
-#       }
-#   ],
-
-#     "agent_insights": {
-#       "detected_patterns": [],
-#       "plateau_flags": [],
-#     "confidence_trend": []
-#   },
-
-#     "timeline": [
-#       {
-#           "event": "strategy_revision",
-#           "timestamp": "2025-07-07",
-#           "summary": "Adjusted focus toward rhythm stability"
-#       }
-#   ],
-
-#     "meta": {
-#       "last_analyzed": "2025-07-14",
-#       "next_scheduled_review": "2025-07-21",
-#     "agent_version": "forge-v1"
-#   }
-# }
