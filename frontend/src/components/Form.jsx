@@ -1,17 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  FiArrowRight,
-  FiTarget,
-  FiClock,
-  FiHeart,
-  FiUser,
-  FiTrendingUp,
-  FiBook,
-  FiZap,
-  FiMessageCircle,
-  FiAlertTriangle,
-} from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { SessionContext } from "../contextApi/SessionContext";

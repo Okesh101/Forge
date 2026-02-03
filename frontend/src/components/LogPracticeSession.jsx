@@ -114,8 +114,6 @@ export default function LogPracticeSession() {
   useEffect(() => {
     // Fetch log history from backend when component mounts
 
-    // "http://127.0.0.1:5000/api/practice/logs"
-
     const fetchLogHistory = async () => {
       try {
         const res = await fetch(`${BACKEND_API}/api/practice/logs`, {

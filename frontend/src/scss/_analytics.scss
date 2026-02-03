@@ -85,6 +85,9 @@
       }
     }
   }
+  .error {
+    @include errorStyle;
+  }
 
   // Responsive adjustments
   @media (max-width: 883px) {
