@@ -11,6 +11,11 @@
   z-index: 1;
   span {
     margin-left: 40rem;
+    .no_ID {
+      font-size: 14px;
+      opacity: 0.8;
+      font-weight: bold;
+    }
     @media (max-width: 1220px) {
       margin-left: 35rem;
     }
@@ -57,6 +62,12 @@
         text-align: right;
         font-size: 14px;
       }
+    }
+    .no_ID {
+      font-size: 14px;
+      opacity: 0.8;
+      font-weight: bold;
+      text-align: right;
     }
   }
   @media (max-width: 883px) {

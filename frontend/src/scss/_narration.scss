@@ -48,20 +48,7 @@
       }
     }
     .error {
-      opacity: 0.6;
-      // padding: 20px;
-      margin-top: -1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      span {
-        em {
-          color: #ff6a1a;
-          text-decoration: underline;
-          cursor: pointer;
-        }
-      }
+      @include errorStyle;
     }
   }
   @media (max-width: 883px) {

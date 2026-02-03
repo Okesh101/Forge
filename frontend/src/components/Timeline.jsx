@@ -61,7 +61,7 @@ export default function Timeline() {
             <h1>Timeline Page</h1>
             <p>See how your practice strategy has evolved over time.</p>
           </header>
-          {timeline_data ? (
+          {timeline_data.length > 0 ? (
             <div className="timeline_details">
               {timeline_data.map((item) => (
                 <div className="timeline_card" key={item.id}>

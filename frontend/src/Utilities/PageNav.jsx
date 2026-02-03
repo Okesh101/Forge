@@ -65,7 +65,13 @@ export default function PageNav() {
             animate={{ x: "0px" }}
             transition={{ delay: 0.1, type: "spring", stiffness: 50 }}
           >
-            <strong>Session Id</strong> : {SESSION_ID}
+            {SESSION_ID ? (
+              <>
+                <strong>Session Id</strong> : {SESSION_ID}
+              </>
+            ) : (
+              <div className="no_ID">Start Forging to get a Session ID</div>
+            )}
           </motion.span>
           <motion.h1
             initial={{ x: "400px" }}
@@ -73,7 +79,6 @@ export default function PageNav() {
             transition={{ delay: 0.1, type: "spring", stiffness: 50 }}
           >
             Forge
-            {/* <strong>Session Id</strong> : {SESSION_ID} */}
           </motion.h1>
         </div>
       )}
@@ -89,9 +94,13 @@ export default function PageNav() {
               >
                 Forge
               </motion.h1>
-              <span>
-                <strong>Session Id</strong> : {SESSION_ID}
-              </span>
+              {SESSION_ID ? (
+                <>
+                  <strong>Session Id</strong> : {SESSION_ID}
+                </>
+              ) : (
+                <div className="no_ID">Start Forging to get a Session ID</div>
+              )}
             </section>
 
             <motion.button

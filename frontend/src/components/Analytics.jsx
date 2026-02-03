@@ -4,7 +4,7 @@ import { Bar, Line, Scatter } from "react-chartjs-2";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { FiX } from "react-icons/fi";
-import { Check } from "lucide-react";
+import { Check, MessageCircleOff } from "lucide-react";
 import { SessionContext } from "../contextApi/SessionContext";
 
 ChartJS.defaults.font.size = 14;
@@ -24,7 +24,7 @@ export default function Analytics() {
   const SESSION_ID = sessionStorage.getItem("sessionId");
   const [analytics_Data, setAnalytics_Data] = useState({});
   // Getting and BACKEND_API from contextApi
-  const { BACKEND_API } = useContext(SessionContext);
+  const { BACKEND_API, handleNavigation } = useContext(SessionContext);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -464,107 +464,117 @@ export default function Analytics() {
             </p>
           </header>
 
-          <main>
-            <div className="stats">
-              <div className="stat_item">
-                {analytics_Data.summary?.total_sessions}
-                <small>Total Sessions</small>
-              </div>
-              <div className="stat_item">
-                {analytics_Data.summary?.average_difficulty}
-                <small>Average Difficulty</small>
-              </div>
-              <div className="stat_item">
-                {analytics_Data.summary?.average_fatigue}
-                <small>Average Fatigue</small>
-              </div>
-              <div
-                className="stat_item"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                {demoData.summary.overload_detected === true ? (
-                  <Check />
-                ) : (
-                  <FiX />
-                )}
-                <small>Overload Detected</small>
-              </div>
-            </div>
-
-            <div className="charts-grid">
-              <div className="chart-box">
-                <h3>Practice Frequency</h3>
-                <div className="chart-container">
-                  <Line
-                    key={chartKey}
-                    data={simplifiedPracticeFrequencyData}
-                    options={lineChartOptions}
-                  />
+          {analytics_Data.length > 0 ? (
+            <main>
+              <div className="stats">
+                <div className="stat_item">
+                  {analytics_Data.summary?.total_sessions}
+                  <small>Total Sessions</small>
+                </div>
+                <div className="stat_item">
+                  {analytics_Data.summary?.average_difficulty}
+                  <small>Average Difficulty</small>
+                </div>
+                <div className="stat_item">
+                  {analytics_Data.summary?.average_fatigue}
+                  <small>Average Fatigue</small>
+                </div>
+                <div
+                  className="stat_item"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  {analytics_Data.summary?.overload_detected === true ? (
+                    <Check />
+                  ) : (
+                    <FiX />
+                  )}
+                  <small>Overload Detected</small>
                 </div>
               </div>
 
-              <div className="chart-box">
-                <h3>Duration per Day</h3>
-                <div className="chart-container">
-                  <Bar
-                    key={chartKey}
-                    data={simplifiedDurationPerSessionData}
-                    options={barChartOptions}
-                  />
+              <div className="charts-grid">
+                <div className="chart-box">
+                  <h3>Practice Frequency</h3>
+                  <div className="chart-container">
+                    <Line
+                      key={chartKey}
+                      data={simplifiedPracticeFrequencyData}
+                      options={lineChartOptions}
+                    />
+                  </div>
+                </div>
+
+                <div className="chart-box">
+                  <h3>Duration per Day</h3>
+                  <div className="chart-container">
+                    <Bar
+                      key={chartKey}
+                      data={simplifiedDurationPerSessionData}
+                      options={barChartOptions}
+                    />
+                  </div>
+                </div>
+
+                <div className="chart-box">
+                  <h3>Difficulty Rating</h3>
+                  <div className="chart-container">
+                    <Bar
+                      key={chartKey}
+                      data={difficultyData}
+                      options={horizontalBarOptions}
+                    />
+                  </div>
+                </div>
+
+                <div className="chart-box">
+                  <h3>Fatigue Rating</h3>
+                  <div className="chart-container">
+                    <Bar
+                      key={chartKey}
+                      data={fatigueData}
+                      options={horizontalBarOptions}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="chart-box">
-                <h3>Difficulty Rating</h3>
-                <div className="chart-container">
-                  <Bar
-                    key={chartKey}
-                    data={difficultyData}
-                    options={horizontalBarOptions}
-                  />
+              <div className="bottom-charts">
+                <div className="chart-box">
+                  <h3>Session Duration (min) vs Difficulty</h3>
+                  <div className="chart-container">
+                    <Scatter
+                      key={chartKey}
+                      data={simplifiedScatterData(durationVsDifficultyData)}
+                      options={scatterOptions}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="chart-box">
-                <h3>Fatigue Rating</h3>
-                <div className="chart-container">
-                  <Bar
-                    key={chartKey}
-                    data={fatigueData}
-                    options={horizontalBarOptions}
-                  />
+                <div className="chart-box">
+                  <h3>Session Duration (min) vs Fatigue</h3>
+                  <div className="chart-container">
+                    <Scatter
+                      key={chartKey}
+                      data={simplifiedScatterData(durationVsFatigueData)}
+                      options={scatterOptions}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="bottom-charts">
-              <div className="chart-box">
-                <h3>Session Duration (min) vs Difficulty</h3>
-                <div className="chart-container">
-                  <Scatter
-                    key={chartKey}
-                    data={simplifiedScatterData(durationVsDifficultyData)}
-                    options={scatterOptions}
-                  />
-                </div>
-              </div>
-
-              <div className="chart-box">
-                <h3>Session Duration (min) vs Fatigue</h3>
-                <div className="chart-container">
-                  <Scatter
-                    key={chartKey}
-                    data={simplifiedScatterData(durationVsFatigueData)}
-                    options={scatterOptions}
-                  />
-                </div>
-              </div>
-            </div>
-          </main>
+            </main>
+          ) : (
+            <p className="error">
+              <MessageCircleOff size={70} height={80} />
+              <span>
+                Start Forging to view your timeline.{" "}
+                <em onClick={handleNavigation}>Back to Homepage</em>{" "}
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </>
