@@ -23,7 +23,8 @@ forge/
 ├── backend/               # Python Flask server
 │   ├── server.py          # Main Flask application
 │   ├── AI_Memory/         # Persistent memory storage for AI context
-│   ├── requirements.txt   # Python dependencies   │   ├── .env.example       # Gemini API Key
+│   ├── requirements.txt   # Python dependencies
+│   ├── .env.example       # Gemini API Key
 │   ├── Dockerfile         # Docker configuration environment
 │
 ├── frontend/              # React + Vite web application
