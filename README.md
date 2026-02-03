@@ -20,12 +20,11 @@ Forge is an intelligent practice planning system that leverages AI to create per
 
 ```
 forge/
-├── backend/                 # Python Flask server
-│   ├── server.py           # Main Flask application
-│   ├── AI_Memory/          # Persistent memory storage for AI context
-│   ├── requirements.txt    # Python dependencies
-│   ├── Dockerfile         # Docker configuration for deployment
-│   └── env/               # Python virtual environment
+├── backend/               # Python Flask server
+│   ├── server.py          # Main Flask application
+│   ├── AI_Memory/         # Persistent memory storage for AI context
+│   ├── requirements.txt   # Python dependencies   │   ├── .env.example       # Gemini API Key
+│   ├── Dockerfile         # Docker configuration environment
 │
 ├── frontend/              # React + Vite web application
 │   ├── src/
@@ -61,20 +60,20 @@ cd backend
 2. Create and activate virtual environment:
 
 ```bash
-python -m venv env
+python3 -m venv env
 source env/bin/activate
 ```
 
 3. Install dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 4. Run the server:
 
 ```bash
-python server.py
+python3 server.py
 ```
 
 The backend API will be available at `http://localhost:5000`
@@ -127,11 +126,10 @@ The frontend will be available at `http://localhost:5173`
 
 ## Environment Variables
 
-Create a `.env` file in the backend directory with:
+Rename the `.env.example` to `.env` file in the backend directory and update with:
 
 ```
 GEMINI_API_KEY=your_api_key_here
-FLASK_ENV=development
 ```
 
 ## Docker Deployment
@@ -150,7 +148,6 @@ docker run -p 5000:5000 forge
 - Python 3.12
 - Flask - Web framework
 - APScheduler - Task scheduling
-- PyRSA - Encryption utilities
 
 ### Frontend
 
