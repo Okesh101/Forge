@@ -53,7 +53,19 @@ export default function Narration() {
           }}
         >
           <header>
+
+          <div className="agent_insight">
+            {narrationData.agent_available === true ? (
+              narrationData.agent_insights
+            ):(
+              ""
+            )}
+          </div>
+
             <h1>Narration</h1>
+            <div className="version">
+              <strong>v<span>{narrationData?.agent_version}</span></strong>
+            </div>
             {narrationData?.static?.goal_summary && (
               <p>
                 <span>Goal summary:</span>
@@ -62,14 +74,10 @@ export default function Narration() {
             )}
             {narrationData.static?.learning_philosophy && (
               <p>
-                <span>Goal summary:</span>
+                <span>Learning Philosophy:</span>
                 {narrationData.static?.learning_philosophy}
               </p>
             )}
-            {/* <p>
-              <span>Learning Philosophy:</span>
-              {narrationData.static?.learning_philosophy}
-            </p> */}
           </header>
           <div className="card_container">
             {narrationData.dynamic ? (
@@ -101,11 +109,12 @@ export default function Narration() {
                             <small> {item.this_week_plan.primary.task} </small>
                           </p>
                           <ul>
-                            <li>
-                              <small>
-                                {item.this_week_plan.primary.details}
-                              </small>
-                            </li>
+                                {item.this_week_plan.primary.details.map((detail, index) => (
+                                 
+                                  <li key={index}>
+ <small >{detail}</small>
+                                  </li>
+                                ))}
                           </ul>
                         </li>
                         <li>
@@ -117,11 +126,11 @@ export default function Narration() {
                             </small>
                           </p>
                           <ul>
-                            <li>
-                              <small>
-                                {item.this_week_plan.secondary.details}
-                              </small>
-                            </li>
+                                {item.this_week_plan.secondary.details.map((detail, index) => (
+                                  <li  key={index}> 
+                                  <small>{detail}</small></li>
+                                ))}
+                             
                           </ul>
                         </li>
                       </ol>
