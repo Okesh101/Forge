@@ -6,13 +6,23 @@ from google import genai
 from google.genai.errors import ClientError, ServerError
 from google.genai import types
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from collections import Counter, defaultdict
+# Email service
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+from icalendar import Calendar, Event, vRecur
+#
+import pytz
 import uuid
 import requests
 import time
 import json
+import threading
 import datetime as dt
 import os
 
@@ -350,9 +360,72 @@ memoryPath = Path(AI_MEMORY_DIR)
 summaryLife = {}
 scheduler = BackgroundScheduler()
 current_time = dt.datetime
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASS = os.getenv("EMAIL_PASS")
+
 
 # UTILITY FUNCTIONS
+def send_smart_calendar_invite(user_email, skill_name):
+    # 1. Handle Timezones (Lagos/West Africa Time)
+    lagos_tz = pytz.timezone('Africa/Lagos')
+    # Schedule the first reminder for tomorrow at 9:00 AM WAT
+    start_time = datetime.now(lagos_tz).replace(
+        hour=9, minute=0, second=0) + timedelta(days=1)
 
+    # 2. Create the Calendar Event
+    cal = Calendar()
+    cal.add('prodid', '-//Forge Practice Agent//mxm.dk//')
+    cal.add('version', '2.0')
+
+    event = Event()
+    event.add('summary', f"Practice: {skill_name}")
+    event.add('dtstart', start_time)
+    event.add('dtend', start_time + timedelta(hours=1))
+
+    # THE SMART PART: Repeat every 4 days indefinitely
+    event.add('rrule', vRecur(freq='DAILY', interval=4))
+
+    event.add('description',
+              f"Consistency is key! This is your scheduled 4-day reminder to practice {skill_name}.")
+    cal.add_component(event)
+
+    # 3. Setup the Email
+    msg = MIMEMultipart()
+    msg['Subject'] = f"🗓️ Scheduled: 4-Day Practice for {skill_name}"
+    msg['From'] = EMAIL_USER
+    msg['To'] = user_email
+
+    body = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="color: #2e7d32;">Ready to Forge your skills?</h2>
+        <p>We've created a custom practice strategy for <strong>{skill_name}</strong>.</p>
+        <p>To help you stay consistent, we've attached a <strong>Recurring Calendar Invite</strong>.</p>
+        <p><strong>Action:</strong> Open the attached 'invite.ics' file and click "Add to Calendar". 
+        It will automatically set a reminder for you <strong>every 4 days</strong>.</p>
+        <br>
+        <p>Stay sharp,<br>The Forge Agent</p>
+      </body>
+    </html>
+    """
+    msg.attach(MIMEText(body, 'html'))
+
+    # 4. Attach the .ics file with the "REQUEST" method
+    part = MIMEBase('text', "calendar", method="REQUEST", name="invite.ics")
+    part.set_payload(cal.to_ical())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', 'attachment; filename="invite.ics"')
+    msg.attach(part)
+
+    # 5. Send it
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(EMAIL_USER, EMAIL_PASS)
+            server.send_message(msg)
+        print(f"Smart Invite sent to {user_email}")
+    except Exception as e:
+        print(f"Email failed: {e}")
 
 def continuous_ping():
     url = "https://christoschools.org"
@@ -845,7 +918,17 @@ def new_decision():
 
     saveAiMemory(session_id, memory)
 
-    return jsonify({"response": "Strategy Created Successfully",
+    user_email = decision_data.get('userEmail')
+    if user_email:
+        email_thread = threading.Thread(
+            target=send_smart_calendar_invite,
+            args=(user_email,
+                  memory['normalized_return']['normalized_input']['skill_name'],)
+        )
+        email_thread.daemon = True
+        email_thread.start()
+
+    return jsonify({"response": "Strategy Created Successfully and Reminders Set!",
                     "status": "success"}), 201
 
 
@@ -871,7 +954,6 @@ def get_narration():
         agent_insights_available,
         memory['agent_insights']['version']
     )
-    # agent_insights_available
     return jsonify(narration), 200
 
 
@@ -1156,7 +1238,7 @@ def get_analytics():
     }), 200
 
 
-scheduler.add_job(id='Dispatch Optimizer  ',
+scheduler.add_job(id='dispatch_optimizer',
                   func=optimizer_dispatcher,
                   trigger='interval',
                   seconds=30,
@@ -1165,7 +1247,7 @@ scheduler.add_job(id='Dispatch Optimizer  ',
                   )
 
 
-scheduler.add_job(id='Ping Server  ',
+scheduler.add_job(id='ping_server',
                   func=continuous_ping,
                   trigger='interval',
                   seconds=10,

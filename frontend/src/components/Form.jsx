@@ -12,6 +12,7 @@ export default function Form() {
   const SESSION_ID = sessionStorage.getItem("sessionId");
   // State to hold form data
   const [decision_Data, setDecision_Data] = useState({
+    userEmail:"",
     goal: "",
     currentLevel: "",
     goalLevel: "",
@@ -101,6 +102,7 @@ export default function Form() {
   // Function to reset the form
   function resetForm() {
     setDecision_Data({
+      userEmail:"",
       goal: "",
       currentLevel: "",
       goalLevel: "",
@@ -211,6 +213,11 @@ export default function Form() {
                 </div>
               </fieldset>
             </div>
+
+            <fieldset>
+              <label htmlFor="userEmail">EMAIL ADDRESS</label>
+              <input type="email" name="userEmail" value={decision_Data.userEmail} onChange={handleInputChange} />
+            </fieldset>
           </form>
           <button type="button" onClick={handleSubmit}>
             Create My Practice Plan <FiArrowRight />

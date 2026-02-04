@@ -9,3 +9,4 @@ flask_cors
 datetime
 flask_apscheduler
 gunicorn
+icalendar
