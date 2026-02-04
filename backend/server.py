@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from flask_apscheduler import APScheduler
+# from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask_cors import CORS
 from google import genai
 from google.genai.errors import ClientError, ServerError
@@ -9,20 +10,16 @@ from datetime import datetime
 from pathlib import Path
 from collections import Counter, defaultdict
 import uuid
+import requests
 import time
 import json
 import datetime as dt
 import os
 
 load_dotenv()
-
 client = genai.Client()
-
 app = Flask(__name__)
 CORS(app)
-
-scheduler = APScheduler()
-current_time = dt.datetime
 
 # AI PROMPTS
 forge_decision_architect_prompt = """
@@ -100,12 +97,12 @@ Schema you must follow exactly:
     "practice_cycles": [
       {
         "cycle_index": 1,
-        "duration_weeks": "number",
+        "duration_weeks": "number", (Confer the number of weeks suitable for this cycle and it must not be more than 4 weeks. Some cycles must show weeks other than 4!)
         "focus_summary": "string",
         "short_explanation_for_cycle": "string" (NOTE: Explicitly tell the user why this phase is necessary according to your responses so far. Start the sentence with "This phase...") (Use only "your" not "my" in your responses) (The sentence must not be less than 55 words),
         "weekly_loop": {
-          "primary_activity": "string",
-          "secondary_activity": "string"
+          "primary_activity": [ "string" ], (Give at most 3 primary activities)
+          "secondary_activity": [ "string" ] (Give at most 3 secondary activities)
         },
         "difficulty_profile": {
           "comfortable": "string",
@@ -347,26 +344,24 @@ You MUST follow this schema exactly:
 """
 
 # GLOBAL VARIABLES
-AI_MEMORY_DIR = "AI_Memory"
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+AI_MEMORY_DIR = os.path.join(BASE_DIR, "AI_Memory")
 memoryPath = Path(AI_MEMORY_DIR)
 summaryLife = {}
-
+scheduler = BackgroundScheduler()
+current_time = dt.datetime
 
 # UTILITY FUNCTIONS
-def printer():
-    timeT = current_time.now().isoformat()
-    timeN = current_time.now()
-    josn = f"""
-    {{
-            "timeIso": "{timeT}",
-            "timeNow": "{timeN}"
-    }}
-    """
-    # json1 = None
-    # json.dump(josn, indent=4)
-    loaded = json.loads(josn)
-    print(f"Iso Format Time: {loaded["timeIso"]}")
-    print(f"Now Format Time: {loaded["timeNow"]}")
+
+
+def continuous_ping():
+    url = "https://christoschools.org"
+    try:
+        response = requests.get(url, timeout=10)
+        print(f"Ping successful: {response.status_code}")
+        print(f"Server is alive at {current_time.now()}")
+    except Exception as e:
+        print(f"Ping failed: {e}")
 
 
 def run_optimizer(file):
@@ -420,10 +415,17 @@ def try_dispatch_optimizer(file):
 
 
 def optimizer_dispatcher():
-    for user_file in memoryPath.iterdir():
-        if user_file.is_file():
-            print(user_file.name)
-            try_dispatch_optimizer(user_file.name)
+    if not memoryPath.exists() or not memoryPath.is_dir():
+        print(f"⚠️ [WARNING]: Directory not found at {memoryPath.absolute()}. Skipping optimization.")
+        return  # Exit the function safely
+    
+    try:
+        for user_file in memoryPath.iterdir():
+            if user_file.is_file():
+                print(user_file.name)
+                try_dispatch_optimizer(user_file.name)
+    except Exception as e:
+        print(f"❌ [ERROR]: An error occurred during dispatch: {e}")
 
 
 def call_gemini(prompt: str, payload: dict) -> dict:
@@ -507,7 +509,10 @@ def createAiMemory(session_id):
         "practice_logs": [],
         "practice_logs_analysis": [],
         "strategy_history": [],
-        "agent_insights": {},
+        "agent_insights": {
+            "version": 1,
+            "insights": None
+        },
         "optimizer_state": {
             "last_run_at": None,
             "cooldown_days": 3,
@@ -535,7 +540,6 @@ def createAiMemory(session_id):
         "meta": {
             "agent_version": "forge-v1",
             "last_analyzed": None,
-            # "next_scheduled_review": None,
         },
         "normalized_return": {
             "normalized_input": {},
@@ -574,7 +578,7 @@ def getLevel(level: int) -> str:
     return levels.get(level, -1)
 
 
-def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
+def build_narration_payload(normalized_input: dict, strategy: dict, agent_insights: str = None, agent_available: bool = False, agent_version: int = 1) -> dict:
     total_cycles = strategy['practice_cycles']
     cycles = []
     for cycle in total_cycles:
@@ -601,10 +605,6 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
                 f"You will start with {cycle['difficulty_profile']['comfortable']} "
                 f"and gradually work towards {cycle['difficulty_profile']['challenging']}."
             ],
-            # "how_to_measure_progress": [
-            #     cycle['success_markers']['objective']
-            #     + cycle['success_markers']['subjective']
-            # ]
         })
 
     return {
@@ -621,7 +621,10 @@ def build_narration_payload(normalized_input: dict, strategy: dict) -> dict:
                 f"while managing a {normalized_input['constraints']['dropout_risk']} risk of dropping out."
             )
         },
-        "dynamic": cycles
+        "dynamic": cycles,
+        "agent_available": agent_available,
+        "agent_insights": agent_insights,
+        "agent_version": agent_version
     }
 
 
@@ -667,12 +670,6 @@ def callOptimizer(session_id: str) -> dict:
     memory = loadAiMemory(session_id)
 
     optimizer_state = memory.get('optimizer_state', {})
-
-    # last_run = optimizer_state.get("last_run_at")
-    # cooldown = optimizer_state.get("cooldown_days", 3)
-
-    # if last_run and days_since(last_run) < cooldown:
-    #     return {"status": "skipped", "reason": "cooldown_active"}
 
     eligible_batches = []
     for analysis in practice_logs_analysis:
@@ -735,12 +732,19 @@ def callOptimizer(session_id: str) -> dict:
         })
         memory["optimizer_state"]["last_run_at"] = current_time.now().isoformat(),
         memory["optimizer_state"]["times_optimized"] += 1
+        memory["agent_insights"]["version"] += 1
+        memory["agent_insights"]["insights"] = optimizer_result["reasoning"]
         saveAiMemory(session_id, memory)
         return {"status": "optimized"}
     # return {}
 
 
 # API ROUTES
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
+
 @app.route('/api/create_session', methods=['GET'])
 def createSession():
     session_id = create_session()
@@ -856,12 +860,18 @@ def get_narration():
         return jsonify({
             "error": "User hasn't created a practice plan"
         }), 400
+    agent_insights_available = False
+    if memory['agent_insights']['insights']:
+        agent_insights_available = True
 
     narration = build_narration_payload(
         memory['normalized_return']['normalized_input'],
-        memory['normalized_return']['normalized_strategy']
+        memory['normalized_return']['normalized_strategy'],
+        memory['agent_insights']['insights'],
+        agent_insights_available,
+        memory['agent_insights']['version']
     )
-
+    # agent_insights_available
     return jsonify(narration), 200
 
 
@@ -1138,9 +1148,7 @@ def get_analytics():
     # ----------------------------------------
     return jsonify({
         "sessions": session_metrics,
-        "analysis_batches": analysis_batches,
         "summary": summary,
-        "mappings": mappings,
         "dateCounts": dateCounts,
         "durationCounts": durationCounts,
         "difficultyCounts": difficultyCounts,
@@ -1156,14 +1164,18 @@ scheduler.add_job(id='Dispatch Optimizer  ',
                   replace_existing=True
                   )
 
-# scheduler.add_job(id='Testing  ',
-#                   func=printer,
-#                   trigger='interval',
-#                   seconds=30,
-#                   max_instances=1,  # Ensures only one dispatcher runs at a time
-#                   replace_existing=True
-#                   )
+
+scheduler.add_job(id='Ping Server  ',
+                  func=continuous_ping,
+                  trigger='interval',
+                  seconds=10,
+                  max_instances=1,  # Ensures only one dispatcher runs at a time
+                  replace_existing=True
+                  )
+
+
+scheduler.start()
+
 
 if __name__ == '__main__':
-    scheduler.start()
     app.run(debug=True, use_reloader=False)
