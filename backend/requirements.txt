@@ -1,13 +1,11 @@
 Flask
 Flask[async]
-jsonify
-uuid
 requests
 google-genai
 python-dotenv
 flask_cors
-datetime
 flask_apscheduler
 gunicorn
 icalendar
 sqlalchemy
+pytz

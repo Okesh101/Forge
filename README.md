@@ -131,6 +131,8 @@ Rename the `.env.example` to `.env` file in the backend directory and update wit
 
 ```
 GEMINI_API_KEY=your_api_key_here
+EMAIL_USER=your_email_here
+EMAIL_PASS=your_email_app_password_here (usually 16 characters for Gmail)
 ```
 
 ## Docker Deployment

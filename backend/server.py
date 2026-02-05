@@ -447,7 +447,7 @@ def monthly_follow_up_agent(user_email, skill_name, job_id):
     """
     # Encoding the email for the 'Stop' link
     encoded_email = quote(user_email)
-    stop_link = f"https://forge.onrender.com/api/reminders/stop?email={encoded_email}"
+    stop_link = f"https://forgev1.onrender.com/api/reminders/stop?email={encoded_email}"
     emailBodyReminder = f"""
         <html>
         <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px;">
@@ -478,7 +478,7 @@ def monthly_follow_up_agent(user_email, skill_name, job_id):
 
 
 def continuous_ping():
-    url = "https://forge.onrender.com/api/health"
+    url = "https://forgev1.onrender.com/api/health"
     try:
         response = requests.get(url, timeout=10)
         print(f"Ping successful: {response.status_code}")
