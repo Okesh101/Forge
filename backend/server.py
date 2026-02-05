@@ -1247,13 +1247,13 @@ scheduler.add_job(id='dispatch_optimizer',
                   )
 
 
-scheduler.add_job(id='ping_server',
-                  func=continuous_ping,
-                  trigger='interval',
-                  seconds=10,
-                  max_instances=1,  # Ensures only one dispatcher runs at a time
-                  replace_existing=True
-                  )
+# scheduler.add_job(id='ping_server',
+#                   func=continuous_ping,
+#                   trigger='interval',
+#                   seconds=10,
+#                   max_instances=1,  # Ensures only one dispatcher runs at a time
+#                   replace_existing=True
+#                   )
 
 
 scheduler.start()

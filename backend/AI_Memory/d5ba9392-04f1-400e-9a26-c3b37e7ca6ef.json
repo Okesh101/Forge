@@ -139,7 +139,15 @@
             "The strategy assumes a transition from 'making it work' to 'making it right'."
         ]
     },
-    "practice_logs": [],
+    "practice_logs": [
+        {
+            "date": "2026-02-05T09:58:59.544099",
+            "activity": "I refactored small JavaScript components into TypeScript",
+            "duration_minutes": "40",
+            "difficulty_rating": "10",
+            "fatigue_level": "3"
+        }
+    ],
     "practice_logs_analysis": [],
     "strategy_history": [
         {
@@ -190,6 +198,28 @@
                 "evidence": [
                     "Skill: Learn React TS",
                     "Experience Level: beginner"
+                ]
+            },
+            "visibility": {
+                "show_on_timeline": true,
+                "clickable": true
+            }
+        },
+        {
+            "id": "e91b5529-0270-11f1-9c80-d4bed912d276",
+            "event": "practice_session_logged",
+            "actor": "user",
+            "timestamp": "2026-02-05T09:58:59.614611",
+            "title": "Practice Session Logged",
+            "summary": "Logged practice session for Learn React TS.",
+            "details": {
+                "reason": "User logged a new practice session.",
+                "changes": {
+                    "practice_log_count": 1
+                },
+                "evidence": [
+                    "Activity: None",
+                    "Difficulty Rating: None"
                 ]
             },
             "visibility": {
