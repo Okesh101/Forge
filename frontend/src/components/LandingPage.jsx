@@ -17,8 +17,6 @@ export default function LandingPage() {
   const handleNavigate = async () => {
     // Create a new session before navigating
     try {
-      // "http://127.0.0.1:5000/api/create_session"
-
       const res = await fetch(`${BACKEND_API}/api/create_session`);
       const data = await res.json();
 

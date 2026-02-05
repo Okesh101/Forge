@@ -85,6 +85,26 @@ export default function HowForgeWorks() {
         </span>
       ),
     },
+    {
+      title: "10. Version Management",
+      info: (
+        <span>
+          Your practice plan evolves automatically. When the system detects a
+          plateau in your progress, it updates your strategy with new focus
+          areas and techniques to break through the stagnation.
+        </span>
+      ),
+    },
+    {
+      title: "11. Practice Reminders",
+      info: (
+        <span>
+          When you opt in to receive updates on your practice plan, you'll get
+          email reminders about your scheduled practice sessions, and the
+          practice dates are automatically added to your calendar.
+        </span>
+      ),
+    },
   ];
 
   return (

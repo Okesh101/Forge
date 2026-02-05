@@ -26,6 +26,7 @@ export default function LogIn({ setShowLogin }) {
     if (!session_Id) {
       setSession_Id_Error("This field is required");
     }
+    // If session ID is valid, send login request to backend
     if (isValid) {
       try {
         const res = await fetch(`${BACKEND_API}/api/auth/login`, {
@@ -33,11 +34,11 @@ export default function LogIn({ setShowLogin }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({session_Id})
+          body: JSON.stringify({ session_Id }),
         });
 
         const data = await res.json();
-
+        //
         if (data.status === "success") {
           sessionStorage.setItem("sessionId", session_Id);
           navigate("/logSession");
