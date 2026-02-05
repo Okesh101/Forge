@@ -32,6 +32,31 @@
         }
       }
     }
+    .verify {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 2rem;
+      input {
+        width: 20px;
+        height: 30px;
+      }
+      p {
+        opacity: 0.7;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+    }
+    .email_section {
+      background-color: #0f0f5e7c;
+      padding: 20px;
+      border-radius: 10px;
+      .errorMssg {
+        color: red;
+        margin-top: 3px;
+        font-size: 13px;
+      }
+    }
   }
   button {
     @include btnStyle;
@@ -44,9 +69,6 @@
 
   // Responsive design
   @media (max-width: 883px) {
-    padding: 40px 24px;
-    margin: 40px 20px;
-
     header {
       h1 {
         font-size: 2rem;

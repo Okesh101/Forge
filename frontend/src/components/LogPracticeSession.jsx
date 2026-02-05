@@ -81,12 +81,8 @@ export default function LogPracticeSession() {
 
     // If all validations pass, submit the form
     if (isValid) {
-      // navigate("/analytics");
-      console.log(logSessionData);
-
       // Send form data to backend
       try {
-        // "http://127.0.0.1:5000/api/practice/new"
         const res = await fetch(`${BACKEND_API}/api/practice/new`, {
           method: "POST",
           headers: {
@@ -96,13 +92,8 @@ export default function LogPracticeSession() {
           body: JSON.stringify({ logSessionData }),
         });
         const data = await res.json();
-        console.log(data);
         if (data.status === "success") {
           window.location.reload();
-        } else if (data.error) {
-          alert(`Error: ${data.error}`);
-        } else {
-          alert("Error sending log practice data to the backend");
         }
       } catch (error) {
         console.log(error.message);
@@ -126,8 +117,6 @@ export default function LogPracticeSession() {
         const data = await res.json();
         if (!data.error && data) {
           setLogHistory(data);
-        } else {
-          alert("Error retrieving log practice data from the backend");
         }
       } catch (error) {
         console.log(error.message);

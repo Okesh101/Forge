@@ -69,7 +69,6 @@
         transition: all 0.3s ease;
         position: relative;
         z-index: 2;
-        // min-width: 300px;
         small {
           color: rgba(255, 106, 26, 0.9);
           font-weight: 600;
@@ -153,8 +152,7 @@
     @include errorStyle;
   }
   @media (max-width: 1150px) and (min-width: 883px) {
-    // padding: 0;
-    margin-top: 10px;
+    margin-top: 40px;
     border-radius: 0;
     background: none;
     border: none;
@@ -185,9 +183,6 @@
     }
   }
   @media (max-width: 883px) {
-    padding: 20px 24px;
-    margin: 40px 0;
-    margin-top: 70px;
     .timeline_details {
       margin-left: 40px;
       padding: 1rem 0;
@@ -214,6 +209,12 @@
         }
       }
     }
+  }
+
+  @media (max-width: 689px) {
+    border-radius: 0;
+    background: none;
+    border: none;
   }
 
   @media (max-width: 500px) {

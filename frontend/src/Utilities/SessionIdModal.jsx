@@ -5,11 +5,14 @@ export default function SessionIdModal({ onClose }) {
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
 
+  // State to track if session ID has been copied
   const [copied, setCopied] = useState(false);
 
+  // Function to copy session ID to clipboard
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(SESSION_ID);
     setCopied(true);
+    onClose();
   };
 
   return (

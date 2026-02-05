@@ -12,7 +12,10 @@ export default function PageNav() {
   const SESSION_ID = sessionStorage.getItem("sessionId");
 
   const navigate = useNavigate();
+
+  // State to track active mobile button
   const [activeMobileBtn, setActiveMobileBtn] = useState("form");
+  // Get the current pathname using useLocation hook
   const location = useLocation();
   const isMobile = width <= 883;
 
@@ -67,7 +70,7 @@ export default function PageNav() {
           >
             {SESSION_ID ? (
               <>
-                <strong>Session Id</strong> : {SESSION_ID}
+                <strong>Session Id:</strong>{" "}{SESSION_ID}
               </>
             ) : (
               <div className="no_ID">Start Forging to get a Session ID</div>

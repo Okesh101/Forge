@@ -12,11 +12,12 @@ export default function Form() {
   const SESSION_ID = sessionStorage.getItem("sessionId");
   // State to hold form data
   const [decision_Data, setDecision_Data] = useState({
-    userEmail:"",
+    userEmail: "",
     goal: "",
     currentLevel: "",
     goalLevel: "",
     timeCommitment: 1,
+    verify: false,
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +31,10 @@ export default function Form() {
 
   // Function to handle input changes
   function handleInputChange(e) {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setDecision_Data((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   }
 
@@ -61,13 +62,16 @@ export default function Form() {
       newErrors.timeCommitment = "This field is required";
       isValid = false;
     }
+    if (!decision_Data.userEmail) {
+      newErrors.userEmail = "This field is required";
+      isValid = false;
+    }
 
     setErrors(newErrors);
     // If all validations pass, submit the form
     if (isValid) {
       // Send form data to backend
       setIsLoading(true);
-      // "http://127.0.0.1:5000/api/decision/new"
       try {
         const res = await fetch(`${BACKEND_API}/api/decision/new`, {
           method: "POST",
@@ -81,13 +85,11 @@ export default function Form() {
         console.log(data);
 
         // Simulate loading time
-        // await new Promise((resolve) => setTimeout(resolve, 5000));
         if (data.status === "success") {
           setIsLoading(false);
           navigate("/narration");
           resetForm();
         } else {
-          // await new Promise((resolve) => setTimeout(resolve, 5000));
           setErrorModal(true);
           setIsLoading(false);
           resetForm();
@@ -102,11 +104,12 @@ export default function Form() {
   // Function to reset the form
   function resetForm() {
     setDecision_Data({
-      userEmail:"",
+      userEmail: "",
       goal: "",
       currentLevel: "",
       goalLevel: "",
       timeCommitment: 1,
+      verify: false,
     });
   }
 
@@ -198,7 +201,7 @@ export default function Form() {
                   value={decision_Data.timeCommitment}
                   onChange={handleInputChange}
                 />
-                <div
+                <divinput
                   className="footer"
                   style={{
                     display: "flex",
@@ -210,14 +213,35 @@ export default function Form() {
                 >
                   <p>Casual(1h)</p>
                   <p>Intense(40h)</p>
-                </div>
+                </divinput>
               </fieldset>
             </div>
 
-            <fieldset>
-              <label htmlFor="userEmail">EMAIL ADDRESS</label>
-              <input type="email" name="userEmail" value={decision_Data.userEmail} onChange={handleInputChange} />
-            </fieldset>
+            <div className="verify">
+              <input
+                type="checkbox"
+                name="verify"
+                checked={decision_Data.verify}
+                onChange={handleInputChange}
+              />
+              <p>Would you like us remind you about your practice plan?</p>
+            </div>
+
+            {decision_Data.verify && (
+              <div className="email_section">
+                <fieldset >
+                <label htmlFor="userEmail">EMAIL ADDRESS</label>
+                <input
+                  type="email"
+                  name="userEmail"
+                  value={decision_Data.userEmail}
+                  onChange={handleInputChange}
+                />
+              </fieldset>
+
+              {errors.userEmail  && <p className="errorMssg">{errors.userEmail}</p>}
+              </div>
+            )}
           </form>
           <button type="button" onClick={handleSubmit}>
             Create My Practice Plan <FiArrowRight />

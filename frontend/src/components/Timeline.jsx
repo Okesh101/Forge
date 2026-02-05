@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 export default function Timeline() {
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
+
   const BACKEND_API = "http://localhost:5000";
 
   const { handleNavigation } = useContext(SessionContext);
@@ -19,7 +20,6 @@ export default function Timeline() {
   useEffect(() => {
     // Fetch timeline data from backend
     const fetchTimeLine = async () => {
-      // "http://localhost:5000/api/timeline"
       try {
         const res = await fetch(`${BACKEND_API}/api/timeline`, {
           method: "GET",
@@ -61,9 +61,9 @@ export default function Timeline() {
             <h1>Timeline Page</h1>
             <p>See how your practice strategy has evolved over time.</p>
           </header>
-          {timeline_data.length > 0 ? (
+          {timeline_data?.length > 0 ? (
             <div className="timeline_details">
-              {timeline_data.map((item) => (
+              {timeline_data?.map((item) => (
                 <div className="timeline_card" key={item.id}>
                   <div className="circle-section">
                     <p>{item.timestamp.slice(0, 10)}</p>

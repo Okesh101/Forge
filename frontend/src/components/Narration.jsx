@@ -4,14 +4,18 @@ import PageNav from "../Utilities/PageNav";
 import { motion } from "framer-motion";
 import { SessionContext } from "../contextApi/SessionContext";
 import { FileX, MessageCircleOff } from "lucide-react";
+import { FiPenTool } from "react-icons/fi";
+import { BiPen, BiPencil } from "react-icons/bi";
+import { BsPen, BsPencil } from "react-icons/bs";
+import { FaPencil } from "react-icons/fa6";
 
 export default function Narration() {
   const SESSION_ID = sessionStorage.getItem("sessionId");
   // State to hold narration data
   const [narrationData, setNarrationData] = useState({});
 
+  // Get BACKEND_API and handleNavigation function from context
   const { BACKEND_API, handleNavigation } = useContext(SessionContext);
-  // http://127.0.0.1:5000/api/decision/get
   // Fetch narration data from the backend API
   useEffect(() => {
     if (!SESSION_ID) return;
@@ -53,19 +57,34 @@ export default function Narration() {
           }}
         >
           <header>
-
-          <div className="agent_insight">
             {narrationData.agent_available === true ? (
-              narrationData.agent_insights
-            ):(
+              <div className="agent_insight">
+                <div
+                  className="heading"
+                  style={{ display: "flex", alignItems: "center", gap: "5px" }}
+                >
+                  <BiPencil />
+                  <span style={{ fontSize: "11px", fontWeight: "bold" }}>
+                    AI ADAPTATION NOTE
+                  </span>
+                </div>
+
+                <p>{narrationData.agent_insights}</p>
+              </div>
+            ) : (
               ""
             )}
-          </div>
 
             <h1>Narration</h1>
-            <div className="version">
-              <strong>v<span>{narrationData?.agent_version}</span></strong>
-            </div>
+            {SESSION_ID ? (
+              <div className="version">
+                <strong>
+                  v<span>{narrationData?.agent_version}</span>
+                </strong>
+              </div>
+            ) : (
+              ""
+            )}
             {narrationData?.static?.goal_summary && (
               <p>
                 <span>Goal summary:</span>
@@ -109,28 +128,28 @@ export default function Narration() {
                             <small> {item.this_week_plan.primary.task} </small>
                           </p>
                           <ul>
-                                {item.this_week_plan.primary.details.map((detail, index) => (
-                                 
-                                  <li key={index}>
- <small >{detail}</small>
-                                  </li>
-                                ))}
+                            {item.this_week_plan.primary.details.map(
+                              (detail, index) => (
+                                <li key={index}>
+                                  <small>{detail}</small>
+                                </li>
+                              )
+                            )}
                           </ul>
                         </li>
                         <li>
                           <p>
                             <em>Task: </em>
-                            <small>
-                              {" "}
-                              {item.this_week_plan.secondary.task}{" "}
-                            </small>
+                            <small>{item.this_week_plan.secondary.task}</small>
                           </p>
                           <ul>
-                                {item.this_week_plan.secondary.details.map((detail, index) => (
-                                  <li  key={index}> 
-                                  <small>{detail}</small></li>
-                                ))}
-                             
+                            {item.this_week_plan.secondary.details.map(
+                              (detail, index) => (
+                                <li key={index}>
+                                  <small>{detail}</small>
+                                </li>
+                              )
+                            )}
                           </ul>
                         </li>
                       </ol>

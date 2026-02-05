@@ -6,26 +6,45 @@ import PageNav from "../Utilities/PageNav";
 import { FiX } from "react-icons/fi";
 import { Check, MessageCircleOff } from "lucide-react";
 import { SessionContext } from "../contextApi/SessionContext";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.defaults.font.size = 14;
 ChartJS.defaults.color = "#666";
 
 export default function Analytics() {
-  // Demo data matching the image template
-
+  // State to track screen size for responsive chart options
   const [screenSize, setScreenSize] = useState({
     isMobile: window.innerWidth <= 768,
     isSmallMobile: window.innerWidth <= 398,
     isVerySmallMobile: window.innerWidth <= 320,
     isTablet: window.innerWidth > 769 && window.innerWidth <= 894,
   });
-  const [chartKey, setChartKey] = useState(0);
 
+  // Navigate function for redirection
+  const navigate = useNavigate();
+
+  // State to force re-render of charts on screen resize for better responsiveness
+  const [chartKey, setChartKey] = useState(0);
+  // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
+  // State to hold analytics data
   const [analytics_Data, setAnalytics_Data] = useState({});
-  // Getting and BACKEND_API from contextApi
+
+  // Getting and BACKEND_API and handle navigation function from contextApi
   const { BACKEND_API, handleNavigation } = useContext(SessionContext);
 
+  // Determine whether analytics contains meaningful data
+  const hasData = (() => {
+    if (!analytics_Data) return false;
+    return (
+      analytics_Data.dateCounts && analytics_Data.dateCounts.length > 0 ||
+      analytics_Data.durationCounts && analytics_Data.durationCounts.length > 0 ||
+      analytics_Data.difficultyCounts && analytics_Data.difficultyCounts.length > 0 ||
+      analytics_Data.fatigueCounts && analytics_Data.fatigueCounts.length > 0
+    );
+  })();
+
+  // Fetch analytics data from backend API on component mount
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
@@ -46,6 +65,7 @@ export default function Analytics() {
     fetchAnalytics();
   }, []);
 
+  // Handle window resize to update screen size state for responsive chart options
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({
@@ -61,6 +81,14 @@ export default function Analytics() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Check if user is logged in based on presence of session ID in session storage
+  let isLoggedIn = true;
+  if (SESSION_ID) {
+    isLoggedIn = true;
+  } else {
+    isLoggedIn = false;
+  }
 
   // Chart 1: Practice Frequency (Line Chart)
   const practiceFrequencyData = {
@@ -153,6 +181,7 @@ export default function Analytics() {
     ],
   };
 
+  // Common chart options with responsive adjustments based on screen size
   const commonOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -464,7 +493,7 @@ export default function Analytics() {
             </p>
           </header>
 
-          {analytics_Data.length > 0 ? (
+          {hasData ? (
             <main>
               <div className="stats">
                 <div className="stat_item">
@@ -570,8 +599,19 @@ export default function Analytics() {
             <p className="error">
               <MessageCircleOff size={70} height={80} />
               <span>
-                Start Forging to view your timeline.{" "}
-                <em onClick={handleNavigation}>Back to Homepage</em>{" "}
+                {isLoggedIn ? (
+                  <>
+                    Log a practice session to view your analytics.{" "}
+                    <em onClick={() => navigate("/logSession")}>
+                      Navigate to Log Practice Page
+                    </em>
+                  </>
+                ) : (
+                  <>
+                    Start Forging to view your analytics.{" "}
+                    <em onClick={handleNavigation}>Back to Homepage</em>
+                  </>
+                )}
               </span>
             </p>
           )}
