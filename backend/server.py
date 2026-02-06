@@ -28,6 +28,7 @@ import json
 import threading
 import datetime as dt
 import os
+import ssl
 
 load_dotenv()
 client = genai.Client()
@@ -389,7 +390,7 @@ EMAIL_PASS = os.getenv("EMAIL_PASS")
 
 
 # UTILITY FUNCTIONS
-def send_smart_calendar_invite(user_email, skill_name, body):
+def send_smart_calendar_invite(user_email, skill_name, body, afterSent=False, afterMessage=""):
     # 1. Handle Timezones (Lagos/West Africa Time)
     lagos_tz = pytz.timezone('Africa/Lagos')
     # Schedule the first reminder for tomorrow at 9:00 AM WAT
@@ -429,18 +430,21 @@ def send_smart_calendar_invite(user_email, skill_name, body):
     part.add_header('Content-Disposition', 'attachment; filename="invite.ics"')
     msg.attach(part)
 
-    # 5. Send it
+    # 5. Send it via Gmail's SMTP server with SSL
     try:
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
             server.login(EMAIL_USER, EMAIL_PASS)
             server.send_message(msg)
-        print(f"Smart Invite sent to {user_email}")
+        if afterSent:
+            print(afterMessage)
+        else:
+            print(f"Smart Invite sent to {user_email}")
     except Exception as e:
         print(f"Email failed: {e}")
 
 
-def monthly_follow_up_agent(user_email, skill_name, job_id):
+def monthly_follow_up_agent(user_email, skill_name):
     """
     This function is called by APScheduler every 30 days 
     to prompt the user for the next month's schedule.
@@ -473,8 +477,9 @@ def monthly_follow_up_agent(user_email, skill_name, job_id):
         </body>
         </html>
         """
-    send_smart_calendar_invite(user_email, skill_name, emailBodyReminder)
-    print(f"Monthly follow-up sent to {user_email}")
+    afterSentMessage = f"Monthly follow-up sent to {user_email}"
+    send_smart_calendar_invite(user_email, skill_name, emailBodyReminder, True, afterSentMessage)
+    # print(f"Monthly follow-up sent to {user_email}")
 
 
 def continuous_ping():
@@ -1001,9 +1006,10 @@ def new_decision():
                           trigger='interval',
                           minutes=2,  # Runs every month (Change it later)
                           args=[user_email, memory['normalized_return']
-                                ['normalized_input']['skill_name'], job_id],
+                                ['normalized_input']['skill_name']],
                           replace_existing=True,
                           max_instances=1,
+                          misfire_grace_time=3600
                           )
 
     return jsonify({"response": "Strategy Created Successfully and Reminders Set!",
@@ -1323,21 +1329,36 @@ def stop_reminders():
     if not user_email:
         return "Email missing", 400
 
-    job_id = f"monthly_update_{user_email}"
+    found_any = False
 
-    try:
-        scheduler.remove_job(job_id)
+    # We look through ALL jobs currently in the scheduler's memory/store
+    for job in scheduler.get_jobs():
+        if user_email in job.id:
+            try:
+                scheduler.remove_job(job.id)
+                found_any = True
+            except:
+                pass
+
+    if found_any:
         return render_template_string("""
             <body style="text-align:center; font-family:sans-serif; padding-top:50px;">
                 <h1 style="color:#2e7d32;">Successfully Unsubscribed</h1>
-                <p>Forge Agent will no longer send you monthly reminders for this skill.</p>
-                <a href="https://forge.vercel.app">Back to Forge</a>
+                <p>Forge Agent has cleared all practice reminders for <strong>{{email}}</strong>.</p>
+                <a href="https://forgeai.vercel.app" style="color:#2e7d32;">Back to Forge</a>
             </body>
-        """), 200
-    except Exception:
-        return "Reminder already stopped or expired.", 404
+        """, email=user_email), 200
+    else:
+        return render_template_string("""
+            <body style="text-align:center; font-family:sans-serif; padding-top:50px;">
+                <h1 style="color:#666;">No Active Reminders</h1>
+                <p>We couldn't find any active reminders for {{email}}. You're already all clear!</p>
+                <a href="https://forgeai.vercel.app">Back to Forge</a>
+            </body>
+        """, email=user_email), 200
 
 
+# SCHEDULER JOBS
 scheduler.add_job(id='dispatch_optimizer',
                   func=optimizer_dispatcher,
                   trigger='interval',
@@ -1350,7 +1371,7 @@ scheduler.add_job(id='dispatch_optimizer',
 scheduler.add_job(id='ping_server',
                   func=continuous_ping,
                   trigger='interval',
-                  seconds=10,
+                  minutes=10,
                   max_instances=1,  # Ensures only one dispatcher runs at a time
                   replace_existing=True
                   )

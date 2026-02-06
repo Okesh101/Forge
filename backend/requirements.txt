@@ -9,3 +9,4 @@ gunicorn
 icalendar
 sqlalchemy
 pytz
+cryptography
