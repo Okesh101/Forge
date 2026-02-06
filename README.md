@@ -116,6 +116,7 @@ The frontend will be available at `http://localhost:5173`
 
 - **server.py**: Flask application handling API endpoints and AI integration
 - **AI_Memory**: Stores conversation context and user progress data for the Gemini AI agent
+- **Dockerfile**: Docker file to handle containerization
 
 ### Frontend
 
@@ -178,3 +179,4 @@ For issues, questions, or feature requests, please open an issue in the reposito
 - Powered by Google's Gemini AI
 - Built with React and Flask
 - Designed for continuous skill development
+- Inspired by Google Gemini3 Hackathon on Devpost
