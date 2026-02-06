@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
-# from flask_apscheduler import APScheduler
+from flask import Flask, render_template_string, request, jsonify
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_cors import CORS
 from google import genai
@@ -14,8 +15,10 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
+from email.utils import formataddr
 from email import encoders
 from icalendar import Calendar, Event, vRecur
+from urllib.parse import quote
 #
 import pytz
 import uuid
@@ -25,6 +28,7 @@ import json
 import threading
 import datetime as dt
 import os
+import ssl
 
 load_dotenv()
 client = genai.Client()
@@ -353,19 +357,40 @@ You MUST follow this schema exactly:
 
 """
 
+# SCHEDULER CONFIG
+jobstores = {
+    'default': SQLAlchemyJobStore(
+        url='sqlite:///forge_scheduler.db'
+    )
+}
+
+executors = {
+    'default': ThreadPoolExecutor(10)
+}
+
+job_defaults = {
+    'coalesce': False,
+    'max_instances': 1
+}
+
 # GLOBAL VARIABLES
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 AI_MEMORY_DIR = os.path.join(BASE_DIR, "AI_Memory")
 memoryPath = Path(AI_MEMORY_DIR)
 summaryLife = {}
-scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler(
+    jobstores=jobstores,
+    executors=executors,
+    job_defaults=job_defaults,
+    timezone=pytz.timezone("Africa/Lagos")
+)
 current_time = dt.datetime
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
 
 
 # UTILITY FUNCTIONS
-def send_smart_calendar_invite(user_email, skill_name):
+def send_smart_calendar_invite(user_email, skill_name, body, afterSent=False, afterMessage=""):
     # 1. Handle Timezones (Lagos/West Africa Time)
     lagos_tz = pytz.timezone('Africa/Lagos')
     # Schedule the first reminder for tomorrow at 9:00 AM WAT
@@ -383,7 +408,7 @@ def send_smart_calendar_invite(user_email, skill_name):
     event.add('dtend', start_time + timedelta(hours=1))
 
     # THE SMART PART: Repeat every 4 days indefinitely
-    event.add('rrule', vRecur(freq='DAILY', interval=4))
+    event.add('rrule', vRecur(freq='DAILY', interval=4, count=7))
 
     event.add('description',
               f"Consistency is key! This is your scheduled 4-day reminder to practice {skill_name}.")
@@ -391,23 +416,11 @@ def send_smart_calendar_invite(user_email, skill_name):
 
     # 3. Setup the Email
     msg = MIMEMultipart()
+    sender_name = "Forge Agent"
     msg['Subject'] = f"🗓️ Scheduled: 4-Day Practice for {skill_name}"
-    msg['From'] = EMAIL_USER
+    msg['From'] = formataddr((sender_name, EMAIL_USER))
     msg['To'] = user_email
 
-    body = f"""
-    <html>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #2e7d32;">Ready to Forge your skills?</h2>
-        <p>We've created a custom practice strategy for <strong>{skill_name}</strong>.</p>
-        <p>To help you stay consistent, we've attached a <strong>Recurring Calendar Invite</strong>.</p>
-        <p><strong>Action:</strong> Open the attached 'invite.ics' file and click "Add to Calendar". 
-        It will automatically set a reminder for you <strong>every 4 days</strong>.</p>
-        <br>
-        <p>Stay sharp,<br>The Forge Agent</p>
-      </body>
-    </html>
-    """
     msg.attach(MIMEText(body, 'html'))
 
     # 4. Attach the .ics file with the "REQUEST" method
@@ -417,18 +430,60 @@ def send_smart_calendar_invite(user_email, skill_name):
     part.add_header('Content-Disposition', 'attachment; filename="invite.ics"')
     msg.attach(part)
 
-    # 5. Send it
+    # 5. Send it via Gmail's SMTP server with SSL
     try:
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
             server.login(EMAIL_USER, EMAIL_PASS)
             server.send_message(msg)
-        print(f"Smart Invite sent to {user_email}")
+        if afterSent:
+            print(afterMessage)
+        else:
+            print(f"Smart Invite sent to {user_email}")
     except Exception as e:
         print(f"Email failed: {e}")
 
+
+def monthly_follow_up_agent(user_email, skill_name):
+    """
+    This function is called by APScheduler every 30 days 
+    to prompt the user for the next month's schedule.
+    """
+    # Encoding the email for the 'Stop' link
+    encoded_email = quote(user_email)
+    stop_link = f"https://forgev1.onrender.com/api/reminders/stop?email={encoded_email}"
+    emailBodyReminder = f"""
+        <html>
+        <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px;">
+            <div style="text-align: center; padding-bottom: 20px;">
+                <h1 style="color: #2e7d32; margin: 0;">Forge Agent</h1>
+                <p style="font-style: italic; color: #666;">Mastery through Consistency</p>
+            </div>
+            <hr style="border: 0; border-top: 1px solid #eee;">
+            <div style="padding: 20px 0;">
+                <h2 style="color: #2e7d32;">New Month, New Gains!</h2>
+                <p>Ready to level up your <strong>"{skill_name}"</strong> practice?</p>
+                <p>Your previous strategy has been processed. We've generated a new 30-day block of practice sessions to keep your momentum high.</p>
+                
+                <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #2e7d32; margin: 20px 0;">
+                    <strong>Action Required:</strong> Open the attached <code>invite.ics</code> file to sync your next 7 sessions (every 4 days) to your calendar.
+                </div>
+            </div>
+            <footer style="font-size: 12px; color: #888; text-align: center; margin-top: 30px;">
+                <p>Stay sharp, <br><strong>Forge Agent</strong></p>
+                <hr style="border: 0; border-top: 1px solid #eee;">
+                <p>Too much mail? <a href="{stop_link}" style="color: #d32f2f; text-decoration: none;">Stop these reminders</a></p>
+            </footer>
+        </body>
+        </html>
+        """
+    afterSentMessage = f"Monthly follow-up sent to {user_email}"
+    send_smart_calendar_invite(user_email, skill_name, emailBodyReminder, True, afterSentMessage)
+    # print(f"Monthly follow-up sent to {user_email}")
+
+
 def continuous_ping():
-    url = "https://christoschools.org"
+    url = "https://forgev1.onrender.com/api/health"
     try:
         response = requests.get(url, timeout=10)
         print(f"Ping successful: {response.status_code}")
@@ -489,9 +544,10 @@ def try_dispatch_optimizer(file):
 
 def optimizer_dispatcher():
     if not memoryPath.exists() or not memoryPath.is_dir():
-        print(f"⚠️ [WARNING]: Directory not found at {memoryPath.absolute()}. Skipping optimization.")
+        print(
+            f"⚠️ [WARNING]: Directory not found at {memoryPath.absolute()}. Skipping optimization.")
         return  # Exit the function safely
-    
+
     try:
         for user_file in memoryPath.iterdir():
             if user_file.is_file():
@@ -920,13 +976,41 @@ def new_decision():
 
     user_email = decision_data.get('userEmail')
     if user_email:
+        # 1. Send the first month's invite immediately
+        bodyOfEmail = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h2 style="color: #2e7d32;">Ready to Forge your skills?</h2>
+                <p>We've created a custom practice strategy for <strong>{memory['normalized_return']['normalized_input']['skill_name']}</strong>.</p>
+                <p>To help you stay consistent, we've attached a <strong>Recurring Calendar Invite</strong> for the month.</p>
+                <p><strong>Action:</strong> Open the attached 'invite.ics' file and click "Add to Calendar". 
+                It will automatically set a reminder for you <strong>every 4 days</strong>.</p>
+                <br>
+                <p>Stay sharp,<br>Forge Agent</p>
+            </body>
+            </html>
+            """
         email_thread = threading.Thread(
             target=send_smart_calendar_invite,
             args=(user_email,
-                  memory['normalized_return']['normalized_input']['skill_name'],)
+                  memory['normalized_return']['normalized_input']['skill_name'],
+                  bodyOfEmail)
         )
         email_thread.daemon = True
         email_thread.start()
+
+        # 2. Schedule the NEXT email for 30 days from now with the follow-up agent
+        job_id = f"monthly_update_{user_email}"
+        scheduler.add_job(id=job_id,
+                          func=monthly_follow_up_agent,
+                          trigger='interval',
+                          minutes=2,  # Runs every month (Change it later)
+                          args=[user_email, memory['normalized_return']
+                                ['normalized_input']['skill_name']],
+                          replace_existing=True,
+                          max_instances=1,
+                          misfire_grace_time=3600
+                          )
 
     return jsonify({"response": "Strategy Created Successfully and Reminders Set!",
                     "status": "success"}), 201
@@ -1238,25 +1322,65 @@ def get_analytics():
     }), 200
 
 
+@app.route('/api/reminders/stop', methods=['GET'])
+def stop_reminders():
+    user_email = request.args.get('email')
+
+    if not user_email:
+        return "Email missing", 400
+
+    found_any = False
+
+    # We look through ALL jobs currently in the scheduler's memory/store
+    for job in scheduler.get_jobs():
+        if user_email in job.id:
+            try:
+                scheduler.remove_job(job.id)
+                found_any = True
+            except:
+                pass
+
+    if found_any:
+        return render_template_string("""
+            <body style="text-align:center; font-family:sans-serif; padding-top:50px;">
+                <h1 style="color:#2e7d32;">Successfully Unsubscribed</h1>
+                <p>Forge Agent has cleared all practice reminders for <strong>{{email}}</strong>.</p>
+                <a href="https://forgeai.vercel.app" style="color:#2e7d32;">Back to Forge</a>
+            </body>
+        """, email=user_email), 200
+    else:
+        return render_template_string("""
+            <body style="text-align:center; font-family:sans-serif; padding-top:50px;">
+                <h1 style="color:#666;">No Active Reminders</h1>
+                <p>We couldn't find any active reminders for {{email}}. You're already all clear!</p>
+                <a href="https://forgeai.vercel.app">Back to Forge</a>
+            </body>
+        """, email=user_email), 200
+
+
+# SCHEDULER JOBS
 scheduler.add_job(id='dispatch_optimizer',
                   func=optimizer_dispatcher,
                   trigger='interval',
-                  seconds=30,
+                  minutes=1,
                   max_instances=1,  # Ensures only one dispatcher runs at a time
                   replace_existing=True
                   )
 
 
-# scheduler.add_job(id='ping_server',
-#                   func=continuous_ping,
-#                   trigger='interval',
-#                   seconds=10,
-#                   max_instances=1,  # Ensures only one dispatcher runs at a time
-#                   replace_existing=True
-#                   )
+scheduler.add_job(id='ping_server',
+                  func=continuous_ping,
+                  trigger='interval',
+                  minutes=10,
+                  max_instances=1,  # Ensures only one dispatcher runs at a time
+                  replace_existing=True
+                  )
 
 
 scheduler.start()
+
+print("📅 Scheduler started with persisted job store")
+print(scheduler.get_jobs())
 
 
 if __name__ == '__main__':
