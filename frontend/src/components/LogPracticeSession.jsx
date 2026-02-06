@@ -21,7 +21,8 @@ export default function LogPracticeSession() {
   const [fieldError, setFieldError] = useState({});
 
   // Getting BACKEND_API from sessionContext
-  const BACKEND_API = "http://127.0.0.1:5000";
+  const BACKEND_API = "https://forgev1.onrender.com";
+  // const BACKEND_API = "http://127.0.0.1:5000";
   // const BACKEND_API = useContext(SessionContext);
 
   // Get session ID from session storage
