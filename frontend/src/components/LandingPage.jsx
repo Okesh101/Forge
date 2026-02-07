@@ -75,7 +75,7 @@ export default function LandingPage() {
             }}
             onClick={() => setShowLogin(true)}
           >
-            I Have a Session ID
+            I have a Session ID
           </motion.button>
         </div>
       </section>
@@ -83,10 +83,10 @@ export default function LandingPage() {
       <main>
         <div className="card">
           <header>
-            <h2>What is forge?</h2>
+            <h2>What is Forge?</h2>
             <p className="subtitle">
-              More than a platform-a dynamic learning partner thah grows with
-              you
+              More than a platform, a dynamic learning partner thah grows with
+              you!
             </p>
           </header>
           <p>
