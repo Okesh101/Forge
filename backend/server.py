@@ -440,8 +440,12 @@ def send_smart_calendar_invite(user_email, skill_name, body, afterSent=False, af
             print(afterMessage)
         else:
             print(f"Smart Invite sent to {user_email}")
+    except smtplib.SMTPConnectError:
+        print("Failed to connect to Gmail. Check your internet/docker network.")
+    except smtplib.SMTPAuthenticationError:
+        print("Gmail Login failed. Check your App Password.")
     except Exception as e:
-        print(f"Email failed: {e}")
+        print(f"Email failed with error: {e}")
 
 
 def monthly_follow_up_agent(user_email, skill_name):
@@ -479,7 +483,6 @@ def monthly_follow_up_agent(user_email, skill_name):
         """
     afterSentMessage = f"Monthly follow-up sent to {user_email}"
     send_smart_calendar_invite(user_email, skill_name, emailBodyReminder, True, afterSentMessage)
-    # print(f"Monthly follow-up sent to {user_email}")
 
 
 def continuous_ping():
@@ -1008,7 +1011,7 @@ def new_decision():
                           args=[user_email, memory['normalized_return']
                                 ['normalized_input']['skill_name']],
                           replace_existing=True,
-                          max_instances=1,
+                          max_instances=3, # Change later
                           misfire_grace_time=3600
                           )
 
@@ -1345,7 +1348,7 @@ def stop_reminders():
             <body style="text-align:center; font-family:sans-serif; padding-top:50px;">
                 <h1 style="color:#2e7d32;">Successfully Unsubscribed</h1>
                 <p>Forge Agent has cleared all practice reminders for <strong>{{email}}</strong>.</p>
-                <a href="https://forgeai.vercel.app" style="color:#2e7d32;">Back to Forge</a>
+                <a href="https://forge2ai.vercel.app" style="color:#2e7d32;">Back to Forge</a>
             </body>
         """, email=user_email), 200
     else:
@@ -1353,7 +1356,7 @@ def stop_reminders():
             <body style="text-align:center; font-family:sans-serif; padding-top:50px;">
                 <h1 style="color:#666;">No Active Reminders</h1>
                 <p>We couldn't find any active reminders for {{email}}. You're already all clear!</p>
-                <a href="https://forgeai.vercel.app">Back to Forge</a>
+                <a href="https://forge2ai.vercel.app">Back to Forge</a>
             </body>
         """, email=user_email), 200
 
