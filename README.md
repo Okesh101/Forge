@@ -1,6 +1,6 @@
 # Forge
 
-A Gemini-powered web-based autonomous agent that designs a skill-building practice plan, observes performance over time, detects stagnation or growth, and rewrites the practice loop weekly without the user asking.
+A Gemini-powered web-based autonomous agent that designs a skill-building practice plan, observes performance over time, detects stagnation or growth, and rewrites the practice loop at intervals without the user asking.
 
 ## Overview
 
@@ -15,6 +15,8 @@ Forge is an intelligent practice planning system that leverages AI to create per
 - **Analytics Dashboard**: Visualize your progress over time with comprehensive analytics
 - **Session Management**: Track individual practice sessions and view historical data
 - **Timeline View**: See your skill development journey in a visual timeline format
+- **Email Reminders**: Can send you reminders for your practice sessions to your mail as provided on creating a plan
+- **Google Calendar Integration**: Connects to your Google calender using the email provided on creation of a practice session and automatically writes 4-days practice plan throughout your month.
 
 ## Project Structure
 
@@ -24,7 +26,7 @@ forge/
 │   ├── server.py          # Main Flask application
 │   ├── AI_Memory/         # Persistent memory storage for AI context
 │   ├── requirements.txt   # Python dependencies
-│   ├── .env.example       # Gemini API Key
+│   ├── .env.example       # Gemini API Key and Email Configuration
 │   ├── Dockerfile         # Docker configuration environment
 │
 ├── frontend/              # React + Vite web application
@@ -105,10 +107,11 @@ The frontend will be available at `http://localhost:5173`
 
 1. **Create an Account**: Start forging with a new ID or log in with an existing ID
 2. **Define Your Skill**: Enter the skill you want to practice
-3. **Start Practicing**: Complete assigned practice sessions
-4. **Log Progress**: Record your performance metrics after each session
-5. **Review Analytics**: Check your progress dashboard to see improvements
-6. **Adjust Plans**: The system automatically updates your practice plan based on performance
+3. **Set up Email (Optional)**: Check the box for recieving email updates and enter your email for reminders
+4. **Start Practicing**: Complete assigned practice sessions
+5. **Log Progress**: Record your performance metrics after each session
+6. **Review Analytics**: Check your progress dashboard to see improvements
+7. **Adjust Plans**: The system automatically updates your practice plan based on performance
 
 ## Key Components
 
