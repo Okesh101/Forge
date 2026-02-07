@@ -13,7 +13,6 @@ export const SessionProvider = ({ children }) => {
 
   // Backend API URL
   const BACKEND_API = "https://forgev1.onrender.com";
-  // const BACKEND_API = "http://127.0.0.1:5000";
 
   // Function to handle navigation to landing page
   const handleNavigation = () => {
