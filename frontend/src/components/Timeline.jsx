@@ -6,17 +6,23 @@ import PageNav from "../Utilities/PageNav";
 import { FileX, MessageCircleOff } from "lucide-react";
 import { SessionContext } from "../contextApi/SessionContext";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Timeline() {
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
 
-  const BACKEND_API = "http://localhost:5000";
+  // Backend API URL
+  const BACKEND_API = "https://forgev1.onrender.com";
 
   const { handleNavigation } = useContext(SessionContext);
 
   // State to hold time line data
   const [timeline_data, setTimeline_Data] = useState([]);
+
+  // Navigate function from react-router-dom to programmatically navigate to other pages
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Fetch timeline data from backend
     const fetchTimeLine = async () => {
@@ -39,6 +45,14 @@ export default function Timeline() {
 
     fetchTimeLine();
   }, []);
+
+  // Check if user is logged in based on presence of session ID in session storage
+  let isLoggedIn = true;
+  if (SESSION_ID) {
+    isLoggedIn = true;
+  } else {
+    isLoggedIn = false;
+  }
 
   return (
     <>
@@ -89,8 +103,19 @@ export default function Timeline() {
             <p className="error">
               <MessageCircleOff size={70} height={80} />
               <span>
-                Start Forging to view your timeline.{" "}
-                <em onClick={handleNavigation}>Back to Homepage</em>{" "}
+                {isLoggedIn ? (
+                  <>
+                    Log a practice session to view your analytics.{" "}
+                    <em onClick={() => navigate("/logSession")}>
+                      Navigate to Log Practice Page
+                    </em>
+                  </>
+                ) : (
+                  <>
+                    Start Forging to view your analytics.{" "}
+                    <em onClick={handleNavigation}>Back to Homepage</em>
+                  </>
+                )}
               </span>
             </p>
           )}

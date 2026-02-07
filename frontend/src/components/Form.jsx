@@ -27,7 +27,7 @@ export default function Form() {
   const navigate = useNavigate();
 
   // Getting sessionId and BACKEND_API from contextApi
-  const { sessionId, BACKEND_API } = useContext(SessionContext);
+  const {  BACKEND_API } = useContext(SessionContext);
 
   // Function to handle input changes
   function handleInputChange(e) {

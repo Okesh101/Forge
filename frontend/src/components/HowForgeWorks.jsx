@@ -109,7 +109,6 @@ export default function HowForgeWorks() {
 
   return (
     <>
-      {/* <PageNav/> */}
       <SideBar />
       <div className="container">
         <PageNav />
