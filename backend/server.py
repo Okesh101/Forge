@@ -19,6 +19,8 @@ from email.utils import formataddr
 from email import encoders
 from icalendar import Calendar, Event, vRecur
 from urllib.parse import quote
+import socket
+import ssl
 #
 import pytz
 import uuid
@@ -28,7 +30,6 @@ import json
 import threading
 import datetime as dt
 import os
-import ssl
 
 load_dotenv()
 client = genai.Client()
@@ -432,8 +433,15 @@ def send_smart_calendar_invite(user_email, skill_name, body, afterSent=False, af
 
     # 5. Send it via Gmail's SMTP server with SSL
     try:
+        # FORCE IPv4 RESOLUTION
+        # This gets the IPv4 address (AF_INET) for gmail
+        addr_info = socket.getaddrinfo("smtp.gmail.com", 465, socket.AF_INET)
+        ipv4_address = addr_info[0][4][0]
+
+        print(f"DEBUG: Resolved smtp.gmail.com to IPv4: {ipv4_address}")
+
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        with smtplib.SMTP_SSL(ipv4_address, 465, context=context, timeout=20) as server:
             server.login(EMAIL_USER, EMAIL_PASS)
             server.send_message(msg)
         if afterSent:
