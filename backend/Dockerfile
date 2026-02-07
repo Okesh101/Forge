@@ -1,5 +1,5 @@
 # 1. Using the full image (includes curl, git, and certificates by default)
-FROM python:3.12
+FROM python:3.12-slim
 
 # 2. Prevent Python from generating .pyc files and enable real-time logging
 ENV PYTHONDONTWRITEBYTECODE=1
