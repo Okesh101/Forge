@@ -11,20 +11,12 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from collections import Counter, defaultdict
 # Email service
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email.utils import formataddr
-from email import encoders
 from icalendar import Calendar, Event, vRecur
-from urllib.parse import quote
-import socket
-import ssl
 #
 import pytz
 import uuid
 import requests
+import base64
 import time
 import json
 import threading
@@ -386,9 +378,7 @@ scheduler = BackgroundScheduler(
     timezone=pytz.timezone("Africa/Lagos")
 )
 current_time = dt.datetime
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASS = os.getenv("EMAIL_PASS")
-
+BRIDGE_URL = os.getenv("GOOGLE_BRIDGE_URL")
 
 # UTILITY FUNCTIONS
 def send_smart_calendar_invite(user_email, skill_name, body, afterSent=False, afterMessage=""):
@@ -408,52 +398,41 @@ def send_smart_calendar_invite(user_email, skill_name, body, afterSent=False, af
     event.add('dtstart', start_time)
     event.add('dtend', start_time + timedelta(hours=1))
 
-    # THE SMART PART: Repeat every 4 days indefinitely
+    # THE SMART PART: Repeat every 4 days for a month
     event.add('rrule', vRecur(freq='DAILY', interval=4, count=7))
 
     event.add('description',
               f"Consistency is key! This is your scheduled 4-day reminder to practice {skill_name}.")
     cal.add_component(event)
 
-    # 3. Setup the Email
-    msg = MIMEMultipart()
-    sender_name = "Forge Agent"
-    msg['Subject'] = f"🗓️ Scheduled: 4-Day Practice for {skill_name}"
-    msg['From'] = formataddr((sender_name, EMAIL_USER))
-    msg['To'] = user_email
+    # Convert .ics to Base64 string
+    ics_bytes = cal.to_ical()
+    encoded_ics = base64.b64encode(ics_bytes).decode('utf-8')
 
-    msg.attach(MIMEText(body, 'html'))
+    payload = {
+            "to": user_email,
+            "subject": f"Scheduled: 4-Day Practice for {skill_name}",
+            "body": body, # This is the HTML body
+            "attachment": encoded_ics,
+            "filename": "invite.ics"
+        }
 
-    # 4. Attach the .ics file with the "REQUEST" method
-    part = MIMEBase('text', "calendar", method="REQUEST", name="invite.ics")
-    part.set_payload(cal.to_ical())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment; filename="invite.ics"')
-    msg.attach(part)
-
-    # 5. Send it via Gmail's SMTP server with SSL
     try:
-        # FORCE IPv4 RESOLUTION
-        # This gets the IPv4 address (AF_INET) for gmail
-        addr_info = socket.getaddrinfo("smtp.gmail.com", 465, socket.AF_INET)
-        ipv4_address = addr_info[0][4][0]
+        # Send this as a simple POST request.
+        response = requests.post(
+            BRIDGE_URL, data=json.dumps(payload), timeout=30)
 
-        print(f"DEBUG: Resolved smtp.gmail.com to IPv4: {ipv4_address}")
-
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(ipv4_address, 465, context=context, timeout=20) as server:
-            server.login(EMAIL_USER, EMAIL_PASS)
-            server.send_message(msg)
-        if afterSent:
-            print(afterMessage)
+        if "✅" in response.text:
+            if afterSent:
+                print(afterMessage)
+            else:
+                print(
+                    f"🚀 Success! Smart Invite sent to {user_email}")
         else:
-            print(f"Smart Invite sent to {user_email}")
-    except smtplib.SMTPConnectError:
-        print("Failed to connect to Gmail. Check your internet/docker network.")
-    except smtplib.SMTPAuthenticationError:
-        print("Gmail Login failed. Check your App Password.")
+            print(f"❌ Bridge Error: {response.status_code}")
+
     except Exception as e:
-        print(f"Email failed with error: {e}")
+        print(f"📡 Connection to Bridge failed: {e}")
 
 
 def monthly_follow_up_agent(user_email, skill_name):
@@ -1015,11 +994,11 @@ def new_decision():
         scheduler.add_job(id=job_id,
                           func=monthly_follow_up_agent,
                           trigger='interval',
-                          minutes=2,  # Runs every month (Change it later)
+                          days=30,  # Runs every month
                           args=[user_email, memory['normalized_return']
                                 ['normalized_input']['skill_name']],
                           replace_existing=True,
-                          max_instances=3, # Change later
+                          max_instances=3,
                           misfire_grace_time=3600
                           )
 
@@ -1373,7 +1352,7 @@ def stop_reminders():
 scheduler.add_job(id='dispatch_optimizer',
                   func=optimizer_dispatcher,
                   trigger='interval',
-                  minutes=1,
+                  minutes=5,
                   max_instances=1,  # Ensures only one dispatcher runs at a time
                   replace_existing=True
                   )
