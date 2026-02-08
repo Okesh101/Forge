@@ -12,6 +12,7 @@ from pathlib import Path
 from collections import Counter, defaultdict
 # Email service
 from icalendar import Calendar, Event, vRecur
+from urllib.parse import quote
 #
 import pytz
 import uuid
