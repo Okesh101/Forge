@@ -26,11 +26,11 @@ EXPOSE 5000
 # --workers 1: Ensures only ONE scheduler instance starts (prevents duplicate emails)
 # --threads 2: Allows the server to handle the API while the Agent sends emails in the background
 # --preload: Loads the app BEFORE forking, ensuring APScheduler initializes correctly
-# --timeout 120: Prevents Gunicorn from killing the worker while it's waiting for Gmail's SMTP
+# --timeout 120: Prevents Gunicorn from killing the worker while it's waiting for Goolge's API response (which can sometimes be slow)
 CMD ["gunicorn", \
     "--bind", "0.0.0.0:5000", \
     "--workers", "1", \
     "--threads", "2", \
     "--preload", \
-    "--timeout", "120", \
+    "--timeout", "130", \
     "server:app"]
