@@ -30,6 +30,7 @@ forge/
 │   ├── Dockerfile         # Docker configuration environment
 │
 ├── frontend/              # React + Vite web application
+│   ├── public/            # Static assets (favicon)
 │   ├── src/
 │   │   ├── components/    # React components (Form, Analytics, Timeline, etc.)
 │   │   ├── contextApi/    # Context API for state management
@@ -126,6 +127,7 @@ The frontend will be available at `http://localhost:5173`
 - **Form.jsx**: Practice session entry form
 - **Analytics.jsx**: Performance dashboard and statistics
 - **Timeline.jsx**: Visual timeline of your skill development
+- **Narration.jsx**: UI for narrated guidance and practice narration
 - **LogPracticeSession.jsx**: Interface for logging practice results
 - **LandingPage.jsx**: Home page and project overview
 
