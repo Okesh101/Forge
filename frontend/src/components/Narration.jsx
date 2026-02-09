@@ -126,6 +126,7 @@ export default function Narration() {
                   <b>{item.current_phase.title}</b>
                   <small>{item.current_phase.why_this_phase}</small>
 
+
                   {item.current_cycle_index === 1 && (
                     <>
                       <ol>
