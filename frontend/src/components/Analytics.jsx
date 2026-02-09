@@ -326,7 +326,7 @@ export default function Analytics() {
     },
   };
 
-  const horizontalBarOptions = {
+  const horizontalBarOptionsDifficulty = {
     ...commonOptions,
     indexAxis: "y",
     scales: {
@@ -353,7 +353,62 @@ export default function Analytics() {
         },
         title: {
           display: !screenSize.isMobile,
-          text: "Rating",
+          text: "Difficulty Rating",
+          font: {
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
+          },
+        },
+      },
+      y: {
+        ticks: {
+          precision: 0,
+          stepSize: 1.2,
+          font: {
+            size: screenSize.isVerySmallMobile
+              ? 7
+              : screenSize.isSmallMobile
+              ? 8
+              : screenSize.isMobile
+              ? 9
+              : 12,
+          },
+          maxTicksLimit: screenSize.isSmallMobile
+            ? 4
+            : screenSize.isMobile
+            ? 6
+            : 10,
+        },
+      },
+    },
+  };
+  const horizontalBarOptionsFatigue = {
+    ...commonOptions,
+    indexAxis: "y",
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 10,
+        ticks: {
+          font: {
+            size: screenSize.isVerySmallMobile
+              ? 6
+              : screenSize.isSmallMobile
+              ? 7
+              : screenSize.isMobile
+              ? 8
+              : 12,
+          },
+          maxTicksLimit: screenSize.isVerySmallMobile
+            ? 2
+            : screenSize.isSmallMobile
+            ? 3
+            : screenSize.isMobile
+            ? 4
+            : 10,
+        },
+        title: {
+          display: !screenSize.isMobile,
+          text: "Fatigue Rating",
           font: {
             size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
@@ -382,7 +437,7 @@ export default function Analytics() {
     },
   };
 
-  const scatterOptions = {
+  const scatterOptionsDifficulty = {
     ...commonOptions,
     scales: {
       x: {
@@ -435,7 +490,68 @@ export default function Analytics() {
         },
         title: {
           display: !screenSize.isMobile,
-          text: "Difficulty/Fatigue",
+          text: "Difficulty",
+          font: {
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
+          },
+        },
+      },
+    },
+  };
+  const scatterOptionsFatigue = {
+    ...commonOptions,
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            size: screenSize.isVerySmallMobile
+              ? 6
+              : screenSize.isSmallMobile
+              ? 7
+              : screenSize.isMobile
+              ? 8
+              : 12,
+          },
+          maxTicksLimit: screenSize.isVerySmallMobile
+            ? 2
+            : screenSize.isSmallMobile
+            ? 3
+            : screenSize.isMobile
+            ? 4
+            : 10,
+        },
+        title: {
+          display: !screenSize.isMobile,
+          text: "Session Duration (min)",
+          font: {
+            size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
+          },
+        },
+      },
+      y: {
+        beginAtZero: true,
+        max: 11,
+        ticks: {
+          precision: 0,
+          stepSize: 1.2,
+          font: {
+            size: screenSize.isVerySmallMobile
+              ? 7
+              : screenSize.isSmallMobile
+              ? 8
+              : screenSize.isMobile
+              ? 9
+              : 12,
+          },
+          maxTicksLimit: screenSize.isSmallMobile
+            ? 4
+            : screenSize.isMobile
+            ? 6
+            : 10,
+        },
+        title: {
+          display: !screenSize.isMobile,
+          text: "Fatigue",
           font: {
             size: screenSize.isSmallMobile ? 8 : screenSize.isMobile ? 10 : 14,
           },
@@ -561,7 +677,7 @@ export default function Analytics() {
                     <Bar
                       key={chartKey}
                       data={difficultyData}
-                      options={horizontalBarOptions}
+                      options={horizontalBarOptionsDifficulty}
                     />
                   </div>
                 </div>
@@ -572,7 +688,7 @@ export default function Analytics() {
                     <Bar
                       key={chartKey}
                       data={fatigueData}
-                      options={horizontalBarOptions}
+                      options={horizontalBarOptionsFatigue}
                     />
                   </div>
                 </div>
@@ -585,7 +701,7 @@ export default function Analytics() {
                     <Scatter
                       key={chartKey}
                       data={simplifiedScatterData(durationVsDifficultyData)}
-                      options={scatterOptions}
+                      options={scatterOptionsDifficulty}
                     />
                   </div>
                 </div>
@@ -596,7 +712,7 @@ export default function Analytics() {
                     <Scatter
                       key={chartKey}
                       data={simplifiedScatterData(durationVsFatigueData)}
-                      options={scatterOptions}
+                      options={scatterOptionsFatigue}
                     />
                   </div>
                 </div>
