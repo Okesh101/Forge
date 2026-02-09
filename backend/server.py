@@ -1223,7 +1223,6 @@ def get_analytics():
             "date": datDiff,
             "difficulty": difficulty["total_diff"] / difficulty["count"]
         })
-    # print(difficultyCounts)
 
     # Fatigue
     fatigueSum = defaultdict(lambda: {"total_fat": 0, "count": 0})
