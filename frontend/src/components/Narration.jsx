@@ -135,7 +135,7 @@ export default function Narration() {
                             <small> {item.this_week_plan.primary.task} </small>
                           </p>
                           <ul>
-                            {item.this_week_plan.primary.details.map(
+                            {item.this_week_plan.primary.details?.map(
                               (detail, index) => (
                                 <li key={index}>
                                   <small>{detail}</small>
@@ -150,7 +150,7 @@ export default function Narration() {
                             <small>{item.this_week_plan.secondary.task}</small>
                           </p>
                           <ul>
-                            {item.this_week_plan.secondary.details.map(
+                            {item.this_week_plan.secondary.details?.map(
                               (detail, index) => (
                                 <li key={index}>
                                   <small>{detail}</small>
