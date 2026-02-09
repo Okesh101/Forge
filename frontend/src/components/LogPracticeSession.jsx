@@ -14,9 +14,11 @@ export default function LogPracticeSession() {
     fatigueLevel: 1,
   });
   const [logHistory, setLogHistory] = useState([]);
+  const [loaderCircle, setLoaderCircle] = useState(false)
 
   // Get loading and setLoading function from context
   const { isLoading, setIsLoading } = useContext(SessionContext);
+  
 
   // State for field errors
   const [fieldError, setFieldError] = useState({});
@@ -79,6 +81,7 @@ export default function LogPracticeSession() {
     // If all validations pass, submit the form
     if (isValid) {
       // Send form data to backend
+      setLoaderCircle(true)
       try {
         const res = await fetch(`${BACKEND_API}/api/practice/new`, {
           method: "POST",
@@ -103,7 +106,7 @@ export default function LogPracticeSession() {
   const fetchLogHistory = async () => {
     try {
       setIsLoading(true);
-
+      setLoaderCircle(false)
       const res = await fetch(`${BACKEND_API}/api/practice/logs`, {
         method: "GET",
         headers: {
@@ -235,7 +238,14 @@ export default function LogPracticeSession() {
             </div>
           </form>
           <button type="button" onClick={handleSubmit}>
-            Submit Log
+            {loaderCircle === true ? (
+              <>
+                <div className="loader"></div>
+                Submitting Log
+              </>
+            ) : (
+              "Submit Log"
+            )}
           </button>
 
           <div className="logSession_list">
