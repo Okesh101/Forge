@@ -31,7 +31,7 @@ export default function Analytics() {
   const [analytics_Data, setAnalytics_Data] = useState({});
 
   // Getting and BACKEND_API and handle navigation function from contextApi
-  const { BACKEND_API, handleNavigation } = useContext(SessionContext);
+  const { BACKEND_API, handleNavigation, isLoading, setIsLoading } = useContext(SessionContext);
 
   // Determine whether analytics contains meaningful data
   const hasData = (() => {
@@ -47,6 +47,7 @@ export default function Analytics() {
   // Fetch analytics data from backend API on component mount
   useEffect(() => {
     const fetchAnalytics = async () => {
+      setIsLoading(true)
       try {
         const res = await fetch(`${BACKEND_API}/api/analytics`, {
           method: "GET",
@@ -59,6 +60,8 @@ export default function Analytics() {
         setAnalytics_Data(data);
       } catch (error) {
         console.log(error.message);
+      } finally{
+        setIsLoading(false)
       }
     };
 
@@ -493,7 +496,11 @@ export default function Analytics() {
             </p>
           </header>
 
-          {hasData ? (
+          { isLoading ? (
+              <div className="loading">
+                <p>Loading analytics data...</p>
+              </div>
+            ) :hasData ? (
             <main>
               <div className="stats">
                 <div className="stat_item">

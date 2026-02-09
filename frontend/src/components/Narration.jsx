@@ -14,12 +14,13 @@ export default function Narration() {
   // State to hold narration data
   const [narrationData, setNarrationData] = useState({});
 
-  // Get BACKEND_API and handleNavigation function from context
-  const { BACKEND_API, handleNavigation } = useContext(SessionContext);
+  // Get BACKEND_API, handleNavigation, isLoading, setIsLoading function from context
+  const { BACKEND_API, handleNavigation, isLoading, setIsLoading } = useContext(SessionContext);
   // Fetch narration data from the backend API
   useEffect(() => {
     if (!SESSION_ID) return;
     const fetchNarrationData = async () => {
+      setIsLoading(true)
       try {
         const res = await fetch(`${BACKEND_API}/api/decision/get`, {
           method: "GET",
@@ -33,6 +34,8 @@ export default function Narration() {
         setNarrationData(data);
       } catch (error) {
         console.error("Error fetching narration data:", error);
+      } finally{
+        setIsLoading(false)
       }
     };
 
@@ -76,7 +79,7 @@ export default function Narration() {
             )}
 
             <h1>Narration</h1>
-            {SESSION_ID ? (
+            {narrationData?.agent_version ? (
               <div className="version">
                 <strong>
                   v<span>{narrationData?.agent_version}</span>
@@ -99,7 +102,11 @@ export default function Narration() {
             )}
           </header>
           <div className="card_container">
-            {narrationData.dynamic ? (
+            { isLoading ? (
+              <div className="loading">
+                <p>Loading narration data ...</p>
+              </div>
+            ) :narrationData.dynamic ? (
               narrationData.dynamic?.map((item) => (
                 <motion.div
                   className="item_card"
@@ -153,11 +160,9 @@ export default function Narration() {
                           </ul>
                         </li>
                       </ol>
-                      {/* <span>{item.current_phase.summary}</span> */}
                       <small style={{ fontSize: "14px" }}>
                         {item.what_to_focus_on}
                       </small>
-                      {/* <small> {item.how_to_measure_progress} </small> */}
                     </>
                   )}
                 </motion.div>
