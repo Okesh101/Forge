@@ -34,7 +34,6 @@
 
     .session_field {
       background-color: #082b8d77;
-      //   padding: 10px;
       margin-top: 20px;
       width: 100%;
       border-radius: 3px;
@@ -43,7 +42,7 @@
       justify-content: space-between;
       padding-left: 5px;
       button {
-        padding: 10px 10px;
+        padding: 10px;
         background-color: #ff6a1a;
         border: none;
         border-radius: 3px;
@@ -58,6 +57,28 @@
           align-items: center;
           gap: 4px;
         }
+      }
+    }
+  }
+  @media (max-width: 883px) {
+    margin: 40px 0;
+    margin-top: 0px;
+  }
+  @media (max-width:535px) {
+    P{
+     &:first-of-type {
+        margin-top: 30px !important;
+      }
+    }
+    .session_field{
+
+        padding-left: 10px !important;
+      span{
+        font-size: 14px;
+      }
+      button{
+        font-size: 15px;
+        padding: 10px 20px !important;
       }
     }
   }

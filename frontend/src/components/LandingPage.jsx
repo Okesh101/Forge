@@ -52,10 +52,6 @@ export default function LandingPage() {
           An intelligent, adaptive system that evolves with you. Forge doesn't
           just train, it learns, adapts, and refines your path to expertise.
         </p>
-        {/* <div className="cta-btns">
-         
-       
-        </div> */}
         <div className="hero-btns">
           <motion.button
             className="cta-btn"
@@ -71,7 +67,6 @@ export default function LandingPage() {
             className="btn"
             whileHover={{
               scale: 1.03,
-              // boxShadow: "0px 0px 8px #ff6a1a",
             }}
             onClick={() => setShowLogin(true)}
           >
@@ -90,7 +85,7 @@ export default function LandingPage() {
             </p>
           </header>
           <p>
-            Forge is an intelligent practice system that evolves wiith you.
+            Forge is an intelligent practice system that evolves with you.
             Instead of static courses or generic prompts, it observes your
             progress, learns from your patterns, and continously refines your
             training strategy to maximize growth.
