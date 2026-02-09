@@ -44,7 +44,7 @@ export default function Timeline() {
     };
 
     fetchTimeLine();
-  }, [SESSION_ID, BACKEND_API]);
+  }, []);
 
   // Check if user is logged in based on presence of session ID in session storage
   let isLoggedIn = true;

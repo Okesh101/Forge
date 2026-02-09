@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const SessionContext = createContext();
@@ -13,6 +13,12 @@ export const SessionProvider = ({ children }) => {
 
   // Backend API URL
   const BACKEND_API = "https://forgev1.onrender.com";
+
+  // Effect to retrieve session ID from session storage on component mount
+  useEffect(() => {
+    const stored = sessionStorage.getItem("sessionId");
+    if (stored) setSessionId(stored);
+  }, []);
 
   // Function to handle navigation to landing page
   const handleNavigation = () => {
