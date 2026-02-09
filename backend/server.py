@@ -591,7 +591,7 @@ def call_gemini_for_deeper_reasoning(prompt: str, payload: dict) -> dict:
         raise ValueError("AI response is not valid JSON")
 
 
-def call_gemini_with_retry(prompt, payload, deeper=False, retries=3, delay=5) -> dict:
+def call_gemini_with_retry(prompt, payload, deeper=False, retries=5, delay=5) -> dict:
     for attempt in range(retries):
         try:
             if deeper:
@@ -1174,6 +1174,14 @@ def get_analytics():
     practice_logs = memory.get("practice_logs", [])
     analyses = memory.get("practice_logs_analysis", [])
 
+    normalized_logs = []
+    for logD in practice_logs:
+        day = datetime.fromisoformat(logD["date"]).date().isoformat()
+        normalized_logs.append({
+            **logD,
+            "day": day
+        })
+
     # -----------------------------
     # 1. Build per-session analytics
     # -----------------------------
@@ -1188,55 +1196,41 @@ def get_analytics():
             "fatigue_level": int(log['fatigue_level'])
         })
 
-    dateCounts = []
-    counts = Counter(item['date'] for item in practice_logs)
-    for date, number in counts.items():
-        dateCounts.append({
-            "date": date[:10],
-            "number": number
-        })
+    counts = Counter(log["day"] for log in normalized_logs)
+    dateCounts = [
+        {"date": day, "number": count}
+        for day, count in sorted(counts.items())
+    ]
 
     # Duration
-    durationSum = defaultdict(lambda: {"total_dur": 0, "count": 0})
-    for entry in practice_logs:
-        dates = entry.get("date")
-        dur = int(entry.get("duration_minutes"))
-        durationSum[dates[:10]]["total_dur"] += dur
-        durationSum[dates[:10]]["count"] += 1
-    durationCounts = []
-    for dat, duration in durationSum.items():
-        durationCounts.append({
-            "date": dat,
-            "duration": duration["total_dur"] / duration["count"]
-        })
+    durationSum = defaultdict(list)
+    for log in normalized_logs:
+        durationSum[log["day"]].append(int(log["duration_minutes"]))
+
+    durationCounts = [
+        {"date": day, "duration": sum(vals) / len(vals)}
+        for day, vals in sorted(durationSum.items())
+    ]
 
     # Difficulty
-    difficultySum = defaultdict(lambda: {"total_diff": 0, "count": 0})
-    for entryDiff in practice_logs:
-        datesDiff = entryDiff.get("date")
-        diff = int(entryDiff.get("difficulty_rating"))
-        difficultySum[datesDiff[:10]]["total_diff"] += diff
-        difficultySum[datesDiff[:10]]["count"] += 1
-    difficultyCounts = []
-    for datDiff, difficulty in difficultySum.items():
-        difficultyCounts.append({
-            "date": datDiff,
-            "difficulty": difficulty["total_diff"] / difficulty["count"]
-        })
+    difficultySum = defaultdict(list)
+    for log in normalized_logs:
+        difficultySum[log["day"]].append(int(log["difficulty_rating"]))
+
+    difficultyCounts = [
+        {"date": day, "difficulty": sum(vals) / len(vals)}
+        for day, vals in sorted(difficultySum.items())
+    ]
 
     # Fatigue
-    fatigueSum = defaultdict(lambda: {"total_fat": 0, "count": 0})
-    for entryFat in practice_logs:
-        datesFat = entryFat.get("date")
-        fat = int(entryFat.get("fatigue_level"))
-        fatigueSum[datesFat[:10]]["total_fat"] += fat
-        fatigueSum[datesFat[:10]]["count"] += 1
-    fatigueCounts = []
-    for datFat, fatigue in fatigueSum.items():
-        fatigueCounts.append({
-            "date": datFat,
-            "fatigue": fatigue["total_fat"] / fatigue["count"]
-        })
+    fatigueSum = defaultdict(list)
+    for log in normalized_logs:
+        fatigueSum[log["day"]].append(int(log["fatigue_level"]))
+
+    fatigueCounts = [
+        {"date": day, "fatigue": sum(vals) / len(vals)}
+        for day, vals in sorted(fatigueSum.items())
+    ]
 
     # ----------------------------------------
     # 2. Build analysis batches with scope
@@ -1281,8 +1275,7 @@ def get_analytics():
         avg_fatigue = sum(s["fatigue_level"]
                           for s in session_metrics) / len(session_metrics)
     else:
-        avg_difficulty = 0
-        avg_fatigue = 0
+        avg_difficulty = avg_fatigue = 0
 
     overload_flags = [
         a["flags"]["overload_risk"]
@@ -1374,4 +1367,4 @@ print(scheduler.get_jobs())
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=False, use_reloader=False)

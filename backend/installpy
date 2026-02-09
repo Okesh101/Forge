@@ -1,3 +1,0 @@
-#!/bin/bash
-# Use '.' or 'source' to ensure changes stay in your current shell
-pip3 install -r requirements.txt
