@@ -145,7 +145,7 @@ export default function LogPracticeSession() {
             <div className="field">
               <fieldset>
                 <label htmlFor="focusContent">FOCUS CONTENT</label>
-                <input
+                <textarea
                   type="text"
                   value={logSessionData.focusContent}
                   name="focusContent"

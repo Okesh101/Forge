@@ -27,7 +27,7 @@ export default function Form() {
   const navigate = useNavigate();
 
   // Getting sessionId and BACKEND_API from contextApi
-  const {  BACKEND_API } = useContext(SessionContext);
+  const { BACKEND_API } = useContext(SessionContext);
 
   // Function to handle input changes
   function handleInputChange(e) {
@@ -62,7 +62,7 @@ export default function Form() {
       newErrors.timeCommitment = "This field is required";
       isValid = false;
     }
-    if (!decision_Data.userEmail) {
+    if (decision_Data.verify && !decision_Data.userEmail) {
       newErrors.userEmail = "This field is required";
       isValid = false;
     }
@@ -84,7 +84,6 @@ export default function Form() {
         const data = await res.json();
         console.log(data);
 
-        // Simulate loading time
         if (data.status === "success") {
           setIsLoading(false);
           navigate("/narration");
@@ -97,6 +96,7 @@ export default function Form() {
       } catch (error) {
         console.log(error.message);
         setIsLoading(false);
+        setErrorModal(true)
       }
     }
   };
@@ -229,17 +229,19 @@ export default function Form() {
 
             {decision_Data.verify && (
               <div className="email_section">
-                <fieldset >
-                <label htmlFor="userEmail">EMAIL ADDRESS</label>
-                <input
-                  type="email"
-                  name="userEmail"
-                  value={decision_Data.userEmail}
-                  onChange={handleInputChange}
-                />
-              </fieldset>
+                <fieldset>
+                  <label htmlFor="userEmail">EMAIL ADDRESS</label>
+                  <input
+                    type="email"
+                    name="userEmail"
+                    value={decision_Data.userEmail}
+                    onChange={handleInputChange}
+                  />
+                </fieldset>
 
-              {errors.userEmail  && <p className="errorMssg">{errors.userEmail}</p>}
+                {errors.userEmail && (
+                  <p className="errorMssg">{errors.userEmail}</p>
+                )}
               </div>
             )}
           </form>
