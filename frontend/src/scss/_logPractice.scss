@@ -28,7 +28,18 @@
   button {
     @include btnStyle;
     width: 100%;
-    margin-top: 30px;
+    margin-top: 30px; display: flex;
+        align-items: center;
+        gap: 10px;
+         .loader{
+          width: 20px;
+          height: 20px;
+          border: 3px solid white;
+          border-top: 3px solid red;
+          border-left: 3px solid red;
+          border-radius: 50%;
+          animation: spin 1s linear infinite ;
+        }
   }
   .logSession_list {
     background: rgba(30, 30, 40, 0.8);
@@ -86,5 +97,15 @@
         margin-top: 0.8rem;
       }
     }
+  }
+}
+
+
+@keyframes spin {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
   }
 }

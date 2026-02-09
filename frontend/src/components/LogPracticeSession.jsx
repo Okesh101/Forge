@@ -2,10 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { useNavigate } from "react-router-dom";
-// import { LineChart } from "lucide-react";
 import { Activity } from "lucide-react";
-import { SessionContext } from "../contextApi/SessionContext";
-import { FiUser, FiUserX, FiX } from "react-icons/fi";
 
 export default function LogPracticeSession() {
   // State to hold log practice session data
@@ -16,11 +13,11 @@ export default function LogPracticeSession() {
     fatigueLevel: 1,
   });
   const [logHistory, setLogHistory] = useState([]);
-  const [showSessionId, setShowSessionId] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   // State for field errors
   const [fieldError, setFieldError] = useState({});
 
-// Backend API URL
+  // Backend API URL
   const BACKEND_API = "https://forgev1.onrender.com";
 
   // Get session ID from session storage
@@ -80,6 +77,8 @@ export default function LogPracticeSession() {
 
     // If all validations pass, submit the form
     if (isValid) {
+      // Set button to loading state
+      setShowLoader(true);
       // Send form data to backend
       try {
         const res = await fetch(`${BACKEND_API}/api/practice/new`, {
@@ -123,12 +122,7 @@ export default function LogPracticeSession() {
     };
 
     fetchLogHistory();
-  }, []);
-
-  // Handle sessionID visbility
-  const handleIdVisibility = () => {
-    setShowSessionId((prev) => !prev);
-  };
+  }, [SESSION_ID, BACKEND_API]);
 
   return (
     <>
@@ -236,7 +230,14 @@ export default function LogPracticeSession() {
             </div>
           </form>
           <button type="button" onClick={handleSubmit}>
-            Submit Log
+            {showLoader === true ? (
+              <>
+                <div className="loader"></div>
+                Submitting
+              </>
+            ) : (
+              "Submit Log"
+            )}
           </button>
 
           <div className="logSession_list">

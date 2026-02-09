@@ -63,7 +63,7 @@ export default function Analytics() {
     };
 
     fetchAnalytics();
-  }, []);
+  }, [SESSION_ID, BACKEND_API]);
 
   // Handle window resize to update screen size state for responsive chart options
   useEffect(() => {

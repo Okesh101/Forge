@@ -8,6 +8,7 @@ export default function LogIn({ setShowLogin }) {
   const [showId, setShowId] = useState(false);
   const [session_Id, setSession_Id] = useState("");
   const [session_Id_Error, setSession_Id_Error] = useState("");
+  const [isBtnClicked, setIsBtnClicked] = useState(false);
   const navigate = useNavigate();
   const { BACKEND_API } = useContext(SessionContext);
 
@@ -25,9 +26,14 @@ export default function LogIn({ setShowLogin }) {
     let isValid = true;
     if (!session_Id) {
       setSession_Id_Error("This field is required");
+      return;
     }
     // If session ID is valid, send login request to backend
     if (isValid) {
+      // Set button to loading state
+      setIsBtnClicked(true);
+
+      
       try {
         const res = await fetch(`${BACKEND_API}/api/auth/login`, {
           method: "POST",
@@ -38,16 +44,18 @@ export default function LogIn({ setShowLogin }) {
         });
 
         const data = await res.json();
-        //
+        // If login is successful, store session ID in session storage and navigate to log session page
         if (data.status === "success") {
           sessionStorage.setItem("sessionId", session_Id);
           navigate("/logSession");
           setSession_Id_Error("");
         } else if (data.error) {
           setSession_Id_Error(data.error);
+          setIsBtnClicked(false);
         }
       } catch (error) {
         console.log(error.message);
+        setIsBtnClicked(false);
       }
     }
   };
@@ -91,7 +99,14 @@ export default function LogIn({ setShowLogin }) {
             )}
           </fieldset>
           <button className="login_btn" onClick={handleSubmit}>
-            Login
+            {isBtnClicked === true ? (
+              <>
+                <div className="loader"></div>
+                Logging In
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
         </main>
       </div>
