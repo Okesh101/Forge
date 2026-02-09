@@ -14,7 +14,6 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
-        {/* <Route path="/" element={<LogIn />} /> */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/form" element={<Form />} />
         <Route path="/logSession" element={<LogPracticeSession />} />
