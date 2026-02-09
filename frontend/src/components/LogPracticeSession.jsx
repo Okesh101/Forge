@@ -94,6 +94,7 @@ export default function LogPracticeSession() {
         const data = await res.json();
         if (data.status === "success") {
           await fetchLogHistory();
+          resetForm()
         }
       } catch (error) {
         console.log(error.message);
@@ -131,6 +132,17 @@ export default function LogPracticeSession() {
 
     fetchLogHistory();
   }, [SESSION_ID, BACKEND_API]);
+
+
+    // Function to reset the form
+  function resetForm() {
+    setLogSessionData({
+      focusContent: "",
+    duration: "",
+    difficulty: "",
+    fatigueLevel: 1,
+    });
+  }
 
   return (
     <>
