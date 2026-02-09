@@ -3,6 +3,7 @@ import SideBar from "../Utilities/SideBar";
 import PageNav from "../Utilities/PageNav";
 import { useNavigate } from "react-router-dom";
 import { Activity } from "lucide-react";
+import { SessionContext } from "../contextApi/SessionContext";
 
 export default function LogPracticeSession() {
   // State to hold log practice session data
@@ -13,7 +14,10 @@ export default function LogPracticeSession() {
     fatigueLevel: 1,
   });
   const [logHistory, setLogHistory] = useState([]);
-  const [showLoader, setShowLoader] = useState(false);
+
+  // Get loading and setLoading function from context
+  const { isLoading, setIsLoading } = useContext(SessionContext);
+
   // State for field errors
   const [fieldError, setFieldError] = useState({});
 
@@ -22,9 +26,6 @@ export default function LogPracticeSession() {
 
   // Get session ID from session storage
   const SESSION_ID = sessionStorage.getItem("sessionId");
-
-  // Navigation hook
-  const navigate = useNavigate();
 
   // Function handling input change
   const handleChange = (e) => {
@@ -77,8 +78,6 @@ export default function LogPracticeSession() {
 
     // If all validations pass, submit the form
     if (isValid) {
-      // Set button to loading state
-      setShowLoader(true);
       // Send form data to backend
       try {
         const res = await fetch(`${BACKEND_API}/api/practice/new`, {
@@ -91,7 +90,7 @@ export default function LogPracticeSession() {
         });
         const data = await res.json();
         if (data.status === "success") {
-          window.location.reload();
+          await fetchLogHistory();
         }
       } catch (error) {
         console.log(error.message);
@@ -100,29 +99,35 @@ export default function LogPracticeSession() {
     setFieldError(newErrors);
   };
 
-  useEffect(() => {
-    // Fetch log history from backend when component mounts
+  // Function to fetch log history from backend
+  const fetchLogHistory = async () => {
+    try {
+      setIsLoading(true);
 
-    const fetchLogHistory = async () => {
-      try {
-        const res = await fetch(`${BACKEND_API}/api/practice/logs`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Session-ID": SESSION_ID,
-          },
-        });
-        const data = await res.json();
-        if (!data.error && data) {
-          setLogHistory(data);
-        }
-      } catch (error) {
-        console.log(error.message);
+      const res = await fetch(`${BACKEND_API}/api/practice/logs`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-ID": SESSION_ID,
+        },
+      });
+      const data = await res.json();
+      if (!data.error && data) {
+        setLogHistory(data);
       }
-    };
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // if session ID or backend API URL is missing, do not attempt to fetch log history
+    if (!SESSION_ID || !BACKEND_API) return;
 
     fetchLogHistory();
-  }, []);
+  }, [SESSION_ID, BACKEND_API]);
 
   return (
     <>
@@ -194,7 +199,7 @@ export default function LogPracticeSession() {
                 )}
               </div>
             </section>
-            <div className="field">Defining strict interfaces for functional component props
+            <div className="field">
               <fieldset>
                 <label
                   htmlFor="fatigueLevel"
@@ -230,25 +235,22 @@ export default function LogPracticeSession() {
             </div>
           </form>
           <button type="button" onClick={handleSubmit}>
-            {showLoader === true ? (
-              <>
-                <div className="loader"></div>
-                Submitting
-              </>
-            ) : (
-              "Submit Log"
-            )}
+            Submit Log
           </button>
 
           <div className="logSession_list">
             <h3>Log Practice History</h3>
-            {logHistory.length === 0 ? (
+            {isLoading ? (
+              <div className="loading">
+                <p>Loading practice history...</p>
+              </div>
+            ) : logHistory.length === 0 ? (
               <div className="no_log">
                 <Activity className="icon" size={60} height={80} />
                 <p>Activity Overview</p>
               </div>
             ) : (
-              logHistory.map((item, index) => (
+              [...logHistory].reverse().map((item, index) => (
                 <div className="logPracticeCard" key={index}>
                   <b style={{ color: "rgba(250, 92, 7, 0.81)" }}>{item.date}</b>
                   <em>{item.focusContent}</em>

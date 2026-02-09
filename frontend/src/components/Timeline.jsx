@@ -15,7 +15,8 @@ export default function Timeline() {
   // Backend API URL
   const BACKEND_API = "https://forgev1.onrender.com";
 
-  const { handleNavigation } = useContext(SessionContext);
+  const { handleNavigation, isLoading, setIsLoading } =
+    useContext(SessionContext);
 
   // State to hold time line data
   const [timeline_data, setTimeline_Data] = useState([]);
@@ -24,6 +25,8 @@ export default function Timeline() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsLoading(true);
+
     // Fetch timeline data from backend
     const fetchTimeLine = async () => {
       try {
@@ -40,6 +43,8 @@ export default function Timeline() {
         }
       } catch (error) {
         console.log(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -75,7 +80,11 @@ export default function Timeline() {
             <h1>Timeline Page</h1>
             <p>See how your practice strategy has evolved over time.</p>
           </header>
-          {timeline_data?.length > 0 ? (
+          { isLoading ? (
+              <div className="loading">
+                <p>Loading timeline data...</p>
+              </div>
+            ) :timeline_data?.length > 0 ? (
             <div className="timeline_details">
               {timeline_data?.map((item) => (
                 <div className="timeline_card" key={item.id}>
