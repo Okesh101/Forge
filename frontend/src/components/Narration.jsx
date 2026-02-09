@@ -15,7 +15,8 @@ export default function Narration() {
   const [narrationData, setNarrationData] = useState({});
 
   // Get BACKEND_API, handleNavigation, isLoading, setIsLoading function from context
-  const { BACKEND_API, handleNavigation, isLoading, setIsLoading } = useContext(SessionContext);
+  const { BACKEND_API, handleNavigation, isLoading, setIsLoading } =
+    useContext(SessionContext);
   // Fetch narration data from the backend API
   useEffect(() => {
     if (!SESSION_ID) return;
@@ -72,7 +73,11 @@ export default function Narration() {
                   </span>
                 </div>
 
-                <p>{narrationData.agent_insights}</p>
+                <ul>
+                  {narrationData.agent_insights?.map((ag, index) => (
+                    <li key={index}>{ag}</li>
+                  ))}
+                </ul>
               </div>
             ) : (
               ""
@@ -108,13 +113,17 @@ export default function Narration() {
               </div>
             ) : narrationData.dynamic ? (
               narrationData.dynamic?.map((item) => {
-                const primaryDetails = Array.isArray(item?.this_week_plan?.primary?.details)
+                const primaryDetails = Array.isArray(
+                  item?.this_week_plan?.primary?.details
+                )
                   ? item.this_week_plan.primary.details
                   : item?.this_week_plan?.primary?.details
                   ? [item.this_week_plan.primary.details]
                   : [];
 
-                const secondaryDetails = Array.isArray(item?.this_week_plan?.secondary?.details)
+                const secondaryDetails = Array.isArray(
+                  item?.this_week_plan?.secondary?.details
+                )
                   ? item.this_week_plan.secondary.details
                   : item?.this_week_plan?.secondary?.details
                   ? [item.this_week_plan.secondary.details]
@@ -145,7 +154,10 @@ export default function Narration() {
                           <li>
                             <p>
                               <em>Task: </em>
-                              <small> {item.this_week_plan.primary.task} </small>
+                              <small>
+                                {" "}
+                                {item.this_week_plan.primary.task}{" "}
+                              </small>
                             </p>
                             <ul>
                               {primaryDetails.map((detail, index) => (
@@ -158,7 +170,9 @@ export default function Narration() {
                           <li>
                             <p>
                               <em>Task: </em>
-                              <small>{item.this_week_plan.secondary.task}</small>
+                              <small>
+                                {item.this_week_plan.secondary.task}
+                              </small>
                             </p>
                             <ul>
                               {secondaryDetails.map((detail, index) => (
