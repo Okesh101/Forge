@@ -148,6 +148,7 @@
   margin: 0px 0 0 390px;
   padding: 40px 20px;
   z-index: 999;
+  min-height: 100vh;
 }
 
 @mixin errorStyle {
