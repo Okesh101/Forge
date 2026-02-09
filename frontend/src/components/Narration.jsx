@@ -20,7 +20,7 @@ export default function Narration() {
   useEffect(() => {
     if (!SESSION_ID) return;
     const fetchNarrationData = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         const res = await fetch(`${BACKEND_API}/api/decision/get`, {
           method: "GET",
@@ -34,8 +34,8 @@ export default function Narration() {
         setNarrationData(data);
       } catch (error) {
         console.error("Error fetching narration data:", error);
-      } finally{
-        setIsLoading(false)
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -102,72 +102,81 @@ export default function Narration() {
             )}
           </header>
           <div className="card_container">
-            { isLoading ? (
+            {isLoading ? (
               <div className="loading">
                 <p>Loading narration data ...</p>
               </div>
-            ) :narrationData.dynamic ? (
-              narrationData.dynamic?.map((item) => (
-                <motion.div
-                  className="item_card"
-                  key={item.current_cycle_index}
-                  whileHover={{
-                    scale: 1.023,
-                    borderColor: "rgba(255, 106, 26, 0.3)",
-                  }}
-                  transition={{ type: "spring", stiffness: 200 }}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
-                >
-                  <h3>Duration: {item.current_phase.weeks} WEEKS</h3>
-                  <b>{item.current_phase.title}</b>
-                  <small>{item.current_phase.why_this_phase}</small>
+            ) : narrationData.dynamic ? (
+              narrationData.dynamic?.map((item) => {
+                const primaryDetails = Array.isArray(item?.this_week_plan?.primary?.details)
+                  ? item.this_week_plan.primary.details
+                  : item?.this_week_plan?.primary?.details
+                  ? [item.this_week_plan.primary.details]
+                  : [];
 
+                const secondaryDetails = Array.isArray(item?.this_week_plan?.secondary?.details)
+                  ? item.this_week_plan.secondary.details
+                  : item?.this_week_plan?.secondary?.details
+                  ? [item.this_week_plan.secondary.details]
+                  : [];
 
-                  {item.current_cycle_index === 1 && (
-                    <>
-                      <ol>
-                        <li>
-                          <p>
-                            <em>Task: </em>
-                            <small> {item.this_week_plan.primary.task} </small>
-                          </p>
-                          <ul>
-                            {item.this_week_plan.primary.details?.map(
-                              (detail, index) => (
+                return (
+                  <motion.div
+                    className="item_card"
+                    key={item.current_cycle_index}
+                    whileHover={{
+                      scale: 1.023,
+                      borderColor: "rgba(255, 106, 26, 0.3)",
+                    }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                    }}
+                  >
+                    <h3>Duration: {item.current_phase.weeks} WEEKS</h3>
+                    <b>{item.current_phase.title}</b>
+                    <small>{item.current_phase.why_this_phase}</small>
+
+                    {item.current_cycle_index === 1 && (
+                      <>
+                        <ol>
+                          <li>
+                            <p>
+                              <em>Task: </em>
+                              <small> {item.this_week_plan.primary.task} </small>
+                            </p>
+                            <ul>
+                              {primaryDetails.map((detail, index) => (
                                 <li key={index}>
                                   <small>{detail}</small>
                                 </li>
-                              )
-                            )}
-                          </ul>
-                        </li>
-                        <li>
-                          <p>
-                            <em>Task: </em>
-                            <small>{item.this_week_plan.secondary.task}</small>
-                          </p>
-                          <ul>
-                            {item.this_week_plan.secondary.details?.map(
-                              (detail, index) => (
+                              ))}
+                            </ul>
+                          </li>
+                          <li>
+                            <p>
+                              <em>Task: </em>
+                              <small>{item.this_week_plan.secondary.task}</small>
+                            </p>
+                            <ul>
+                              {secondaryDetails.map((detail, index) => (
                                 <li key={index}>
                                   <small>{detail}</small>
                                 </li>
-                              )
-                            )}
-                          </ul>
-                        </li>
-                      </ol>
-                      <small style={{ fontSize: "14px" }}>
-                        {item.what_to_focus_on}
-                      </small>
-                    </>
-                  )}
-                </motion.div>
-              ))
+                              ))}
+                            </ul>
+                          </li>
+                        </ol>
+                        <small style={{ fontSize: "14px" }}>
+                          {item.what_to_focus_on}
+                        </small>
+                      </>
+                    )}
+                  </motion.div>
+                );
+              })
             ) : (
               <p className="error">
                 <MessageCircleOff size={70} height={80} />
