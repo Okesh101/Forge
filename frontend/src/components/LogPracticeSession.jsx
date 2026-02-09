@@ -122,7 +122,7 @@ export default function LogPracticeSession() {
     };
 
     fetchLogHistory();
-  }, [SESSION_ID, BACKEND_API]);
+  }, []);
 
   return (
     <>
@@ -194,7 +194,7 @@ export default function LogPracticeSession() {
                 )}
               </div>
             </section>
-            <div className="field">
+            <div className="field">Defining strict interfaces for functional component props
               <fieldset>
                 <label
                   htmlFor="fatigueLevel"
